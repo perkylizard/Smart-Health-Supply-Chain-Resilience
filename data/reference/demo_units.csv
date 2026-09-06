@@ -1,0 +1,14 @@
+unit_id,unit_name,kind,state,districts,is_hero
+bihar,Bihar,state,Bihar,,1
+uttar_pradesh,Uttar Pradesh,state,Uttar Pradesh,,0
+rajasthan,Rajasthan,state,Rajasthan,,0
+madhya_pradesh,Madhya Pradesh,state,Madhya Pradesh,,0
+andhra_pradesh,Andhra Pradesh,state,Andhra Pradesh,,0
+telangana,Telangana,state,Telangana,,0
+karnataka,Karnataka,state,Karnataka,,0
+arunachal_pradesh,Arunachal Pradesh,state,Arunachal Pradesh,,0
+jammu_kashmir,Jammu & Kashmir,ut,Jammu & Kashmir,-Kargil;-Leh Ladakh,0
+ladakh,Ladakh,carveout,Jammu & Kashmir,Kargil;Leh Ladakh,0
+lakshadweep,Lakshadweep,ut,Lakshadweep,,0
+andaman_nicobar,Andaman & Nicobar Islands,ut,A & N Islands,,0
+bastar,Bastar division (Chhattisgarh),carveout,Chhattisgarh,Bastar;Bijapur;Dantewada;Kanker;Kondagaon;Narayanpur;Sukma,0
