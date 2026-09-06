@@ -1,0 +1,20 @@
+:root {
+  --paper: #fbf8f2; --paper-2: #f3eee4; --ink: #1b2226; --ink-2: #4a5359; --ink-3: #7d858b; --rule: #e4ddd1;
+  --teal: #0f6e6e; --teal-2: #0b5757; --teal-soft: #dcecea;
+  --red: #c8372d; --red-soft: #f6dcd9; --amber: #c77c11; --amber-soft: #f7e6c9; --green: #2e7d5b; --green-soft: #d9ece2; --blue: #3b6fb6; --blue-soft: #dbe6f5;
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
+  --r1: 6px; --r2: 10px;
+  --t-xs: 13px; --t-sm: 15px; --t-md: 17px; --t-lg: 22px; --t-xl: 30px;
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-hi: "Noto Sans Devanagari", "Inter", system-ui, sans-serif;
+  --rail: 64px; --strip: 56px; --content: 1280px;
+  --shadow: 0 1px 0 rgba(27, 34, 38, 0.06), 0 6px 18px -12px rgba(27, 34, 38, 0.25);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #14181b; --paper-2: #1c2226; --ink: #eef0ee; --ink-2: #b7bdc0; --ink-3: #848c91; --rule: #2c3439;
+    --teal: #5fb8b4; --teal-2: #7ccbc7; --teal-soft: #1b3736;
+    --red: #e46a60; --red-soft: #3d2320; --amber: #e0a24a; --amber-soft: #3c2e17; --green: #6cbf9a; --green-soft: #1d3a2d; --blue: #7ea6e0; --blue-soft: #1f2d42;
+    --shadow: 0 1px 0 rgba(0,0,0,0.3), 0 6px 18px -12px rgba(0,0,0,0.6);
+  }
+}
