@@ -1,0 +1,27 @@
+SOURCES for samples/apis  (all retrieved 2026-09-05 UTC, by direct curl / python3 urllib+ftplib; no API keys used)
+Columns: filename | URL | retrieval date | licence (as stated by provider docs, see apis.md for citations)
+
+openmeteo_archive_patna_2024jun-sep.json | https://archive-api.open-meteo.com/v1/archive?latitude=25.594&longitude=85.137&start_date=2024-06-01&end_date=2024-09-30&daily=precipitation_sum,temperature_2m_max,temperature_2m_mean&timezone=Asia/Kolkata | 2026-09-05 | CC-BY 4.0 (open-meteo.com/en/terms); non-commercial free tier
+openmeteo_archive_guwahati_2024jun-sep.json | https://archive-api.open-meteo.com/v1/archive?latitude=26.144&longitude=91.736&start_date=2024-06-01&end_date=2024-09-30&daily=precipitation_sum,temperature_2m_max,temperature_2m_mean&timezone=Asia/Kolkata | 2026-09-05 | CC-BY 4.0
+openmeteo_forecast_patna_7d.json | https://api.open-meteo.com/v1/forecast?latitude=25.594&longitude=85.137&daily=precipitation_sum,temperature_2m_max,temperature_2m_mean&forecast_days=7&timezone=Asia/Kolkata | 2026-09-05 | CC-BY 4.0
+dhis2_instances_public.json | https://api.im.dhis2.org/instances/public | 2026-09-05 | DHIS2 Instance Manager public listing (no licence stated)
+dhis2_orgunits_level4.json | https://play.im.dhis2.org/stable-2-43-1/api/organisationUnits?level=4&pageSize=5&fields=id,name,level,parent[name]  (basic auth admin/district, documented demo login) | 2026-09-05 | DHIS2 software BSD-3-Clause; demo DB is synthetic Sierra Leone data, no licence stated
+dhis2_analytics_sample_2025.json | https://play.im.dhis2.org/stable-2-43-1/api/analytics?dimension=dx:fbfJHSPpUQD;cYeuwXTCPkU&dimension=pe:202501;...;202512&dimension=ou:ImspTQPwCqd&displayProperty=NAME | 2026-09-05 | as above (demo data)
+who_gho_indicators_hospital.json | https://ghoapi.azureedge.net/api/Indicator?$filter=contains(IndicatorName,'hospital') | 2026-09-05 | WHO GHO: CC BY-NC-SA 3.0 IGO per WHO data terms (who.int/about/policies/terms-of-use) -- non-commercial
+who_gho_WHS6_102_brics.json | https://ghoapi.azureedge.net/api/WHS6_102?$filter=SpatialDim eq 'IND' or SpatialDim eq 'BRA' or SpatialDim eq 'ZAF' or SpatialDim eq 'RUS' or SpatialDim eq 'CHN' | 2026-09-05 | as above
+worldbank_SH.MED.BEDS.ZS_brics.json | https://api.worldbank.org/v2/country/IND;BRA;ZAF;RUS;CHN/indicator/SH.MED.BEDS.ZS?format=json&per_page=400 | 2026-09-05 | CC-BY 4.0 (World Bank Terms of Use for Datasets)
+worldbank_SH.MED.PHYS.ZS_brics.json | https://api.worldbank.org/v2/country/IND;BRA;ZAF;RUS;CHN/indicator/SH.MED.PHYS.ZS?format=json&per_page=400 | 2026-09-05 | CC-BY 4.0
+datasus_ftp_dissemin_publicos_listing.txt | ftp://ftp.datasus.gov.br/dissemin/publicos/  (anonymous ftplib LIST) | 2026-09-05 | DATASUS public dissemination (Brazilian open government data; Lei de Acesso a Informacao). No explicit licence file on FTP.
+datasus_CNES_STAC2607.dbc | ftp://ftp.datasus.gov.br/dissemin/publicos/CNES/200508_/Dados/ST/STAC2607.dbc  (CNES establishments, state AC=Acre, competence 2026-07; DATASUS compressed DBF) | 2026-09-05 | as above
+datasus_CNES_STAC2607_fields.txt | derived: DBF field descriptors parsed from the uncompressed header of the .dbc above | 2026-09-05 | derived
+opendatasus_root.html | https://opendatasus.saude.gov.br/ (302 -> https://dadosabertos.saude.gov.br/) | 2026-09-05 | portal HTML, informational only
+apidadosabertos_v1_landing.html | https://apidadosabertos.saude.gov.br/v1/ (Swagger UI shell) | 2026-09-05 | informational
+brazil_apidadosabertos_swagger.json | https://apidadosabertos.saude.gov.br/static/swagger.json | 2026-09-05 | spec declares license MIT; data = Brazilian Ministry of Health open data (dados abertos)
+brazil_apidadosabertos_cnes_estabelecimentos_uf12_acre.json | https://apidadosabertos.saude.gov.br/cnes/estabelecimentos?limit=20&codigo_uf=12 | 2026-09-05 | Ministry of Health open data (CNES). Contains facility contact fields (phone/email) -- treat as PII-adjacent
+brazil_apidadosabertos_ubs.json | https://apidadosabertos.saude.gov.br/assistencia-a-saude/unidade-basicas-de-saude?limit=10&offset=0 | 2026-09-05 | Ministry of Health open data
+brazil_apidadosabertos_daf_estoque_medicamentos_bnafar_horus.json | https://apidadosabertos.saude.gov.br/daf/estoque-medicamentos-bnafar-horus?limit=20&offset=0 | 2026-09-05 | Ministry of Health open data (BNAFAR/Horus)
+brazil_apidadosabertos_horus_cnes8471223.json | https://apidadosabertos.saude.gov.br/daf/estoque-medicamentos-bnafar-horus?codigo_cnes=8471223&limit=1000&offset=0 | 2026-09-05 | as above
+brazil_apidadosabertos_horus_uf12_202501.json | https://apidadosabertos.saude.gov.br/daf/estoque-medicamentos-bnafar-horus?codigo_uf=12&anomes_posicao_estoque=202501&limit=50&offset=0 | 2026-09-05 | as above
+datagovin_root.txt | https://api.data.gov.in/ (reachability only) | 2026-09-05 | n/a (404 body)
+overpass_patna_healthcare.json | https://overpass-api.de/api/interpreter  POST data=[out:json][timeout:60];(node[amenity=hospital](25.45,84.95,25.75,85.35);node[healthcare](bbox);way[amenity=hospital](bbox);way[healthcare](bbox););out center tags; | 2026-09-05 | OpenStreetMap data (c) OSM contributors, ODbL 1.0
+brazil_apidadosabertos_horus_uf12_202609.json | https://apidadosabertos.saude.gov.br/daf/estoque-medicamentos-bnafar-horus?codigo_uf=12&anomes_posicao_estoque=202609&limit=50&offset=0 | 2026-09-05 | Ministry of Health open data (BNAFAR/Horus)

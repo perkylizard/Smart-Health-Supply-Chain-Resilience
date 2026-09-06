@@ -1,0 +1,18 @@
+SOURCES for samples/india-gov  (retrieved 2026-09-05, all via curl, no login)
+Format: filename | source URL | retrieval date | licence (as stated on source, else "not stated")
+
+NLEM_2022.pdf | https://cdsco.gov.in/opencms/resources/UploadCDSCOWeb/2018/UploadConsumer/nlem2022.pdf | 2026-09-05 | not stated (Government of India publication, CDSCO)
+census2011_PCA_district.xlsx | https://censusindia.gov.in/nada/index.php/catalog/6191/download/9268/DDW_PCA0000_2011_Indiastatedist.xlsx | 2026-09-05 | not stated on download link (Census of India NADA catalog; ORGI public tables)
+nfhs5_districts_all_SaiSiddhardhaKalla.csv | https://raw.githubusercontent.com/SaiSiddhardhaKalla/NFHS/main/India.csv | 2026-09-05 | NO LICENSE file in repo (GitHub API license = null); derived from public NFHS-5 factsheets
+nfhs5_phase2_districts_jvargh7.csv | https://raw.githubusercontent.com/jvargh7/nfhs5_factsheets/main/phase%202%20release/NFHS-5%20Phase%202%20District%20Factsheets.csv | 2026-09-05 | MIT (repo LICENSE)
+nfhs5_districts_pratapvardhan.csv | https://raw.githubusercontent.com/pratapvardhan/NFHS-5/master/NFHS-5-Districts.csv | 2026-09-05 | CC-BY-4.0 (repo LICENSE)
+nfhs5_states_pratapvardhan.csv | https://raw.githubusercontent.com/pratapvardhan/NFHS-5/master/NFHS-5-States.csv | 2026-09-05 | CC-BY-4.0 (repo LICENSE)
+ncvbdc_dengue_statewise_2021-2026.csv | https://ncvbdc.mohfw.gov.in/index4.php?lang=1&level=0&linkid=431&lid=3715 (inline HTML table, converted to CSV by us) | 2026-09-05 | not stated
+ncvbdc_malaria_situation_2022_onwards.pdf | https://ncvbdc.mohfw.gov.in/WriteReadData/l892s/44132297901787558433.pdf | 2026-09-05 | not stated
+ncvbdc_malaria_MES_2025.pdf | https://ncvbdc.mohfw.gov.in/WriteReadData/l892s/87226817751785920429.pdf | 2026-09-05 | not stated
+ncvbdc_chikungunya_situation.pdf | https://ncvbdc.mohfw.gov.in/WriteReadData/l892s/63661226801781154716.pdf (page links to nvbdcp.gov.in host, which timed out; same path on ncvbdc.mohfw.gov.in worked) | 2026-09-05 | not stated
+idsp_event_chronicle_JanMar2026.pdf | https://ncdc.mohfw.gov.in/uploads/newsletter/1779085013_IDSP_%20Event%20Chronicle_Jan-Mar%202026_Final%20Copy.pdf | 2026-09-05 | not stated (newsletter, NOT the weekly outbreak table)
+
+NOT downloaded (see ../../india-gov.md "Errors and blockers"):
+- Rural Health Statistics / Health Dynamics of India 2022-23 PDF (HMIS downloadfile endpoint returns HTTP 500; MoHFW site is JS-rendered, PDF path unverified)
+- IDSP weekly outbreak report PDFs (idsp.mohfw.gov.in unreachable: timeouts / ECONNREFUSED; NCDC mirror URLs return 404)

@@ -1,0 +1,703 @@
+{
+ "resource_id": "7c568619-b9b4-40bb-b563-68c28c27a6c1",
+ "url": "https://api.data.gov.in/resource/7c568619-b9b4-40bb-b563-68c28c27a6c1",
+ "licence": "Government Open Data License - India (GODL)",
+ "retrieved": "2026-09-06",
+ "title": "All India and State/UT-wise Factsheets of National Family Health Survey (NFHS) - 5, 2019-2021",
+ "desc": "All India and State/UT-wise Factsheets of National Family Health Survey (NFHS) - 5, 2019-2021",
+ "org": [
+  "Ministry of Health and Family Welfare",
+  " Department of Health and Family Welfare",
+  " International Institute for Population Sciences (IIPS)"
+ ],
+ "sector": [
+  "Health and Family welfare",
+  " Family Welfare"
+ ],
+ "source": "data.gov.in",
+ "updated_date": "2026-02-10T07:49:27Z",
+ "created_date": "2026-02-10T07:49:27Z",
+ "total": 111,
+ "field": [
+  {
+   "id": "states_uts",
+   "name": "States/UTs",
+   "type": "keyword"
+  },
+  {
+   "id": "area",
+   "name": "Area",
+   "type": "keyword"
+  },
+  {
+   "id": "number_of_households_surveyed",
+   "name": "Number of Households surveyed",
+   "type": "double"
+  },
+  {
+   "id": "number_of_women_age_15_49_years_interviewed",
+   "name": "Number of Women age 15-49 years interviewed",
+   "type": "double"
+  },
+  {
+   "id": "number_of_men_age_15_54_years_interviewed",
+   "name": "Number of Men age 15-54 years interviewed",
+   "type": "double"
+  },
+  {
+   "id": "_female_population_age_6_years_and_above_who_ever_attended_school____",
+   "name": "Female population age 6 years and above who ever attended school (%)",
+   "type": "double"
+  },
+  {
+   "id": "population_below_age_15_years____",
+   "name": "Population below age 15 years (%)",
+   "type": "double"
+  },
+  {
+   "id": "_sex_ratio_of_the_total_population__females_per_1_000_males_",
+   "name": " Sex ratio of the total population (females per 1,000 males)",
+   "type": "double"
+  },
+  {
+   "id": "sex_ratio_at_birth_for_children_born_in_the_last_five_years__females_per_1_000_males_",
+   "name": "Sex ratio at birth for children born in the last five years (females per 1,000 males)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_under_age_5_years_whose_birth_was_registered_with_the_civil_authority____",
+   "name": "Children under age 5 years whose birth was registered with the civil authority (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "deaths_in_the_last_3_years_registered_with_the_civil_authority____",
+   "name": "Deaths in the last 3 years registered with the civil authority (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "population_living_in_households_with_electricity____",
+   "name": "Population living in households with electricity (%)",
+   "type": "double"
+  },
+  {
+   "id": "population_living_in_households_with_an_improved_drinking_water_source1____",
+   "name": "Population living in households with an improved drinking-water source1 (%)",
+   "type": "double"
+  },
+  {
+   "id": "population_living_in_households_that_use_an_improved_sanitation_facility2____",
+   "name": "Population living in households that use an improved sanitation facility2 (%)",
+   "type": "double"
+  },
+  {
+   "id": "households_using_clean_fuel_for_cooking3____",
+   "name": "Households using clean fuel for cooking3 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "households_using_iodized_salt____",
+   "name": "Households using iodized salt (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "households_with_any_usual_member_covered_under_a_health_insurance_financing_scheme____",
+   "name": "Households with any usual member covered under a health insurance/financing scheme (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_age_5_years_who_attended_pre_primary_school_during_the_school_year_2019_20____",
+   "name": "Children age 5 years who attended pre-primary school during the school year 2019-20 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "_women__age_15_49__who_are_literate4____",
+   "name": "Women (age 15-49) who are literate4 (%)",
+   "type": "double"
+  },
+  {
+   "id": "men__age_15_49__who_are_literate4____",
+   "name": "Men (age 15-49) who are literate4 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "_women__age_15_49___with_10_or_more_years_of_schooling____",
+   "name": "Women (age 15-49)  with 10 or more years of schooling (%)",
+   "type": "double"
+  },
+  {
+   "id": "men__age_15_49___with_10_or_more_years_of_schooling____",
+   "name": "Men (age 15-49)  with 10 or more years of schooling (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "women__age_15_49___who_have_ever_used_the_internet____",
+   "name": "Women (age 15-49)  who have ever used the internet (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "men__age_15_49___who_have_ever_used_the_internet____",
+   "name": "Men (age 15-49)  who have ever used the internet (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "women_age_20_24_years_married_before_age_18_years____",
+   "name": "Women age 20-24 years married before age 18 years (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "men_age_25_29_years_married_before_age_21_years____",
+   "name": "Men age 25-29 years married before age 21 years (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "total_fertility_rate__number_of_children_per_woman_",
+   "name": "Total Fertility Rate (number of children per woman)",
+   "type": "keyword"
+  },
+  {
+   "id": "women_age_15_19_years_who_were_already_mothers_or_pregnant_at_the_time_of_the_survey____",
+   "name": "Women age 15-19 years who were already mothers or pregnant at the time of the survey (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "adolescent_fertility_rate_for_women_age_15_19_years5",
+   "name": "Adolescent fertility rate for women age 15-19 years5",
+   "type": "double"
+  },
+  {
+   "id": "neonatal_mortality_rate__per_1000_live_births_",
+   "name": "Neonatal mortality rate (per 1000 live births)",
+   "type": "keyword"
+  },
+  {
+   "id": "infant_mortality_rate__per_1000_live_births_",
+   "name": "Infant mortality rate (per 1000 live births)",
+   "type": "keyword"
+  },
+  {
+   "id": "under_five_mortality_rate__per_1000_live_births_",
+   "name": "Under-five mortality rate (per 1000 live births)",
+   "type": "keyword"
+  },
+  {
+   "id": "current_use_of_family_planning_methods__currently_married_women_age_15_49__years____any_method6____",
+   "name": "Current Use of Family Planning Methods (Currently Married Women Age 15-49  years) - Any method6 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "current_use_of_family_planning_methods__currently_married_women_age_15_49__years____any_modern_method6____",
+   "name": "Current Use of Family Planning Methods (Currently Married Women Age 15-49  years) - Any modern method6 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "current_use_of_family_planning_methods__currently_married_women_age_15_49__years____female_sterilization____",
+   "name": "Current Use of Family Planning Methods (Currently Married Women Age 15-49  years) - Female sterilization (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "current_use_of_family_planning_methods__currently_married_women_age_15_49__years____male_sterilization____",
+   "name": "Current Use of Family Planning Methods (Currently Married Women Age 15-49  years) - Male sterilization (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "current_use_of_family_planning_methods__currently_married_women_age_15_49__years____iud_ppiud____",
+   "name": "Current Use of Family Planning Methods (Currently Married Women Age 15-49  years) - IUD/PPIUD (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "current_use_of_family_planning_methods__currently_married_women_age_15_49__years____pill____",
+   "name": "Current Use of Family Planning Methods (Currently Married Women Age 15-49  years) - Pill (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "current_use_of_family_planning_methods__currently_married_women_age_15_49__years____condom____",
+   "name": "Current Use of Family Planning Methods (Currently Married Women Age 15-49  years) - Condom (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "current_use_of_family_planning_methods__currently_married_women_age_15_49__years____injectables____",
+   "name": "Current Use of Family Planning Methods (Currently Married Women Age 15-49  years) - Injectables (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "total_unmet_need_for_family_planning__currently_married_women_age_15_49__years_7____",
+   "name": "Total Unmet need for Family Planning (Currently Married Women Age 15-49  years)7 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "unmet_need_for_spacing__currently_married_women_age_15_49__years_7____",
+   "name": "Unmet need for spacing (Currently Married Women Age 15-49  years)7 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "health_worker_ever_talked_to_female_non_users_about_family_planning____",
+   "name": "Health worker ever talked to female non-users about family planning (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "current_users_ever_told_about_side_effects_of_current_method_of_family_planning8____",
+   "name": "Current users ever told about side effects of current method of family planning8 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "mothers_who_had_an_antenatal_check_up_in_the_first_trimester___for_last_birth_in_the_5_years_before_the_survey_____",
+   "name": "Mothers who had an antenatal check-up in the first trimester  (for last birth in the 5 years before the survey) (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "mothers_who_had_at_least_4_antenatal_care_visits___for_last_birth_in_the_5_years_before_the_survey_____",
+   "name": "Mothers who had at least 4 antenatal care visits  (for last birth in the 5 years before the survey) (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "mothers_whose_last_birth_was_protected_against_neonatal_tetanus__for_last_birth_in_the_5_years_before_the_survey_9____",
+   "name": "Mothers whose last birth was protected against neonatal tetanus (for last birth in the 5 years before the survey)9 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "mothers_who_consumed_iron_folic_acid_for_100_days_or_more_when_they_were_pregnant__for_last_birth_in_the_5_years_before_the_survey_",
+   "name": "Mothers who consumed iron folic acid for 100 days or more when they were pregnant (for last birth in the 5 years before the survey)",
+   "type": "keyword"
+  },
+  {
+   "id": "mothers_who_consumed_iron_folic_acid_for_180_days_or_more_when_they_were_pregnant__for_last_birth_in_the_5_years_before_the_survey_",
+   "name": "Mothers who consumed iron folic acid for 180 days or more when they were pregnant (for last birth in the 5 years before the survey)",
+   "type": "keyword"
+  },
+  {
+   "id": "registered_pregnancies_for_which_the_mother_received_a_mother_and_child_protection__mcp__card__for_last_birth_in_the_5_years_before_the_survey_",
+   "name": "Registered pregnancies for which the mother received a Mother and Child Protection (MCP) card (for last birth in the 5 years before the survey)",
+   "type": "keyword"
+  },
+  {
+   "id": "mothers_who_received_postnatal_care_from_a_doctor_nurse_lhv_anm_midwife_other_health_personnel_within_2_days_of_delivery__for_last_birth_in_the_5_years_before_the_survey_",
+   "name": "Mothers who received postnatal care from a doctor/nurse/LHV/ANM/midwife/other health personnel within 2 days of delivery (for last birth in the 5 years before the survey)",
+   "type": "keyword"
+  },
+  {
+   "id": "average_out_of_pocket_expenditure_per_delivery_in_a_public_health_facility__for_last_birth_in_the_5_years_before_the_survey___rs__",
+   "name": "Average out-of-pocket expenditure per delivery in a public health facility (for last birth in the 5 years before the survey) (Rs.)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_born_at_home_who_were_taken_to_a_health_facility_for_a_check_up_within_24_hours_of_birth__for_last_birth_in_the_5_years_before_the_survey_",
+   "name": "Children born at home who were taken to a health facility for a check-up within 24 hours of birth (for last birth in the 5 years before the survey)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_who_received_postnatal_care_from_a_doctor_nurse_lhv_anm_midwife__other_health_personnel_within_2_days_of_delivery__for_last_birth_in_the_5_years_before_the_survey_____",
+   "name": "Children who received postnatal care from a doctor/nurse/LHV/ANM/midwife/ other health personnel within 2 days of delivery (for last birth in the 5 years before the survey) (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "institutional_births__in_the_5_years_before_the_survey_____",
+   "name": "Institutional births (in the 5 years before the survey) (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "institutional_births_in_public_facility__in_the_5_years_before_the_survey_____",
+   "name": "Institutional births in public facility (in the 5 years before the survey) (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "home_births_that_were_conducted_by_skilled_health_personnel___in_the_5_years_before_the_survey_10____",
+   "name": "Home births that were conducted by skilled health personnel  (in the 5 years before the survey)10 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "births_attended_by_skilled_health_personnel__in_the_5_years_before_the_survey_10____",
+   "name": "Births attended by skilled health personnel (in the 5 years before the survey)10 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "births_delivered_by_caesarean_section__in_the_5_years_before_the_survey_____",
+   "name": "Births delivered by caesarean section (in the 5 years before the survey) (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "births_in_a_private_health_facility_that_were_delivered_by_caesarean_section__in_the_5_years_before_the_survey_____",
+   "name": "Births in a private health facility that were delivered by caesarean section (in the 5 years before the survey) (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "births_in_a_public_health_facility_that_were_delivered_by_caesarean_section__in_the_5_years_before_the_survey_____",
+   "name": "Births in a public health facility that were delivered by caesarean section (in the 5 years before the survey) (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_age_12_23_months_fully_vaccinated_based_on_information_from_either_vaccination_card_or_mother_s_recall11____",
+   "name": "Children age 12-23 months fully vaccinated based on information from either vaccination card or mother's recall11 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_age_12_23_months_fully_vaccinated_based_on_information_from_vaccination_card_only12____",
+   "name": "Children age 12-23 months fully vaccinated based on information from vaccination card only12 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_age_12_23_months_who_have_received_bcg____",
+   "name": "Children age 12-23 months who have received BCG (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_age_12_23_months_who_have_received_3_doses_of_polio_vaccine13____",
+   "name": "Children age 12-23 months who have received 3 doses of polio vaccine13 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_age_12_23_months_who_have_received_3_doses_of_penta_or_dpt_vaccine____",
+   "name": "Children age 12-23 months who have received 3 doses of penta or DPT vaccine (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_age_12_23_months_who_have_received_the_first_dose_of_measles_containing_vaccine__mcv_____",
+   "name": "Children age 12-23 months who have received the first dose of measles-containing vaccine (MCV) (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_age_24_35_months_who_have_received_a_second_dose_of_measles_containing_vaccine__mcv_____",
+   "name": "Children age 24-35 months who have received a second dose of measles-containing vaccine (MCV) (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_age_12_23_months_who_have_received_3_doses_of_rotavirus_vaccine14____",
+   "name": "Children age 12-23 months who have received 3 doses of rotavirus vaccine14 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_age_12_23_months_who_have_received_3_doses_of_penta_or_hepatitis_b_vaccine____",
+   "name": "Children age 12-23 months who have received 3 doses of penta or hepatitis B vaccine (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_age_9_35_months_who_received_a_vitamin_a_dose_in_the_last_6_months____",
+   "name": "Children age 9-35 months who received a vitamin A dose in the last 6 months (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_age_12_23_months_who_received_most_of_their_vaccinations_in_a_public_health_facility____",
+   "name": "Children age 12-23 months who received most of their vaccinations in a public health facility (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_age_12_23_months_who_received_most_of_their_vaccinations_in_a_private_health_facility____",
+   "name": "Children age 12-23 months who received most of their vaccinations in a private health facility (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "prevalence_of_diarrhoea_in_the_2_weeks_preceding_the_survey__children_under_age_5_years______",
+   "name": "Prevalence of diarrhoea in the 2 weeks preceding the survey (Children under age 5 years) (%) ",
+   "type": "keyword"
+  },
+  {
+   "id": "children_with_diarrhoea_in_the_2_weeks_preceding_the_survey_who_received_oral_rehydration_salts__ors___children_under_age_5_years______",
+   "name": "Children with diarrhoea in the 2 weeks preceding the survey who received oral rehydration salts (ORS) (Children under age 5 years) (%) ",
+   "type": "keyword"
+  },
+  {
+   "id": "children_with_diarrhoea_in_the_2_weeks_preceding_the_survey_who_received_zinc__children_under_age_5_years______",
+   "name": "Children with diarrhoea in the 2 weeks preceding the survey who received zinc (Children under age 5 years) (%) ",
+   "type": "keyword"
+  },
+  {
+   "id": "children_swith_diarrhoea_in_the_2_weeks_preceding_the_survey_taken_to_a_health_facility_or_health_provider__children_under_age_5_years______",
+   "name": "Children swith diarrhoea in the 2 weeks preceding the survey taken to a health facility or health provider (Children under age 5 years) (%) ",
+   "type": "keyword"
+  },
+  {
+   "id": "children_prevalence_of_symptoms_of_acute_respiratory_infection__ari__in_the_2_weeks_preceding_the_survey__children_under_age_5_years______",
+   "name": "Children Prevalence of symptoms of acute respiratory infection (ARI) in the 2 weeks preceding the survey (Children under age 5 years) (%) ",
+   "type": "keyword"
+  },
+  {
+   "id": "children_with_fever_or_symptoms_of_ari_in_the_2_weeks_preceding_the_survey_taken_to_a_health_facility_or_health_provider__children_under_age_5_years_______",
+   "name": "Children with fever or symptoms of ARI in the 2 weeks preceding the survey taken to a health facility or health provider (Children under age 5 years) (%)  ",
+   "type": "keyword"
+  },
+  {
+   "id": "children_under_age_3_years_breastfed_within_one_hour_of_birth15____",
+   "name": "Children under age 3 years breastfed within one hour of birth15 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_under_age_6_months_exclusively_breastfed16____",
+   "name": "Children under age 6 months exclusively breastfed16 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_age_6_8_months_receiving_solid_or_semi_solid_food_and_breastmilk16____",
+   "name": "Children age 6-8 months receiving solid or semi-solid food and breastmilk16 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "breastfeeding_children_age_6_23_months_receiving_an_adequate_diet16__17_____",
+   "name": "Breastfeeding children age 6-23 months receiving an adequate diet16, 17  (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "non_breastfeeding_children_age_6_23_months_receiving_an_adequate_diet16__17____",
+   "name": "Non-breastfeeding children age 6-23 months receiving an adequate diet16, 17 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "total_children_age_6_23_months_receiving_an_adequate_diet16__17_____",
+   "name": "Total children age 6-23 months receiving an adequate diet16, 17  (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_under_5_years_who_are_stunted__height_for_age_18____",
+   "name": "Children under 5 years who are stunted (height-for-age)18 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_under_5_years_who_are_wasted__weight_for_height_18____",
+   "name": "Children under 5 years who are wasted (weight-for-height)18 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_under_5_years_who_are_severely_wasted__weight_for_height_19____",
+   "name": "Children under 5 years who are severely wasted (weight-for-height)19 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_under_5_years_who_are_underweight__weight_for_age_18____",
+   "name": "Children under 5 years who are underweight (weight-for-age)18 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_under_5_years_who_are_overweight__weight_for_height_20____",
+   "name": "Children under 5 years who are overweight (weight-for-height)20 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "women__age_15_49_years__whose_body_mass_index__bmi__is_below_normal__bmi__18_5_kg_m2_21____",
+   "name": "Women (age 15-49 years) whose Body Mass Index (BMI) is below normal (BMI <18.5 kg/m2)21 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "men__age_15_49_years__whose_body_mass_index__bmi__is_below_normal__bmi__18_5_kg_m2_____",
+   "name": "Men (age 15-49 years) whose Body Mass Index (BMI) is below normal (BMI <18.5 kg/m2) (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "women__age_15_49_years__who_are_overweight_or_obese__bmi___25_0_kg_m2_21____",
+   "name": "Women (age 15-49 years) who are overweight or obese (BMI >=25.0 kg/m2)21 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "men__age_15_49_years__who_are_overweight_or_obese__bmi___25_0_kg_m2_____",
+   "name": "Men (age 15-49 years) who are overweight or obese (BMI >=25.0 kg/m2) (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "women__age_15_49_years__who_have_high_risk_waist_to_hip_ratio____0_85_____",
+   "name": "Women (age 15-49 years) who have high risk waist-to-hip ratio (>=0.85) (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "men__age_15_49_years__who_have_high_risk_waist_to_hip_ratio____0_90_____",
+   "name": "Men (age 15-49 years) who have high risk waist-to-hip ratio (>=0.90) (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "children_age_6_59_months_who_are_anaemic___11_0_g_dl_22____",
+   "name": "Children age 6-59 months who are anaemic (<11.0 g/dl)22 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "non_pregnant_women_age_15_49_years_who_are_anaemic___12_0_g_dl_22____",
+   "name": "Non-pregnant women age 15-49 years who are anaemic (<12.0 g/dl)22 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "pregnant_women_age_15_49_years_who_are_anaemic___11_0_g_dl_22____",
+   "name": "Pregnant women age 15-49 years who are anaemic (<11.0 g/dl)22 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "_all_women_age_15_49_years_who_are_anaemic22____",
+   "name": "All women age 15-49 years who are anaemic22 (%)",
+   "type": "double"
+  },
+  {
+   "id": "all_women_age_15_19_years_who_are_anaemic22_____",
+   "name": "All women age 15-19 years who are anaemic22 (%) ",
+   "type": "keyword"
+  },
+  {
+   "id": "men_age_15_49_years_who_are_anaemic___13_0_g_dl_22____",
+   "name": "Men age 15-49 years who are anaemic (<13.0 g/dl)22 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "men_age_15_19_years_who_are_anaemic___13_0_g_dl_22____",
+   "name": "Men age 15-19 years who are anaemic (<13.0 g/dl)22 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "_women__age_15_years_and_above_with_high__141_160_mg_dl__blood_sugar_level23____",
+   "name": "Women  age 15 years and above with high (141-160 mg/dl) Blood sugar level23 (%)",
+   "type": "double"
+  },
+  {
+   "id": "_women_age_15_years_and_above_wih_very_high___160_mg_dl__blood_sugar_level23____",
+   "name": "Women age 15 years and above wih very high (>160 mg/dl) Blood sugar level23 (%)",
+   "type": "double"
+  },
+  {
+   "id": "_women_age_15_years_and_above_wih_high_or_very_high___140_mg_dl__blood_sugar_level_or_taking_medicine_to_control_blood_sugar_level23____",
+   "name": "Women age 15 years and above wih high or very high (>140 mg/dl) Blood sugar level or taking medicine to control blood sugar level23 (%)",
+   "type": "double"
+  },
+  {
+   "id": "_men_age_15_years_and_above_wih_high__141_160_mg_dl__blood_sugar_level23____",
+   "name": "Men age 15 years and above wih high (141-160 mg/dl) Blood sugar level23 (%)",
+   "type": "double"
+  },
+  {
+   "id": "_men__age_15_years_and_above_wih__very_high___160_mg_dl__blood_sugar_level23____",
+   "name": "Men (age 15 years and above wih  very high (>160 mg/dl) Blood sugar level23 (%)",
+   "type": "double"
+  },
+  {
+   "id": "_men_age_15_years_and_above_wih_high_or_very_high___140_mg_dl__blood_sugar_level__or_taking_medicine_to_control_blood_sugar_level23____",
+   "name": "Men age 15 years and above wih high or very high (>140 mg/dl) Blood sugar level  or taking medicine to control blood sugar level23 (%)",
+   "type": "double"
+  },
+  {
+   "id": "_women_age_15_years_and_above_wih_mildly_elevated_blood_pressure__systolic_140_159_mm_of_hg_and_or_diastolic_90_99_mm_of_hg_____",
+   "name": "Women age 15 years and above wih Mildly elevated blood pressure (Systolic 140-159 mm of Hg and/or Diastolic 90-99 mm of Hg) (%)",
+   "type": "double"
+  },
+  {
+   "id": "women_age_15_years_and_above_wih_moderately_or_severely_elevated_blood_pressure__systolic___160_mm_of_hg_and_or_diastolic___100_mm_of_hg_____",
+   "name": "Women age 15 years and above wih Moderately or severely elevated blood pressure (Systolic >=160 mm of Hg and/or Diastolic >=100 mm of Hg) (%)",
+   "type": "double"
+  },
+  {
+   "id": "women_age_15_years_and_above_wih_elevated_blood_pressure__systolic___140_mm_of_hg_and_or_diastolic___90_mm_of_hg__or_taking_medicine_to_control_blood_pressure____",
+   "name": "Women age 15 years and above wih Elevated blood pressure (Systolic >=140 mm of Hg and/or Diastolic >=90 mm of Hg) or taking medicine to control blood pressure (%)",
+   "type": "double"
+  },
+  {
+   "id": "_men_age_15_years_and_above_wih_mildly_elevated_blood_pressure__systolic_140_159_mm_of_hg_and_or_diastolic_90_99_mm_of_hg_____",
+   "name": "Men age 15 years and above wih Mildly elevated blood pressure (Systolic 140-159 mm of Hg and/or Diastolic 90-99 mm of Hg) (%)",
+   "type": "double"
+  },
+  {
+   "id": "men_age_15_years_and_above_wih_moderately_or_severely_elevated_blood_pressure__systolic___160_mm_of_hg_and_or_diastolic___100_mm_of_hg_____",
+   "name": "Men age 15 years and above wih Moderately or severely elevated blood pressure (Systolic >=160 mm of Hg and/or Diastolic >=100 mm of Hg) (%)",
+   "type": "double"
+  },
+  {
+   "id": "men_age_15_years_and_above_wih_elevated_blood_pressure__systolic___140_mm_of_hg_and_or_diastolic___90_mm_of_hg__or_taking_medicine_to_control_blood_pressure____",
+   "name": "Men age 15 years and above wih Elevated blood pressure (Systolic >=140 mm of Hg and/or Diastolic >=90 mm of Hg) or taking medicine to control blood pressure (%)",
+   "type": "double"
+  },
+  {
+   "id": "women__age_30_49_years__ever_undergone_a_screening_test_for_cervical_cancer____",
+   "name": "Women (age 30-49 years) Ever undergone a screening test for cervical cancer (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "women__age_30_49_years__ever_undergone_a_breast_examination_for_breast_cancer____",
+   "name": "Women (age 30-49 years) Ever undergone a breast examination for breast cancer (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "women__age_30_49_years__ever_undergone_an_oral_cavity_examination_for_oral_cancer____",
+   "name": "Women (age 30-49 years) Ever undergone an oral cavity examination for oral cancer (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "men__age_30_49_years_ever_undergone_an_oral_cavity_examination_for_oral_cancer____",
+   "name": "Men (age 30-49 years)Ever undergone an oral cavity examination for oral cancer (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "women__age_15_49_years__who_have_comprehensive_knowledge24_of_hiv_aids____",
+   "name": "Women (age 15-49 years) who have comprehensive knowledge24 of HIV/AIDS (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "men__age_15_49_years__who_have_comprehensive_knowledge24_of_hiv_aids____",
+   "name": "Men (age 15-49 years) who have comprehensive knowledge24 of HIV/AIDS (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "women__age_15_49_years__who_know_that_consistent_condom_use_can_reduce_the_chance_of_getting_hiv_aids____",
+   "name": "Women (age 15-49 years) who know that consistent condom use can reduce the chance of getting HIV/AIDS (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "men__age_15_49_years__who_know_that_consistent_condom_use_can_reduce_the_chance_of_getting_hiv_aids____",
+   "name": "Men (age 15-49 years) who know that consistent condom use can reduce the chance of getting HIV/AIDS (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "currently_married_women__age_15_49_years__who_usually_participate_in_three_household_decisions25____",
+   "name": "Currently married women (age 15-49 years) who usually participate in three household decisions25 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "women__age_15_49_years__who_worked_in_the_last_12_months_and_were_paid_in_cash____",
+   "name": "Women (age 15-49 years) who worked in the last 12 months and were paid in cash (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "women__age_15_49_years__owning_a_house_and_or_land__alone_or_jointly_with_others_____",
+   "name": "Women (age 15-49 years) owning a house and/or land (alone or jointly with others) (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "women__age_15_49_years__having_a_bank_or_savings_account_that_they_themselves_use____",
+   "name": "Women (age 15-49 years) having a bank or savings account that they themselves use (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "women__age_15_49_years__having_a_mobile_phone_that_they_themselves_use____",
+   "name": "Women (age 15-49 years) having a mobile phone that they themselves use (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "women_age_15_24_years_who_use_hygienic_methods_of_protection_during_their_menstrual_period26____",
+   "name": "Women age 15-24 years who use hygienic methods of protection during their menstrual period26 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "ever_married_women_age_18_49_years_who_have_ever_experienced_spousal_violence27____",
+   "name": "Ever-married women age 18-49 years who have ever experienced spousal violence27 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "ever_married_women_age_18_49_years_who_have_experienced_physical_violence_during_any_pregnancy____",
+   "name": "Ever-married women age 18-49 years who have experienced physical violence during any pregnancy (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "young_women_age_18_29_years_who_experienced_sexual_violence_by_age_18____",
+   "name": "Young women age 18-29 years who experienced sexual violence by age 18 (%)",
+   "type": "keyword"
+  },
+  {
+   "id": "_women_age_15_years_and_above_who_use_any_kind_of_tobacco____",
+   "name": "Women age 15 years and above who use any kind of tobacco (%)",
+   "type": "double"
+  },
+  {
+   "id": "_men_age_15_years_and_above_who_use_any_kind_of_tobacco____",
+   "name": "Men age 15 years and above who use any kind of tobacco (%)",
+   "type": "double"
+  },
+  {
+   "id": "_women_age_15_years_and_above_who_consume_alcohol____",
+   "name": "Women age 15 years and above who consume alcohol (%)",
+   "type": "double"
+  },
+  {
+   "id": "_men_age_15_years_and_above_who_consume_alcohol____",
+   "name": "Men age 15 years and above who consume alcohol (%)",
+   "type": "double"
+  }
+ ]
+}

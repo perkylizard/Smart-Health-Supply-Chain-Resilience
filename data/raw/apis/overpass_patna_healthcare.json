@@ -1,0 +1,4644 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-09-05T04:39:36Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 1358917799,
+  "lat": 25.6102948,
+  "lon": 85.1309070,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:postcode": "803210",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Belchhi",
+    "amenity": "hospital",
+    "name": "New Gardinar Road Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 2174767695,
+  "lat": 25.6141766,
+  "lon": 85.1900358,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "P.O. Gulzarbagh",
+    "addr:postcode": "800007",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Tripolia Social Service Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 2948362003,
+  "lat": 25.6293787,
+  "lon": 85.0371613,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 3417052158,
+  "lat": 25.7371379,
+  "lon": 85.2018007,
+  "tags": {
+    "amenity": "pharmacy",
+    "healthcare": "pharmacy",
+    "name": "Medical Store"
+  }
+},
+{
+  "type": "node",
+  "id": 3417054914,
+  "lat": 25.7464980,
+  "lon": 85.2075234,
+  "tags": {
+    "amenity": "pharmacy",
+    "healthcare": "pharmacy"
+  }
+},
+{
+  "type": "node",
+  "id": 3909458071,
+  "lat": 25.6217719,
+  "lon": 85.0971053,
+  "tags": {
+    "addr:city": "Patna",
+    "addr:housenumber": "Baba Chowk",
+    "addr:postcode": "800024",
+    "addr:street": "Keshri Nagar",
+    "amenity": "doctors",
+    "healthcare": "doctor",
+    "name": "Dr Satyajeet Singh, Aiims Patna, Neuropsychiatrist",
+    "note": "Private Outpatient Neuropsychiatric Clinic",
+    "opening_hours": "Morning 6 to 9 AM; Evening 5 to 10 PM",
+    "operator": "Dr Satyajeet Singh, Aiims Patna, Neuropsychiatrist",
+    "phone": "+91-9430015154",
+    "website": "https://www.neuropsychiatrist.in"
+  }
+},
+{
+  "type": "node",
+  "id": 4447927989,
+  "lat": 25.6168342,
+  "lon": 85.1208725,
+  "tags": {
+    "addr:postcode": "800001",
+    "addr:street": "Canal Road",
+    "amenity": "clinic",
+    "healthcare": "clinic",
+    "name": "Perfect Vision Eye Clinic",
+    "name:en": "Perfect Vision Eye Clinic",
+    "opening_hours": "Mo-Tu, Th-Sa 15:00-21:00",
+    "operator": "Dr Ajay Sinha",
+    "phone": "+91 9135426327"
+  }
+},
+{
+  "type": "node",
+  "id": 4561603389,
+  "lat": 25.6002640,
+  "lon": 85.2101500,
+  "tags": {
+    "addr:postcode": "800008",
+    "addr:street": "Nawab Bahadur Road",
+    "amenity": "pharmacy",
+    "healthcare": "pharmacy",
+    "name": "Gopal Medical Store",
+    "name:en": "Gopal Medical Store",
+    "name:hi": "गोपाल मेडिकल स्टोर",
+    "opening_hours": "Mo-Su 07:00-22:00"
+  }
+},
+{
+  "type": "node",
+  "id": 4561603390,
+  "lat": 25.6005190,
+  "lon": 85.2102770,
+  "tags": {
+    "addr:postcode": "800008",
+    "addr:street": "Nawab Bahadur Road",
+    "amenity": "pharmacy",
+    "healthcare": "pharmacy",
+    "name": "City Medical Hall",
+    "name:en": "City Medical Hall",
+    "name:hi": "सिटी मेडिकल हॉल",
+    "phone": "+919334040377"
+  }
+},
+{
+  "type": "node",
+  "id": 4567506692,
+  "lat": 25.5984110,
+  "lon": 85.2023750,
+  "tags": {
+    "addr:postcode": "800007",
+    "addr:street": "Tulsi Mandi",
+    "amenity": "pharmacy",
+    "healthcare": "pharmacy",
+    "name": "Gopal Medical Hall",
+    "name:en": "Gopal Medical Hall",
+    "name:hi": "गोपाल मेडिकल हॉल",
+    "phone": "+918521343295"
+  }
+},
+{
+  "type": "node",
+  "id": 4567540289,
+  "lat": 25.6011550,
+  "lon": 85.2104490,
+  "tags": {
+    "addr:postcode": "800008",
+    "addr:street": "Nawab Bahadur Road",
+    "amenity": "pharmacy",
+    "healthcare": "pharmacy",
+    "name": "Shiva Medical Hall",
+    "name:en": "Shiva Medical Hall",
+    "name:hi": "शिवा मेडिकल हॉल",
+    "phone": "+919801377209"
+  }
+},
+{
+  "type": "node",
+  "id": 4574681592,
+  "lat": 25.5996766,
+  "lon": 85.2142469,
+  "tags": {
+    "addr:postcode": "800006",
+    "addr:street": "Ashok Raj Path",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Guru Govind Singh Hospital",
+    "name:en": "Guru Govind Singh Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 4574713389,
+  "lat": 25.6003650,
+  "lon": 85.2137960,
+  "tags": {
+    "addr:postcode": "800008",
+    "addr:street": "Bowli Road",
+    "amenity": "pharmacy",
+    "healthcare": "pharmacy",
+    "name": "City Medicines",
+    "name:en": "City Medicines",
+    "name:hi": "सिटी मेडिसिन",
+    "phone": "+919308473051"
+  }
+},
+{
+  "type": "node",
+  "id": 4782289944,
+  "lat": 25.6426634,
+  "lon": 85.3345210,
+  "tags": {
+    "addr:city": "Bidupur",
+    "addr:postcode": "844503",
+    "addr:street": "Bidupur",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Prathmik Hospital Bidupur",
+    "operator": "Bihar Government"
+  }
+},
+{
+  "type": "node",
+  "id": 6030969525,
+  "lat": 25.5850717,
+  "lon": 85.1614754,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Khemani Chak More, Mahavir Nagar, Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Metro Trauma Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6030988256,
+  "lat": 25.6047190,
+  "lon": 85.1969136,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Isha health care"
+  }
+},
+{
+  "type": "node",
+  "id": 6087844484,
+  "lat": 25.6187141,
+  "lon": 85.1639156,
+  "tags": {
+    "amenity": "pharmacy",
+    "healthcare": "pharmacy",
+    "name": "Medicine Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 6833839456,
+  "lat": 25.6196101,
+  "lon": 85.1243883,
+  "tags": {
+    "addr:city": "Patna",
+    "addr:postcode": "800001",
+    "addr:street": "East Boring Canal Road",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr. Sarojini Sinha Memorial Shiv-Shakti Hospital",
+    "name:hi": "डॉ। सरोजिनी सिन्हा मेमोरियल शिव-शक्ति अस्पताल"
+  }
+},
+{
+  "type": "node",
+  "id": 6859938054,
+  "lat": 25.6172639,
+  "lon": 85.1257502,
+  "tags": {
+    "addr:city": "patna",
+    "addr:housenumber": "house no 7",
+    "addr:postcode": "800001",
+    "addr:street": "Sri krishna nagar Road No 4",
+    "amenity": "dentist",
+    "email": "parijatpallav@gmail.com",
+    "healthcare": "dentist",
+    "healthcare:speciality": "orthodontics;dentist",
+    "name": "Balaji Dental and Orthodontic Clinic",
+    "opening_hours": "Mo-Fr 09:00-21:30",
+    "operator": "Parijat apallav",
+    "payment:cash": "yes",
+    "payment:credit_cards": "yes",
+    "payment:debit_cards": "yes",
+    "payment:maestro": "yes",
+    "payment:mastercard": "yes",
+    "payment:visa": "yes",
+    "payment:visa_debit": "yes",
+    "phone": "+917762019092",
+    "website": "http://balajidentalbraces.com",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 6888422329,
+  "lat": 25.6905715,
+  "lon": 85.2091435,
+  "tags": {
+    "addr:city": "Hajipur",
+    "addr:district": "VAISHALI",
+    "addr:full": "hospital road, hajipur, Near Civil Court",
+    "addr:postcode": "8441010",
+    "addr:state": "Bihar",
+    "contact:mobile": "09473191934;09279220893",
+    "healthcare": "blood_donation",
+    "name": "Sadar Hospital Hajipur Blood Bank",
+    "opening_hours": "24/7",
+    "operator:type": "government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6950299211,
+  "lat": 25.6918187,
+  "lon": 85.2140942,
+  "tags": {
+    "addr:district": "Vaishali",
+    "addr:full": "Main Road, Subhash Chowk, Hajipur",
+    "addr:postcode": "844101",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Arogya Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6950301003,
+  "lat": 25.6916374,
+  "lon": 85.2030905,
+  "tags": {
+    "addr:district": "Vaishali",
+    "addr:full": "Purani Gandak, Pul Roadjohari Bazar, Hajipur",
+    "addr:postcode": "844101",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Harsh Anand Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6950315187,
+  "lat": 25.6023905,
+  "lon": 85.1434345,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Near Chiraiyatand Over Bridge, Kankar Bagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mahavir Arogya Sansthan",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6950330098,
+  "lat": 25.5970666,
+  "lon": 85.1457296,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Shyam Path,(Gali No:-10) Chandwari RoadKankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Magalam Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6950344193,
+  "lat": 25.6182109,
+  "lon": 85.1209135,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Laxmi Niwas, NearPanchmukhi Mandir, West Boring Canal Road",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "L.B.Aparajita Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6950348703,
+  "lat": 25.6175277,
+  "lon": 85.1611455,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Nagar Nausa Lothi, Makhania Kuan Road",
+    "addr:postcode": "800004",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Kumar Nursing Home, Patna",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6950348717,
+  "lat": 25.5935884,
+  "lon": 85.1517392,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "U/479, Lohia Nagar, Kankarbagh , (100Yds East Of Kankarbagh, Tempo Stand)",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Kiran Nursing Home, Patna",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6950525576,
+  "lat": 25.5952824,
+  "lon": 85.1565163,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "202, M.I.G. (Nort To Malahi Pakari Chowk) Kankarbagh Colony",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Sri Jagannath Sewa Sadan",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6950541875,
+  "lat": 25.5930731,
+  "lon": 85.1528567,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "B-144, P.C.Colony, NearLohiya Nagar Mount Carmel High School, Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Sri Sai Lions Netralaya",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6950566667,
+  "lat": 25.5925198,
+  "lon": 85.1567941,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "No. E-139, Doctor's Colony,Lohianagar,NearMalahi Pakri Chowk",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sundari Devi Hospital",
+    "operator": "Hospital",
+    "operator:type": "hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6952960342,
+  "lat": 25.6038682,
+  "lon": 85.1667680,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "NearBahadurpur Railway Crossing, Rajendra Nagar",
+    "addr:postcode": "800016",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "A.B. Eye Institute",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6952997645,
+  "lat": 25.6139343,
+  "lon": 85.1299701,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "East Boring Canal Road, Kidwaipuri",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Child Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6952997657,
+  "lat": 25.6202443,
+  "lon": 85.1216566,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "West Boring Canal Road North Anandpuri",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "contact:phone": "+91 6122557720",
+    "name": "Jeevak Shalya Nilayam",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6952997662,
+  "lat": 25.6130926,
+  "lon": 85.1133800,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Rajesh Kumar Path South S.K.Puri",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "D N Singh Memorial Trust",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6952997667,
+  "lat": 25.6143551,
+  "lon": 85.1162083,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Boring Road",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "contact:phone": "+91 2540752",
+    "name": "Jyoti Punj Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953012407,
+  "lat": 25.6018708,
+  "lon": 85.1647523,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Station Road , Phulwarisarif,Kumhrar Rd, Mahatma Gandhi Nagar, Chitragupta Nagar, Patna",
+    "addr:postcode": "801505",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Sahaj Surgery",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953027542,
+  "lat": 25.5950735,
+  "lon": 85.1613047,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Vidyapuri, Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Srijan Centre For Assisted Human Reproduction",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953034582,
+  "lat": 25.6177702,
+  "lon": 85.1128985,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Beside Krishna Apartment , NearA.N.College, Boring Road",
+    "addr:postcode": "800013",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Renu Eye Center",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953036640,
+  "lat": 25.6020379,
+  "lon": 85.1588227,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "H/3 Doctors Colony, East Of Rajendra Nagar Over Bridge, Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "contact:phone": "+91 6122361180",
+    "name": "Patna Bone And Spine Hospital Pvt Ltd",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953060687,
+  "lat": 25.6119250,
+  "lon": 85.1409752,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Ashraf Clinic Complex,S.P Verma Road",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Ruban Emergency Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953102547,
+  "lat": 25.6041881,
+  "lon": 85.0765264,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Behind Shiv Mandir Bailery Road Lane Of Rukunpura Masjid",
+    "addr:postcode": "800014",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "R N Superspecility Hospital And Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953102552,
+  "lat": 25.5997495,
+  "lon": 85.1975182,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Indian council of research, Department of health research, Agamkuan",
+    "addr:postcode": "800007",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Rajendra Memorial Research Institute of Medical Sciences",
+    "operator:type": "government",
+    "source": "OpenGovernmentData",
+    "website": "https://www.rmrims.org.in/"
+  }
+},
+{
+  "type": "node",
+  "id": 6953102557,
+  "lat": 25.6012746,
+  "lon": 85.1686026,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "NearBahadurpur Petrol Pump, Old Bypass Road, Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "email": "nfo@rajeshwarhospital.com",
+    "healthcare:speciality": "multi speciality",
+    "name": "Rajeshwar Hospital, Patna",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "https://www.rajeshwarhospital.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 6953134936,
+  "lat": 25.6001753,
+  "lon": 85.1619651,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "A-5,Patrakar Nagar, Near Back Gate Of Commerce College ,Kankarbagh",
+    "addr:postcode": "800004",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "E N T Hospital and Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953152754,
+  "lat": 25.5850694,
+  "lon": 85.1617214,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "N. R. Tower, Khemni Chowk, More Mahavir Colony, Hanuman Nagar",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Ishwar Dayal Memorial Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953153746,
+  "lat": 25.6022304,
+  "lon": 85.1500484,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Eye Microsurgery & Retina Centre, G-9, People `S Co-Operative Colony, Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Avadh Eye Hospital- Dr Arjun Kumar Singh",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953154985,
+  "lat": 25.5990939,
+  "lon": 85.1638444,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Munna Chowk,Kankarbag",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Patliputra Divine Hospital Pvt Ltd",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953154986,
+  "lat": 25.6112919,
+  "lon": 85.1158583,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Sahdeo Mahto Marg, Sri Krishna Puri, Patna",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Netradham Eye Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953154996,
+  "lat": 25.6004280,
+  "lon": 85.1470698,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "43, Migh, Shalimar Sweets, Infront Of Bata Showroom, Kankar Bagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "contact:phone": "+91 6122342922",
+    "name": "Prakash Hospital, Patna",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953156869,
+  "lat": 25.6303881,
+  "lon": 85.1174786,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "East Of Sadaquat Ashram",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mahavir Vaatsalya Aspatal",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953157150,
+  "lat": 25.5842409,
+  "lon": 85.1630216,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "New Bypass (NH-30), Khemnichak, PO - New Jaganpura, PS - Ramkrishna Nagar",
+    "addr:postcode": "800027",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "email": "admin@fordhospital.org; info@fordhospital.org",
+    "healthcare": "hospital",
+    "healthcare:speciality": "multi speciality",
+    "name": "Ford Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "https://fordhospital.org/"
+  }
+},
+{
+  "type": "node",
+  "id": 6953160027,
+  "lat": 25.5971515,
+  "lon": 85.1597567,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "B-24, Sachivalay Colony, Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hope Child Care and Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953167218,
+  "lat": 25.5999994,
+  "lon": 85.1596020,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Chandralaya, Kankarbagh Between Central School & Rajendra Nagar Bridge",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Heart Hospital, Patna",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953173205,
+  "lat": 25.5982047,
+  "lon": 85.1798869,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Bhagwat Nagar, Nayatola,Kumhrar,West Of Kumhrar Park",
+    "addr:postcode": "800026",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "I Care Eye Hospital and Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953174273,
+  "lat": 25.6280231,
+  "lon": 85.1051067,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "173, Patliputra Colony",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "check_date": "2024-08-01",
+    "contact:mobile": "9835889994",
+    "name": "Chand Memorial Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953174278,
+  "lat": 25.6290981,
+  "lon": 85.1082650,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "40, Patliputra colony",
+    "addr:postcode": "800013",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "contact:phone": "+91 9204323716",
+    "email": "sahyoghospitalpatna@yahoo.com; info@sahyoghospital.com",
+    "healthcare:speciality": "multi speciality",
+    "name": "Sahyog Hospital, Patna",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "https://sahyoghospital.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 6953174729,
+  "lat": 25.5989875,
+  "lon": 85.1572783,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "DS - 2, Lohiya Nagar, Behind Geological Survey of India, Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "email": "info@jagdishhospital.com; dralok@jagdishhospital.com",
+    "healthcare:speciality": "multi speciality",
+    "name": "Jagdish Memorial Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "http://www.jagdishhospital.com"
+  }
+},
+{
+  "type": "node",
+  "id": 6953183747,
+  "lat": 25.5739787,
+  "lon": 85.0691772,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Gulistan Mohalla Isapur Road Phulwari Sharif",
+    "addr:postcode": "801505",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Life Care Maternity Home",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953197527,
+  "lat": 25.5781821,
+  "lon": 85.0721095,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Imarat Shariah Complex Phulwari Sharif",
+    "addr:postcode": "801505",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Maulana Sajjad Memorial Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953226428,
+  "lat": 25.6087892,
+  "lon": 85.1594519,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Arya Kumar , Rajendra Nagar Road",
+    "addr:postcode": "800016",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "New Born Care Centre (P) Ltd",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953239472,
+  "lat": 25.5989339,
+  "lon": 85.2273509,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Indralok, Dharamshala Chowk",
+    "addr:postcode": "800008",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "contact:phone": "+91 9308129667",
+    "name": "Manokamna Health Care",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953260426,
+  "lat": 25.5945748,
+  "lon": 85.1482060,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "B-150, Housing Colony, Kankarbagh NearTempo Stand",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Om Eye Clinic and Phaco Centre - Patna",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953374036,
+  "lat": 25.5933759,
+  "lon": 85.1562005,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "E-9, R.B.I Colony, Kankarbagh, NearPani Tanki",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Nav Sharda Aspatal Pvt Ltd",
+    "operator": "Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953384941,
+  "lat": 25.5906052,
+  "lon": 85.1595507,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "K-208, P.C Colony ,Hanuman Nagar, Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Shubham Maternity Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953448539,
+  "lat": 25.6918550,
+  "lon": 85.2039246,
+  "tags": {
+    "addr:district": "Vaishali",
+    "addr:full": "Purani Gandak,Pul Roadjohari Bazar,Hajipur",
+    "addr:postcode": "844101",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Kailash Hospital, Vaishali",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953484250,
+  "lat": 25.6095814,
+  "lon": 85.0914318,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Sheikhpura Bagicha, Bailey Road , Raja Bazar",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Max Care Hospital And Research Institute Pvt. Ltd.",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6953517715,
+  "lat": 25.5881285,
+  "lon": 85.0545135,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Haridaspur,Rukanpura-Khagaul Road (Nahar Road) Opposite Pillar No.- 46 , (Near Kali Mandir) Khagaul",
+    "addr:postcode": "801105",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "contact:mobile": "8825214450",
+    "name": "Ashutosh Memorial Hospital",
+    "source": "OpenGovernmentData",
+    "website": "https://hairtransplantationpatna.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 6956312377,
+  "lat": 25.6000205,
+  "lon": 85.1599611,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "N-7, Patrakar Nagar, Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Chanakya Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956332161,
+  "lat": 25.5861879,
+  "lon": 85.1582921,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "40, Mig, Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Adarsh Life Care Hospital Pvt. Ltd",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956367384,
+  "lat": 25.6201633,
+  "lon": 85.0433367,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Bailey Road Shaikhpura, Raja Bazar",
+    "addr:postcode": "800014",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "email": "drbimalkr@yahoo.co.in",
+    "healthcare:speciality": "Gastro Surgery; Gastrology; General Medicine; General Surgery; Obstetrics and Gynaecology; Orthopaedics; Paediatrics; Urology",
+    "name": "Dr. Vimal Hospital and Research Center",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "http://www.bimalhospital.com"
+  }
+},
+{
+  "type": "node",
+  "id": 6956367612,
+  "lat": 25.5942693,
+  "lon": 85.1593825,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Swasti Womens Hospital And Research Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956369600,
+  "lat": 25.5951268,
+  "lon": 85.1614639,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Vidyapuri, Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Shivam Hospital And Research Institute Pvt Ltd",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956370637,
+  "lat": 25.5981687,
+  "lon": 85.2273356,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Chowk, City",
+    "addr:postcode": "800008",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "R.P. Golwara Memorial Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956377299,
+  "lat": 25.5938920,
+  "lon": 85.1585900,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Vidayapuri, Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Child Care Center",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956467912,
+  "lat": 25.5874570,
+  "lon": 85.1676982,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "New By Pass, Vijay Nagar (90 Feet Road), Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Shanti Navjeevan Hospital Pvt. Ltd.",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956501304,
+  "lat": 25.5755183,
+  "lon": 85.0648906,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Nh 98,Janipur road",
+    "addr:postcode": "801505",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "K.B. Hospital and Research Institute - Patna",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956507174,
+  "lat": 25.5961515,
+  "lon": 85.1580005,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "0/543, Sachvlaya Colony Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Uma Foundation",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956553412,
+  "lat": 25.6062332,
+  "lon": 85.1611045,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Patliputra Path, Rajendra Nagar",
+    "addr:postcode": "800016",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Shanti Maternity Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956553417,
+  "lat": 25.6183579,
+  "lon": 85.1630652,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Khazanchi Road Opposite Ram Mohan Ray Saminary School,Po-Bankipore",
+    "addr:postcode": "800004",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Anupama Hospital Pvt. Ltd.",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956562380,
+  "lat": 25.5942052,
+  "lon": 85.1881304,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "8M/6, Bahadurpur Housing, NearAgamkuan Thana, Vijay Nagar, Kankarbagh",
+    "addr:postcode": "800026",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Vaishnavi Hospital, Patna",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956634034,
+  "lat": 25.6026612,
+  "lon": 85.2096102,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Belwarganj, Pachim Darwaza",
+    "addr:postcode": "800007",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Polo Hospital, Patna",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956634039,
+  "lat": 25.6156068,
+  "lon": 85.1267970,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "L-26, S P Bariyar Path, near Bank Of India, Sri Krishna Nagar,Kidwaipuri",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Sheila Urology & Laproscopy Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956635724,
+  "lat": 25.6938583,
+  "lon": 85.1806706,
+  "tags": {
+    "addr:district": "Saran",
+    "addr:full": "Hospital Road,NearPunjab National Bank, Sonepur",
+    "addr:postcode": "841101",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "contact:mobile": "9334856373",
+    "name": "Jeevandeep Hospital, Saran",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956662658,
+  "lat": 25.6016084,
+  "lon": 85.2147044,
+  "tags": {
+    "addr:district": "Vaishali",
+    "addr:full": "Hajipur Road Hajipur",
+    "addr:postcode": "844101",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Shri Harijeevan Health Care",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956761482,
+  "lat": 25.5907277,
+  "lon": 85.1566528,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "S.S.Hospital and Research Centre Pvt.Ltd.",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956785826,
+  "lat": 25.6130322,
+  "lon": 85.0754803,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Maurya Path Khajpura",
+    "addr:postcode": "800014",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Shyamal Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956851912,
+  "lat": 25.6000205,
+  "lon": 85.1543965,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Nc-1-C, Lohia Nagar, West Of Rajendra Nagar, Over Bridge, Kankar Bagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Sri Ram Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956888575,
+  "lat": 25.5905772,
+  "lon": 85.1618958,
+  "tags": {
+    "addr:district": "Nawada",
+    "addr:full": "Hisua Rajgir Main Road Nardi Ganj",
+    "addr:postcode": "851129",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Budha Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956913448,
+  "lat": 25.6013979,
+  "lon": 85.1586342,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "6, Doctors Colony Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Jeevak Heart Hospital and Research Institute Pvt Ltd",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6956944933,
+  "lat": 25.6185429,
+  "lon": 85.1632100,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "NearKhudaBaqsh Library, Ashok Rajpath, Makhania Kuan, Lalbagh",
+    "addr:postcode": "800004",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "contact:phone": "+91 9771496911",
+    "email": "arvind.hospital.patna@gmail.com; info@arvindhospital.org",
+    "healthcare:speciality": "multi speciality",
+    "name": "Arvind Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "http://www.arvindhospital.org"
+  }
+},
+{
+  "type": "node",
+  "id": 6958138336,
+  "lat": 25.5959832,
+  "lon": 85.1577732,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "0/85, Doctor`S Colony, Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Vijai Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6965355155,
+  "lat": 25.6904676,
+  "lon": 85.2003653,
+  "tags": {
+    "addr:district": "Vaishali",
+    "addr:full": "Amarapali Chikitsa Kendra, S.D.O. Road, Hazipur",
+    "addr:postcode": "844114",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Pashupati Nath Memorial Research Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6965426829,
+  "lat": 25.6044215,
+  "lon": 85.0844564,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Rajabazar, Bailey Road",
+    "addr:postcode": "800014",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "contact:phone": "+91 9334114835",
+    "name": "Getwell Hospital, Patna",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6965587319,
+  "lat": 25.6075647,
+  "lon": 85.1335663,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "CGHS Dispensary, Budha Marg",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "clinic",
+    "health_facility:type": "dispensary",
+    "healthcare": "centre",
+    "name": "CGHS Dispensary, Budha Marg",
+    "operator:type": "government",
+    "source": "OpenGovernmentData",
+    "website": "http://nb.bsf.gov.in/CGHS%20DIspenseries.pdf"
+  }
+},
+{
+  "type": "node",
+  "id": 6965702666,
+  "lat": 25.5872219,
+  "lon": 85.1605165,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Near Kali Mandir, Sanjay Gandhi Nagar, Kankarbagh, Hanuman Nagar",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Shekhar Shalya Chikitsalaya",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6965751796,
+  "lat": 25.6077147,
+  "lon": 85.1547302,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Jagat Narain Road Kadam Kuan",
+    "addr:postcode": "800003",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "M.G.M Hospital And Research Centre Pvt Ltd",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6965759090,
+  "lat": 25.6055801,
+  "lon": 85.0825587,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Raza Bazar, Baily Road",
+    "addr:postcode": "800014",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "email": "infopatna@parashospitals.com",
+    "healthcare:speciality": "multi speciality",
+    "name": "Paras HMRI Hospital",
+    "operator:type": "private",
+    "source": "OpenGovernmentData",
+    "website": "https://www.parashospitals.com/page=paras-patna"
+  }
+},
+{
+  "type": "node",
+  "id": 6965846513,
+  "lat": 25.6083701,
+  "lon": 85.1602851,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Rajendra Nagar, Road No.3, NearBahai Bhawan",
+    "addr:postcode": "800016",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Ashoka Hospital( Aunit Of Ashoka Multispeciality Hospital Pvt Limited)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6965847922,
+  "lat": 25.6102616,
+  "lon": 85.0576329,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Rupaspur, Rob (Nahar), West Bailey Road",
+    "addr:postcode": "801503",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Atlantis Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6965863190,
+  "lat": 25.6124323,
+  "lon": 85.1553947,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Post Office Road, Bihta",
+    "addr:postcode": "801103",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Aarogya Hospital, Patna",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6965865174,
+  "lat": 25.5997083,
+  "lon": 85.1912123,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Kumhrar (NearMazar),Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Appolo Burn Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967103323,
+  "lat": 25.6097524,
+  "lon": 85.1579060,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Road No 2B Rajendra Nagar",
+    "addr:postcode": "800016",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Magadh Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967217773,
+  "lat": 25.5932533,
+  "lon": 85.1364255,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Mithapur Bus Stand Road",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Sparsh Haritage Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967282527,
+  "lat": 25.5481303,
+  "lon": 85.1190696,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Rahimpur Gumati, Parsa Bazar",
+    "addr:postcode": "804453",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Tridev Health Care and Research Educational Welfare and Charitable Trust",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967384589,
+  "lat": 25.6096412,
+  "lon": 85.1575412,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Rajendra Nagar, Road No.-2 B",
+    "addr:postcode": "800016",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Shahi Hospital (A Unit Of Abhishek Memorial Trust)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967396055,
+  "lat": 25.5859875,
+  "lon": 85.1743600,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Bihar Urdu Ackdmy , NearKhjanchi Road Ashok Rajpath",
+    "addr:postcode": "800026",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Sri Vinayak Hospital, Patna",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967413039,
+  "lat": 25.5991278,
+  "lon": 85.1572502,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Ds/2, Kankarbagh,Behind Geological Survey Of India,NearKankarbagh Over Bridge",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Shri Sai Hospital (A Unit Of Akhilesh Kumar Singh Hospital (P)Ltd)",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967467248,
+  "lat": 25.6219687,
+  "lon": 85.0425696,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Saguna More, Bailey Road",
+    "addr:postcode": "801503",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Keshav Hospital Pvt Ltd",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967489937,
+  "lat": 25.5812482,
+  "lon": 85.1419656,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Ram Krishna Nagar",
+    "addr:postcode": "800027",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Maa Dulari Memorial Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967506526,
+  "lat": 25.6090111,
+  "lon": 85.1831368,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "New Azimabad",
+    "addr:postcode": "800004",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Imdad Medicare Research Institute",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967539654,
+  "lat": 25.6011427,
+  "lon": 85.1570423,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "G-75&77, P.C.Colony Kankarbagh, Behind Rbi Colony",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Anup Memorial Orthopaedic Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967548278,
+  "lat": 25.6072829,
+  "lon": 85.1605359,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Raod No. 5A, Rajendra Nagar",
+    "addr:postcode": "800016",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Siddharth Multispeciality Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967632923,
+  "lat": 25.5955477,
+  "lon": 85.1218370,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Yarpur, NearGurudeo Balram Singh",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "contact:phone": "+91 6122243261",
+    "name": "Akshat Seva Sadan",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967638184,
+  "lat": 25.6159804,
+  "lon": 85.1095095,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Main Road Shivpuri",
+    "addr:postcode": "800023",
+    "addr:state": "Bihar",
+    "amenity": "doctors",
+    "healthcare": "doctor",
+    "name": "Doctor Rupam Sinha Clinic",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967648471,
+  "lat": 25.6124045,
+  "lon": 85.1195209,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Meerambika Apt. 1/ B- Block Ground Floor, NearQlty. Corner",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Advanced Eye Care",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967666153,
+  "lat": 25.5859923,
+  "lon": 85.1738691,
+  "tags": {
+    "addr:district": "Darbhanga",
+    "addr:full": "Mabbi Chouk",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Mithila Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967695551,
+  "lat": 25.6089301,
+  "lon": 85.1738986,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Rampur Road NearBazar Samiti",
+    "addr:postcode": "800006",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Ram Ratan Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967749465,
+  "lat": 25.5974007,
+  "lon": 85.1579368,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "O/60,Doctors Colony, Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Abhinandan Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967815408,
+  "lat": 25.6032604,
+  "lon": 85.1462451,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "No. 101-102, Kundan Complex,Kankarbagh Colony More,Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Chandra Shambhu Narayan Eye Hospital Pvt. Ltd.",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6967873053,
+  "lat": 25.6008628,
+  "lon": 85.1496159,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "A/60, P.C. Colony, OppositeLohiya Park, Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Shrinivas Hospital - Patna",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6968021501,
+  "lat": 25.6058077,
+  "lon": 85.0889150,
+  "tags": {
+    "addr:district": "Gaya",
+    "addr:full": "Sheikhpura, Raza Bazar, Bailey Road, -14",
+    "addr:postcode": "824201",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Satyam Hospital, Gaya",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6968027669,
+  "lat": 25.5988629,
+  "lon": 85.1284513,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Khagaul Road Mithapur",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Anami Orthopaedics",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6968029179,
+  "lat": 25.6046603,
+  "lon": 85.0914650,
+  "tags": {
+    "addr:district": "Sheikhpura",
+    "addr:full": "East Mangal Market, Bailey Roa",
+    "addr:postcode": "800013",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Shekhar Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6968075469,
+  "lat": 25.6918211,
+  "lon": 85.2068140,
+  "tags": {
+    "addr:district": "Vaishali",
+    "addr:full": "Jahauri Bazar, Gandak Pul Road Hajipur",
+    "addr:postcode": "844101",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Bk Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 6968268079,
+  "lat": 25.6049857,
+  "lon": 85.0904196,
+  "tags": {
+    "addr:district": "Sheikhpura",
+    "addr:full": "Mangal Market",
+    "addr:postcode": "800014",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Krishna Health Care",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7115422246,
+  "lat": 25.7489536,
+  "lon": 85.0080831,
+  "tags": {
+    "addr:district": "Kishanganj",
+    "addr:postcode": "855115",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Kochadhamin",
+    "contact:phone": "+91 6456-242391",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Dighwara",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7115537240,
+  "lat": 25.6098576,
+  "lon": 85.2063413,
+  "tags": {
+    "addr:district": "Araria",
+    "addr:full": "Gulzarbagh",
+    "addr:postcode": "800007",
+    "addr:state": "Bihar",
+    "amenity": "clinic",
+    "description": "Dispensaries",
+    "health_facility:type": "dispensary",
+    "healthcare": "centre",
+    "name": "Guljarbagh Dispensary",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7115637133,
+  "lat": 25.6548957,
+  "lon": 84.9804866,
+  "tags": {
+    "addr:district": "Jamui",
+    "addr:postcode": "801108",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Jhajha",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "APHC Sherpur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7115637168,
+  "lat": 25.6048968,
+  "lon": 85.1556509,
+  "tags": {
+    "addr:district": "Vaishali",
+    "addr:postcode": "800003",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Vaishali",
+    "description": "Urban Health Centre",
+    "healthcare": "centre",
+    "name": "UPHC East Lohanipur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7117470287,
+  "lat": 25.6022748,
+  "lon": 85.1548147,
+  "tags": {
+    "addr:district": "Siwan",
+    "addr:full": "Harigan",
+    "addr:postcode": "841238",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Maharajganj",
+    "amenity": "clinic",
+    "description": "Dispensaries",
+    "health_facility:type": "dispensary",
+    "healthcare": "centre",
+    "name": "Kankarbagh Dispensary",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7117674269,
+  "lat": 25.5398375,
+  "lon": 85.1769228,
+  "tags": {
+    "addr:district": "Khagaria",
+    "addr:postcode": "852101",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Chautham",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "PHC,Gopalpur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7117753599,
+  "lat": 25.5027092,
+  "lon": 84.9613627,
+  "tags": {
+    "addr:district": "Pashchim Champaran",
+    "addr:full": "Naubatpur",
+    "addr:postcode": "845307",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Sikta",
+    "amenity": "hospital",
+    "description": "Referral Hospital",
+    "name": "Naubatpur RH",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7118114977,
+  "lat": 25.5576990,
+  "lon": 85.3179681,
+  "tags": {
+    "addr:district": "Purba Champaran",
+    "addr:full": "Mallikpur",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Areraj",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "APHC Mallikpur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7118173062,
+  "lat": 25.7379768,
+  "lon": 85.2457258,
+  "tags": {
+    "addr:district": "Bhagalpur",
+    "addr:postcode": "812006",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Nathnagar",
+    "contact:phone": "+91 6412905070",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "APHC Ghoswar",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7120220723,
+  "lat": 25.6000609,
+  "lon": 85.1523571,
+  "tags": {
+    "addr:district": "Lakhisarai",
+    "addr:full": "Kankarbagh",
+    "addr:postcode": "800020",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Barahiya",
+    "description": "Urban Health Centre",
+    "healthcare": "centre",
+    "name": "Jai Prabha Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7120431128,
+  "lat": 25.5050589,
+  "lon": 85.3038745,
+  "tags": {
+    "addr:district": "Rohtas",
+    "addr:full": "Station Road fatuha",
+    "addr:postcode": "803201",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Tilouthu",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Fatwah",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7120516223,
+  "lat": 25.5510106,
+  "lon": 85.3309929,
+  "tags": {
+    "addr:district": "Samastipur",
+    "addr:full": "High school road",
+    "addr:postcode": "844508",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Shivaji Nagar",
+    "amenity": "hospital",
+    "description": "Referral Hospital",
+    "name": "Raghopur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7130529316,
+  "lat": 25.5780402,
+  "lon": 84.9865946,
+  "tags": {
+    "addr:district": "Gaya",
+    "addr:full": "Neora",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Mohanpur",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "APHC Neora",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7130691865,
+  "lat": 25.5405054,
+  "lon": 85.1777791,
+  "tags": {
+    "addr:district": "Sitamarhi",
+    "addr:full": "Samda Village",
+    "addr:postcode": "800007",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Sursand",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Sampatchak",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7131090410,
+  "lat": 25.6926677,
+  "lon": 85.0686105,
+  "tags": {
+    "addr:district": "Darbhanga",
+    "addr:full": "Manas",
+    "addr:postcode": "800011",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Singhwara",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "APHC Manas",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7131556639,
+  "lat": 25.6066335,
+  "lon": 85.1014347,
+  "tags": {
+    "addr:district": "Samastipur",
+    "addr:full": "Ranvanshi Nagar",
+    "addr:postcode": "848207",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Bithan",
+    "contact:phone": "+91 6275-252432",
+    "description": "Urban Health Centre",
+    "healthcare": "centre",
+    "name": "Rajbansi Nagar Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7135528152,
+  "lat": 25.5573046,
+  "lon": 85.2720205,
+  "tags": {
+    "addr:district": "Sheohar",
+    "addr:full": "Sabalpur",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Dumri Katsari",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Patna Sadar,PHC,Sabalpur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7135813709,
+  "lat": 25.5533282,
+  "lon": 85.0749037,
+  "tags": {
+    "addr:full": "Kurkuri, Patna, Bihar",
+    "addr:state": "Bihar",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "PHC, Kurkuri",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7135813714,
+  "lat": 25.5810659,
+  "lon": 85.0402985,
+  "tags": {
+    "addr:full": "Bagaha Dhala Road, Patna",
+    "addr:state": "Bihar",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "PHC, Danapur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7138096464,
+  "lat": 25.5781950,
+  "lon": 85.0482532,
+  "tags": {
+    "addr:district": "Katihar",
+    "addr:postcode": "855114",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Kadwa",
+    "amenity": "hospital",
+    "name": "Goverment hospital,Khagual",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7139693312,
+  "lat": 25.6346450,
+  "lon": 85.0457688,
+  "tags": {
+    "addr:district": "Pashchim Champaran",
+    "addr:full": "Danapur Bus Stand",
+    "addr:postcode": "845101",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Bagaha",
+    "amenity": "hospital",
+    "description": "Sub-District Hospital",
+    "name": "SDH Danapur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7140693171,
+  "lat": 25.5034600,
+  "lon": 84.9611995,
+  "tags": {
+    "addr:district": "Sitamarhi",
+    "addr:full": "RAMPUR",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Nanpur",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Primary Health Centre",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7140706396,
+  "lat": 25.6689809,
+  "lon": 85.1725817,
+  "tags": {
+    "addr:district": "Sheohar",
+    "addr:full": "Sabalpur",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Sheohar",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "APHC Sabalpur",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7147710332,
+  "lat": 25.6745725,
+  "lon": 85.3413074,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Dhabouli South",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Patna Rural",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "APHC Dhabouli",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7149298715,
+  "lat": 25.6354085,
+  "lon": 85.0553504,
+  "tags": {
+    "addr:district": "Vaishali",
+    "addr:postcode": "844123",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Bhagwanpur",
+    "description": "Urban Health Centre",
+    "healthcare": "centre",
+    "name": "UPHC Jhakhari Mahadev",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7154436155,
+  "lat": 25.6059641,
+  "lon": 85.0656132,
+  "tags": {
+    "addr:district": "Vaishali",
+    "addr:postcode": "801506",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Jandaha",
+    "description": "Urban Health Centre",
+    "healthcare": "centre",
+    "name": "UPHC Rukanpura Mushari",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7156172189,
+  "lat": 25.5953536,
+  "lon": 85.1164632,
+  "tags": {
+    "addr:district": "Rohtas",
+    "addr:full": "Gardanibagh",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Akorhi Gola",
+    "description": "Urban Health Centre",
+    "healthcare": "centre",
+    "name": "Gardanibagh Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7156172199,
+  "lat": 25.5798003,
+  "lon": 85.0770394,
+  "tags": {
+    "addr:district": "Munger",
+    "addr:full": "PHULWARISHARIF",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Bariarpur",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "PHC Phulwari Sharif",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "node",
+  "id": 7197094221,
+  "lat": 25.6210516,
+  "lon": 85.1229477,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Udayan Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 7203400581,
+  "lat": 25.6206881,
+  "lon": 85.1227061,
+  "tags": {
+    "healthcare": "laboratory"
+  }
+},
+{
+  "type": "node",
+  "id": 7525917626,
+  "lat": 25.5947463,
+  "lon": 85.1203156,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "New Jakkanpur, GaRoadanibagh, Patna",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Nestiva Jay Arogyam Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7525917658,
+  "lat": 25.5843096,
+  "lon": 85.1203509,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "70 Feet Road, Near New Bypass, Purbi Saristabad, Sadhnapuri, Patna",
+    "addr:postcode": "800002",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "N.S. Emergency Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7525917661,
+  "lat": 25.5776080,
+  "lon": 85.1231370,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Pragati Nagar, Sipara, Patna",
+    "addr:postcode": "800002",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Bone Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7525917667,
+  "lat": 25.6108270,
+  "lon": 85.1327961,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Panchlok Diagnostic Centre, Near Tara Mandel, Kidwaipuri, Patna",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Child Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7525917669,
+  "lat": 25.5871181,
+  "lon": 85.1190692,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Saristabad Road, Sadhnapuri, Patna",
+    "addr:postcode": "800002",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Baby & Child Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7525917673,
+  "lat": 25.6196419,
+  "lon": 85.1242557,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Sri Krishna Nagar, Kidwaipuri, Patna",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Shiv Shakti Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7525917685,
+  "lat": 25.6181438,
+  "lon": 85.1263193,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Chakaram, Near Shreya Travels, Buddha Colony, Patna",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Patna Heart Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7525917705,
+  "lat": 25.6123081,
+  "lon": 85.1164698,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "D, 36, Sri Krishnapuri, Near Allahabad Bank, Boaring Road Branch, Patna",
+    "addr:postcode": "800001",
+    "addr:state": "Bihar",
+    "amenity": "dentist",
+    "healthcare": "dentist",
+    "name": "Dr. Smile Dental Clinic",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7525917716,
+  "lat": 25.5766307,
+  "lon": 85.1271969,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "103, Gaya Highway, Issarpur, Babadham",
+    "addr:postcode": "800002",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Jagdamba Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7525917723,
+  "lat": 25.5794409,
+  "lon": 85.1249248,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Ioc Main Road, Near Bus Stand, Pragati Nagar, Sipara, Patna",
+    "addr:postcode": "800002",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Ayush Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7525917728,
+  "lat": 25.7467331,
+  "lon": 85.0043390,
+  "tags": {
+    "addr:district": "Saran",
+    "addr:full": "Hospital Road, Ambedkar Chawk, Dighwara",
+    "addr:postcode": "841207",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Nayan Jyoti Eye Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7525917730,
+  "lat": 25.5044209,
+  "lon": 85.3041655,
+  "tags": {
+    "addr:district": "Patna",
+    "addr:full": "Fatwah",
+    "addr:postcode": "803201",
+    "addr:state": "Bihar",
+    "amenity": "hospital",
+    "name": "Shekhar Bone Hospital",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7847929858,
+  "lat": 25.6838554,
+  "lon": 85.2503800,
+  "tags": {
+    "addr:district": "Banka",
+    "addr:full": "Sultanpur",
+    "addr:postcode": "844102",
+    "addr:state": "Bihar",
+    "description": "SubCentre",
+    "healthcare": "centre",
+    "name": "SubCentre, Sultanpur",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7933623936,
+  "lat": 25.5485081,
+  "lon": 85.2442064,
+  "tags": {
+    "addr:district": "Gaya",
+    "addr:full": "Chhitman",
+    "addr:postcode": "803201",
+    "addr:state": "Bihar",
+    "description": "SubCentre",
+    "healthcare": "centre",
+    "name": "SubCentre, Chhitman",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7967851516,
+  "lat": 25.6352398,
+  "lon": 85.3240534,
+  "tags": {
+    "addr:district": "Vaishali",
+    "addr:full": "Ramdauli",
+    "addr:postcode": "844503",
+    "addr:state": "Bihar",
+    "description": "SubCentre",
+    "healthcare": "centre",
+    "name": "SubCentre, Ramdauli",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 7990488368,
+  "lat": 25.4706100,
+  "lon": 85.1920837,
+  "tags": {
+    "addr:district": "Jehanabad",
+    "addr:full": "Barawan",
+    "addr:postcode": "803201",
+    "addr:state": "Bihar",
+    "description": "SubCentre",
+    "healthcare": "centre",
+    "name": "SubCentre, Barawan",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 8038635373,
+  "lat": 25.6839383,
+  "lon": 84.9979964,
+  "tags": {
+    "addr:district": "Kishanganj",
+    "addr:full": "Ganghara",
+    "addr:postcode": "801507",
+    "addr:state": "Bihar",
+    "description": "SubCentre",
+    "healthcare": "centre",
+    "name": "SubCentre, Ganghara",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 8071668869,
+  "lat": 25.6082129,
+  "lon": 85.1566429,
+  "tags": {
+    "addr:city": "patna",
+    "addr:housenumber": "near malti medical",
+    "addr:postcode": "800016",
+    "addr:street": "Rajendra nagar raoad no.1",
+    "emergency": "no",
+    "healthcare": "laboratory",
+    "healthcare:speciality": "clinic;general",
+    "name": "Poonam Diagnostic Center",
+    "name:en": "Poonam diagnostic center",
+    "operator": "Dr.Dayanand Prasad Singh",
+    "operator:type": "private_for_profit",
+    "phone": "+919835488353",
+    "short_name": "PDC"
+  }
+},
+{
+  "type": "node",
+  "id": 8090399864,
+  "lat": 25.6979026,
+  "lon": 85.3024143,
+  "tags": {
+    "addr:district": "Vaishali",
+    "addr:full": "Bahuara",
+    "addr:postcode": "844502",
+    "addr:state": "Bihar",
+    "description": "Primary Health Centre",
+    "healthcare": "centre",
+    "name": "Primary Health Centre, Bahuara",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 8090418860,
+  "lat": 25.5400141,
+  "lon": 85.3416675,
+  "tags": {
+    "addr:district": "Vaishali",
+    "addr:full": "Chandpura",
+    "addr:postcode": "844508",
+    "addr:state": "Bihar",
+    "description": "SubCentre",
+    "healthcare": "centre",
+    "name": "SubCentre, Chandpura",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 8118415138,
+  "lat": 25.5950459,
+  "lon": 85.1646498,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sanjeevani Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 8118417459,
+  "lat": 25.5963449,
+  "lon": 85.1724502,
+  "tags": {
+    "healthcare": "laboratory",
+    "name": "Saral Path lab"
+  }
+},
+{
+  "type": "node",
+  "id": 8144604763,
+  "lat": 25.6621223,
+  "lon": 85.2817992,
+  "tags": {
+    "addr:district": "Vaishali",
+    "addr:full": "Kanchanpur",
+    "addr:postcode": "844102",
+    "addr:state": "Bihar",
+    "description": "SubCentre",
+    "healthcare": "centre",
+    "name": "SubCentre, Kanchanpur",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 8144622179,
+  "lat": 25.5478325,
+  "lon": 85.3164079,
+  "tags": {
+    "addr:district": "Vaishali",
+    "addr:full": "Saidabad",
+    "addr:postcode": "844508",
+    "addr:state": "Bihar",
+    "description": "SubCentre",
+    "healthcare": "centre",
+    "name": "SubCentre, Saidabad",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 8144775953,
+  "lat": 25.6616895,
+  "lon": 85.2699036,
+  "tags": {
+    "addr:district": "Muzaffarpur",
+    "addr:full": "Panapur Dharmpur",
+    "addr:postcode": "844102",
+    "addr:state": "Bihar",
+    "description": "SubCentre",
+    "healthcare": "centre",
+    "name": "SubCentre, Panapur Dharmpur",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 8144988865,
+  "lat": 25.7457718,
+  "lon": 85.1925212,
+  "tags": {
+    "addr:district": "Muzaffarpur",
+    "addr:full": "Kutubpur Dumri",
+    "addr:postcode": "844102",
+    "addr:state": "Bihar",
+    "description": "SubCentre",
+    "healthcare": "centre",
+    "name": "SubCentre, Kutubpur Dumri",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 8145056406,
+  "lat": 25.6240355,
+  "lon": 85.3394033,
+  "tags": {
+    "addr:district": "Muzaffarpur",
+    "addr:full": "Madhurapur",
+    "addr:postcode": "844503",
+    "addr:state": "Bihar",
+    "description": "SubCentre",
+    "healthcare": "centre",
+    "name": "SubCentre, Madhurapur",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 8145644538,
+  "lat": 25.5660303,
+  "lon": 85.3327468,
+  "tags": {
+    "addr:district": "Muzaffarpur",
+    "addr:full": "Rampur Shyamchand",
+    "addr:postcode": "844508",
+    "addr:state": "Bihar",
+    "description": "SubCentre",
+    "healthcare": "centre",
+    "name": "SubCentre, Rampur Shyamchand",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 8145715114,
+  "lat": 25.7246316,
+  "lon": 85.2850380,
+  "tags": {
+    "addr:district": "Vaishali",
+    "addr:full": "Panapur Langa",
+    "addr:postcode": "844124",
+    "addr:state": "Bihar",
+    "description": "SubCentre",
+    "healthcare": "centre",
+    "name": "SubCentre, Panapur Langa",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 8163440796,
+  "lat": 25.7347920,
+  "lon": 85.1267789,
+  "tags": {
+    "addr:district": "Nalanda",
+    "addr:full": "Parmanadpur",
+    "addr:postcode": "841101",
+    "addr:state": "Bihar",
+    "description": "SubCentre",
+    "healthcare": "centre",
+    "name": "SubCentre, Parmanadpur",
+    "source": "Local Knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 8261077486,
+  "lat": 25.6268571,
+  "lon": 85.1125568,
+  "tags": {
+    "addr:city": "Patna",
+    "addr:housenumber": "13/B",
+    "addr:postcode": "800013",
+    "addr:street": "Patliputra Colony",
+    "amenity": "clinic",
+    "healthcare": "clinic",
+    "healthcare:speciality": "rheumatology",
+    "name": "RHEUMATOLOGY MEDICAL SPECIALITY CLINIC",
+    "website": "https://www.rheumatologypatliputra.com/"
+  }
+},
+{
+  "type": "node",
+  "id": 8266383849,
+  "lat": 25.6153216,
+  "lon": 85.1664532,
+  "tags": {
+    "addr:city": "Patna",
+    "addr:postcode": "800004",
+    "addr:street": "ehind Devarun Apartment, Opp Rimjhim Hotel, Bhikhana Pahari",
+    "amenity": "clinic",
+    "healthcare": "clinic",
+    "healthcare:speciality": "Spine_And_Pain_Specialist;Joint_Replacement",
+    "name": "NIRANJAN AAROGYA NIKETAN AND RESEARCH CENTRE",
+    "website": "https://www.nanrc.org/"
+  }
+},
+{
+  "type": "node",
+  "id": 8411203120,
+  "lat": 25.5594859,
+  "lon": 85.0439773,
+  "tags": {
+    "amenity": "hospital",
+    "description": "It is where all the administrative work happen. The preclinical and paraclinical departments, as well as Director office, Dean office are here.",
+    "healthcare": "hospital",
+    "name": "Administration Building, AIIMS Patna"
+  }
+},
+{
+  "type": "node",
+  "id": 8411203121,
+  "lat": 25.5615543,
+  "lon": 85.0428613,
+  "tags": {
+    "amenity": "hospital",
+    "description": "It is where the Physical Medicine and Rehabilitation Department is situated. In the basement, there is Medical Records Department and also the EHS Pharmacy.",
+    "healthcare": "hospital",
+    "healthcare:speciality": "physiotherapy;physiotherapist",
+    "name": "AYUSH building, AIIMS Patna"
+  }
+},
+{
+  "type": "node",
+  "id": 8411203150,
+  "lat": 25.5627413,
+  "lon": 85.0420123,
+  "tags": {
+    "addr:street": "AIIMS Patna Road",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;gynaecology;ophthalmology;paediatrics;internal;orthopaedics;dentist;dermatology;psychiatry;otolaryngology;radiology;urology;surgery;cardiology;plastic_surgery",
+    "name": "AIIMS Patna OPD",
+    "operator": "AIIMS Patna",
+    "operator:type": "government"
+  }
+},
+{
+  "type": "node",
+  "id": 8411203151,
+  "lat": 25.5623888,
+  "lon": 85.0410744,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "no",
+    "healthcare": "hospital",
+    "healthcare:speciality": "covid19",
+    "name": "In patient Department, AIIMS Patna"
+  }
+},
+{
+  "type": "node",
+  "id": 8411203152,
+  "lat": 25.5627178,
+  "lon": 85.0404165,
+  "tags": {
+    "addr:street": "AIIMS Patna Road",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "emergency",
+    "name": "Trauma and Emergency, AIIMS Patna"
+  }
+},
+{
+  "type": "node",
+  "id": 8916787981,
+  "lat": 25.6112524,
+  "lon": 85.1335794,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 8916798301,
+  "lat": 25.6118630,
+  "lon": 85.1358378,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 8973175888,
+  "lat": 25.6883758,
+  "lon": 85.2236642,
+  "tags": {
+    "amenity": "doctors",
+    "healthcare": "doctor",
+    "name": "Dr. D.N. Prem"
+  }
+},
+{
+  "type": "node",
+  "id": 8973229710,
+  "lat": 25.6949834,
+  "lon": 85.2240017,
+  "tags": {
+    "healthcare": "laboratory",
+    "name": "Dr. Lal Pathlogy Lab",
+    "phone": "+91 7970546099"
+  }
+},
+{
+  "type": "node",
+  "id": 8973229711,
+  "lat": 25.6949061,
+  "lon": 85.2207959,
+  "tags": {
+    "addr:street": "Kargil Chowk",
+    "amenity": "clinic",
+    "healthcare": "clinic",
+    "name": "Shivangi Nursing Home"
+  }
+},
+{
+  "type": "node",
+  "id": 8986308785,
+  "lat": 25.6227689,
+  "lon": 85.0964892,
+  "tags": {
+    "addr:city": "Patna",
+    "addr:housenumber": "ashiyana patliputra marg",
+    "addr:postcode": "800024",
+    "addr:street": "Keshri nagar",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "ophthalmology",
+    "name": "Shekhar eye care and laser centre"
+  }
+},
+{
+  "type": "node",
+  "id": 8995328117,
+  "lat": 25.6917989,
+  "lon": 85.2193412,
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "no",
+    "healthcare": "hospital",
+    "name": "Modern Child Care Hospital, Krishna's Complex"
+  }
+},
+{
+  "type": "node",
+  "id": 9005508497,
+  "lat": 25.6915331,
+  "lon": 85.2141242,
+  "tags": {
+    "amenity": "dentist",
+    "healthcare": "dentist",
+    "name": "Ekdant Dental Care"
+  }
+},
+{
+  "type": "node",
+  "id": 9005632306,
+  "lat": 25.6915461,
+  "lon": 85.2140501,
+  "tags": {
+    "amenity": "clinic",
+    "healthcare": "clinic",
+    "name": "Arogya Clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 10053495046,
+  "lat": 25.6284218,
+  "lon": 85.1043428,
+  "tags": {
+    "addr:city": "Patna",
+    "addr:housenumber": "129E",
+    "addr:postcode": "800013",
+    "email": "Visionlasercenter@gmail.com",
+    "healthcare": "optometrist",
+    "healthcare:speciality": "ophthalmology",
+    "name": "Vision Eye care and Laser center",
+    "opening_hours": "10am to 2pm and 530pm to 830pm mon to sat and Sunday evening emergency or appointment only",
+    "operator": "Dr Vishal Kishore, Dr Kunal Kishore",
+    "phone": "7488267203, 9939829148, 7761882875"
+  }
+},
+{
+  "type": "node",
+  "id": 10060006443,
+  "lat": 25.6321657,
+  "lon": 85.1037913,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 10114528610,
+  "lat": 25.6241622,
+  "lon": 85.1099708,
+  "tags": {
+    "amenity": "pharmacy",
+    "brand": "Apollo Pharmacy",
+    "brand:wikidata": "Q62562612",
+    "dispensing": "yes",
+    "drive_through": "no",
+    "healthcare": "pharmacy",
+    "name": "Apollo Pharmacy"
+  }
+},
+{
+  "type": "node",
+  "id": 10131794496,
+  "lat": 25.6282769,
+  "lon": 85.1100479,
+  "tags": {
+    "amenity": "pharmacy",
+    "dispensing": "yes",
+    "drive_through": "no",
+    "healthcare": "pharmacy"
+  }
+},
+{
+  "type": "node",
+  "id": 10131794498,
+  "lat": 25.6278828,
+  "lon": 85.1106794,
+  "tags": {
+    "amenity": "pharmacy",
+    "dispensing": "yes",
+    "healthcare": "pharmacy"
+  }
+},
+{
+  "type": "node",
+  "id": 10131794499,
+  "lat": 25.6280448,
+  "lon": 85.1102537,
+  "tags": {
+    "amenity": "pharmacy",
+    "dispensing": "yes",
+    "healthcare": "pharmacy"
+  }
+},
+{
+  "type": "node",
+  "id": 10131816134,
+  "lat": 25.6087382,
+  "lon": 85.0927924,
+  "tags": {
+    "healthcare": "alternative",
+    "healthcare:speciality": "homeopathy",
+    "name": "Dr.Nizamuddin's Homeopathy"
+  }
+},
+{
+  "type": "node",
+  "id": 10225012678,
+  "lat": 25.6151497,
+  "lon": 85.1148233,
+  "tags": {
+    "amenity": "doctors",
+    "check_date": "2022-11-29",
+    "healthcare": "doctor",
+    "healthcare:speciality": "paediatrics",
+    "internet_access": "no",
+    "name": "Veena gupta",
+    "opening_hours": "Mo-Sa 09:30-12:30,17:00-20:00; Su 10:00-12:00",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 10903081547,
+  "lat": 25.5866343,
+  "lon": 85.1656063,
+  "tags": {
+    "healthcare": "alternative",
+    "name": "solution centre"
+  }
+},
+{
+  "type": "node",
+  "id": 10903081548,
+  "lat": 25.5876010,
+  "lon": 85.1661697,
+  "tags": {
+    "amenity": "clinic",
+    "healthcare": "clinic",
+    "name": "Ridhimaa Medicare and Dental Care"
+  }
+},
+{
+  "type": "node",
+  "id": 11691567487,
+  "lat": 25.5868201,
+  "lon": 85.1496630,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "mediplus hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 11691582832,
+  "lat": 25.5864585,
+  "lon": 85.1494984,
+  "tags": {
+    "amenity": "pharmacy",
+    "healthcare": "pharmacy",
+    "name": "shobha medicals"
+  }
+},
+{
+  "type": "node",
+  "id": 11691620393,
+  "lat": 25.5859993,
+  "lon": 85.1501582,
+  "tags": {
+    "amenity": "clinic",
+    "healthcare": "clinic",
+    "name": "maa laxmi clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 11691625420,
+  "lat": 25.5850048,
+  "lon": 85.1491695,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "mediglobe multispecialty hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 11691625421,
+  "lat": 25.5841146,
+  "lon": 85.1502939,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "mediglobe multispecialty hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 11691625441,
+  "lat": 25.5910944,
+  "lon": 85.1512632,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "amrit avi hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 11691672783,
+  "lat": 25.5895432,
+  "lon": 85.1486187,
+  "tags": {
+    "amenity": "pharmacy",
+    "healthcare": "pharmacy",
+    "name": "pradhan mantri jan anushadi kendra"
+  }
+},
+{
+  "type": "node",
+  "id": 11691703523,
+  "lat": 25.5907057,
+  "lon": 85.1496713,
+  "tags": {
+    "amenity": "clinic",
+    "healthcare": "clinic",
+    "name": "dr. dipti roy"
+  }
+},
+{
+  "type": "node",
+  "id": 11691714559,
+  "lat": 25.5912093,
+  "lon": 85.1496563,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Patna Nutrition and wellness club"
+  }
+},
+{
+  "type": "node",
+  "id": 11691718399,
+  "lat": 25.5909407,
+  "lon": 85.1493205,
+  "tags": {
+    "amenity": "clinic",
+    "healthcare": "clinic",
+    "name": "dr. sk singha"
+  }
+},
+{
+  "type": "node",
+  "id": 11691719358,
+  "lat": 25.5925874,
+  "lon": 85.1504060,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Mohit Medical Hall"
+  }
+},
+{
+  "type": "node",
+  "id": 11691719990,
+  "lat": 25.5956218,
+  "lon": 85.1505775,
+  "tags": {
+    "amenity": "clinic",
+    "healthcare": "clinic",
+    "name": "furever clinic pet"
+  }
+},
+{
+  "type": "node",
+  "id": 11691731310,
+  "lat": 25.5911348,
+  "lon": 85.1491696,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Bhawanani Clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 11691742915,
+  "lat": 25.5899704,
+  "lon": 85.1493994,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sharda Medical Hall"
+  }
+},
+{
+  "type": "node",
+  "id": 11691752400,
+  "lat": 25.5911092,
+  "lon": 85.1493469,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Choudhary Medicals"
+  }
+},
+{
+  "type": "node",
+  "id": 11697973199,
+  "lat": 25.5959064,
+  "lon": 85.1308767,
+  "tags": {
+    "amenity": "pharmacy",
+    "healthcare": "pharmacy",
+    "name": "Vikash medical Hall"
+  }
+},
+{
+  "type": "node",
+  "id": 11698032476,
+  "lat": 25.5956971,
+  "lon": 85.1290321,
+  "tags": {
+    "amenity": "doctors",
+    "healthcare": "doctor",
+    "name": "Ravi ENT & Surgery Clinic, Dr. Deepshikha Mishra, MBBS, MS ENT DNB ENT;Dr. Deepak Thakur, MBBS, MS Surgery"
+  }
+},
+{
+  "type": "node",
+  "id": 11698572259,
+  "lat": 25.5875000,
+  "lon": 85.1702851,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "SR HOSPITAL"
+  }
+},
+{
+  "type": "node",
+  "id": 11698609416,
+  "lat": 25.6191900,
+  "lon": 85.1149879,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr. Gopal Prasad"
+  }
+},
+{
+  "type": "node",
+  "id": 11698646072,
+  "lat": 25.5857375,
+  "lon": 85.1698588,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Patna popular hosp[ital"
+  }
+},
+{
+  "type": "node",
+  "id": 11698728556,
+  "lat": 25.6061321,
+  "lon": 85.1593809,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "DR. BINAY KARAK NEUROLOGISTS CLINIC"
+  }
+},
+{
+  "type": "node",
+  "id": 11698745884,
+  "lat": 25.6100914,
+  "lon": 85.1591212,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "DR. PRABHAT MEMORIAL HIRAMATI HOSPITAL"
+  }
+},
+{
+  "type": "node",
+  "id": 11698758432,
+  "lat": 25.6079177,
+  "lon": 85.1564864,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "PINNACLE HOSPITAL"
+  }
+},
+{
+  "type": "node",
+  "id": 12297183783,
+  "lat": 25.6056645,
+  "lon": 85.1660869,
+  "tags": {
+    "amenity": "doctors",
+    "healthcare": "doctor",
+    "healthcare:speciality": "orthopaedics",
+    "name": "Dr. N.K. Baidya"
+  }
+},
+{
+  "type": "node",
+  "id": 12595041738,
+  "lat": 25.6957884,
+  "lon": 85.1800211,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general",
+    "name": "Sadar Aspatal"
+  }
+},
+{
+  "type": "node",
+  "id": 12595791623,
+  "lat": 25.6944030,
+  "lon": 85.1792311,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "ANM training ccentre"
+  }
+},
+{
+  "type": "node",
+  "id": 12595805300,
+  "lat": 25.6986322,
+  "lon": 85.1654229,
+  "tags": {
+    "amenity": "pharmacy",
+    "healthcare": "pharmacy",
+    "name": "Prashant medical hall"
+  }
+},
+{
+  "type": "node",
+  "id": 12595806448,
+  "lat": 25.6939921,
+  "lon": 85.1798198,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr N.dayal clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 12595811416,
+  "lat": 25.6948313,
+  "lon": 85.1786003,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Government veternary hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12595858915,
+  "lat": 25.5943824,
+  "lon": 85.1723611,
+  "tags": {
+    "addr:city": "Patna",
+    "addr:district": "Patna",
+    "addr:postcode": "800026",
+    "addr:street": "Bhootnath Road",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Bihar Burn Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12595860412,
+  "lat": 25.5939073,
+  "lon": 85.1736949,
+  "tags": {
+    "addr:city": "Patna",
+    "addr:district": "Patna",
+    "addr:postcode": "800026",
+    "addr:street": "Bhootnath Road",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Bhootnath Diagnostics"
+  }
+},
+{
+  "type": "node",
+  "id": 12595860443,
+  "lat": 25.5918263,
+  "lon": 85.1715826,
+  "tags": {
+    "addr:city": "Patna",
+    "addr:district": "Patna",
+    "addr:postcode": "800026",
+    "addr:street": "Bhootnath Road",
+    "healthcare": "optometrist",
+    "name": "Netra Jyoti Eye Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12595861328,
+  "lat": 25.5920995,
+  "lon": 85.1702618,
+  "tags": {
+    "addr:city": "Patna",
+    "addr:district": "Patna",
+    "addr:postcode": "800026",
+    "addr:street": "aastha hospital road",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Atharv hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12595862523,
+  "lat": 25.5954539,
+  "lon": 85.1740610,
+  "tags": {
+    "addr:city": "Patna",
+    "addr:district": "Patna",
+    "addr:postcode": "800026",
+    "addr:street": "Bhootnath Road",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Osho Dhara Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12595863055,
+  "lat": 25.5927486,
+  "lon": 85.1716716,
+  "tags": {
+    "addr:city": "Patna",
+    "addr:district": "Patna",
+    "addr:postcode": "800026",
+    "addr:street": "aastha hospital road",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Nalanda Seva Sadan Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12595903611,
+  "lat": 25.6246363,
+  "lon": 85.0557141,
+  "tags": {
+    "amenity": "pharmacy",
+    "healthcare": "pharmacy",
+    "name": "MAA BHAGWATI HOMEO HAL"
+  }
+},
+{
+  "type": "node",
+  "id": 12595945952,
+  "lat": 25.5915164,
+  "lon": 85.1744168,
+  "tags": {
+    "addr:city": "Patna",
+    "addr:district": "Patna",
+    "addr:postcode": "800026",
+    "addr:street": "Bhootnath Road",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "CIMS Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12595946092,
+  "lat": 25.6939389,
+  "lon": 85.1689169,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Divisional railway hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12595980254,
+  "lat": 25.5900543,
+  "lon": 85.1792245,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Apna Emergency Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12595989297,
+  "lat": 25.5921547,
+  "lon": 85.1796109,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Pushpanjali Multispecialty Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12595993289,
+  "lat": 25.5895832,
+  "lon": 85.1794170,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Patliputra Hospitals & Research Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 12595994286,
+  "lat": 25.5916248,
+  "lon": 85.1790716,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Priyadarshani Nishant Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12595994585,
+  "lat": 25.5912022,
+  "lon": 85.1797044,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Hari Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12595999615,
+  "lat": 25.5908945,
+  "lon": 85.1791523,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Shree Ganesha Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12596002610,
+  "lat": 25.5910055,
+  "lon": 85.1796902,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "The City Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12596016703,
+  "lat": 25.5886256,
+  "lon": 85.1792301,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sindhu Advanced Child Care Center"
+  }
+},
+{
+  "type": "node",
+  "id": 12596019563,
+  "lat": 25.5882489,
+  "lon": 85.1791692,
+  "tags": {
+    "amenity": "dentist",
+    "healthcare": "dentist",
+    "name": "Ganpati Dental Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12596136862,
+  "lat": 25.6419243,
+  "lon": 85.1017664,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Holy Family Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12596154635,
+  "lat": 25.6259837,
+  "lon": 85.0557925,
+  "tags": {
+    "brand": "Dr Lal Path Labs",
+    "brand:wikidata": "Q23198401",
+    "healthcare": "laboratory"
+  }
+},
+{
+  "type": "node",
+  "id": 12596227743,
+  "lat": 25.6399423,
+  "lon": 85.0506028,
+  "tags": {
+    "addr:city": "danapur",
+    "addr:district": "patna",
+    "addr:postcode": "801503",
+    "addr:street": "badi macchua toli",
+    "amenity": "dentist",
+    "healthcare": "dentist",
+    "name": "Sree Govind Dental Clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 12596237696,
+  "lat": 25.6423426,
+  "lon": 85.1032606,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Banka Eye Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12596286767,
+  "lat": 25.6450411,
+  "lon": 85.0996682,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Homeopathy Man"
+  }
+},
+{
+  "type": "node",
+  "id": 12596315967,
+  "lat": 25.5330910,
+  "lon": 85.1762177,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Narayana Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12596369121,
+  "lat": 25.5325053,
+  "lon": 85.1777876,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Sharda Hospital Mother & Child Care Pvt. Ltd."
+  }
+},
+{
+  "type": "node",
+  "id": 12596382829,
+  "lat": 25.5907136,
+  "lon": 85.1640053,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "shankar medical"
+  }
+},
+{
+  "type": "node",
+  "id": 12596396928,
+  "lat": 25.5907340,
+  "lon": 85.1638334,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "vijay nuirsing home"
+  }
+},
+{
+  "type": "node",
+  "id": 12596397752,
+  "lat": 25.5906145,
+  "lon": 85.1626362,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "kali mandir medical"
+  }
+},
+{
+  "type": "node",
+  "id": 12596397806,
+  "lat": 25.5907644,
+  "lon": 85.1636728,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "sunil medical"
+  }
+},
+{
+  "type": "node",
+  "id": 12596474348,
+  "lat": 25.6259426,
+  "lon": 85.0534554,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "mamta kunj"
+  }
+},
+{
+  "type": "node",
+  "id": 12596492828,
+  "lat": 25.6273932,
+  "lon": 85.0545334,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12596492829,
+  "lat": 25.6251614,
+  "lon": 85.0524913,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "mini pet care"
+  }
+},
+{
+  "type": "node",
+  "id": 12596505848,
+  "lat": 25.6246883,
+  "lon": 85.0546269,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "orthocare and speciality"
+  }
+},
+{
+  "type": "node",
+  "id": 12597523554,
+  "lat": 25.6193361,
+  "lon": 85.0421030,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "sasmay hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12597534239,
+  "lat": 25.6107214,
+  "lon": 85.0574121,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "prathma blood care centre"
+  }
+},
+{
+  "type": "node",
+  "id": 12737960524,
+  "lat": 25.6210333,
+  "lon": 85.0407444,
+  "tags": {
+    "addr:city": "saguna more danapur",
+    "addr:district": "PATNA",
+    "addr:postcode": "801503",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "High Tech"
+  }
+},
+{
+  "type": "node",
+  "id": 13015105272,
+  "lat": 25.5619671,
+  "lon": 85.1770251,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Lokpriye Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 13108231414,
+  "lat": 25.6113069,
+  "lon": 85.0756983,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Meditech Hospital & Sports Injury Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 13440411549,
+  "lat": 25.5804878,
+  "lon": 85.1272750,
+  "tags": {
+    "brand": "Dr Lal Path Labs",
+    "brand:wikidata": "Q23198401",
+    "healthcare": "sample_collection",
+    "name": "Lal Path Labs"
+  }
+},
+{
+  "type": "node",
+  "id": 13584500323,
+  "lat": 25.6384651,
+  "lon": 85.1094255,
+  "tags": {
+    "amenity": "clinic",
+    "healthcare": "clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 13584512925,
+  "lat": 25.6371086,
+  "lon": 85.1085712,
+  "tags": {
+    "amenity": "pharmacy",
+    "healthcare": "pharmacy",
+    "name": "Dawai Dawai"
+  }
+},
+{
+  "type": "node",
+  "id": 13584522627,
+  "lat": 25.6383131,
+  "lon": 85.1093124,
+  "tags": {
+    "amenity": "clinic",
+    "healthcare": "clinic",
+    "name": "DR AK Chamdra"
+  }
+},
+{
+  "type": "node",
+  "id": 13604736230,
+  "lat": 25.6189781,
+  "lon": 85.0840405,
+  "tags": {
+    "amenity": "clinic",
+    "healthcare": "clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 13607658948,
+  "lat": 25.6276918,
+  "lon": 85.0978982,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Narayana Cancer Centre"
+  }
+},
+{
+  "type": "node",
+  "id": 13617674953,
+  "lat": 25.6207116,
+  "lon": 85.1155832,
+  "tags": {
+    "amenity": "clinic",
+    "healthcare": "clinic",
+    "name": "Krishna Cardiac Center"
+  }
+},
+{
+  "type": "node",
+  "id": 13686480736,
+  "lat": 25.6934397,
+  "lon": 85.1857218,
+  "tags": {
+    "healthcare": "alternative",
+    "healthcare:speciality": "homeopathy",
+    "name": "saran homeo clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 13708128608,
+  "lat": 25.6378005,
+  "lon": 85.1087823,
+  "tags": {
+    "amenity": "dentist",
+    "healthcare": "dentist",
+    "name": "Daat Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 13713338101,
+  "lat": 25.6122364,
+  "lon": 85.0634655,
+  "tags": {
+    "addr:postcode": "801503",
+    "addr:street": "AIIMS - DIGHA Service road",
+    "amenity": "hospital",
+    "contact:facebook": "Budhhacancercentre",
+    "email": "info@buddhacancer.com",
+    "internet_access": "wlan",
+    "name": "Buddha Cancer Centre, Patna",
+    "opening_hours": "24/7",
+    "phone": "9470000258",
+    "website": "https://www.buddhacancer.com"
+  }
+},
+{
+  "type": "node",
+  "id": 13820793029,
+  "lat": 25.6274858,
+  "lon": 85.1043315,
+  "tags": {
+    "amenity": "clinic",
+    "healthcare": "clinic"
+  }
+},
+{
+  "type": "node",
+  "id": 13968527785,
+  "lat": 25.5753529,
+  "lon": 85.1424055,
+  "tags": {
+    "addr:city": "Patna",
+    "addr:district": "Patna",
+    "addr:postcode": "New Jaganpura",
+    "amenity": "hospital",
+    "email": "rudradentalclinicpatnabihar@gmail.com",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "dental_oral_maxillo_facial_surgery;dentist;dentistry;general;surgery",
+    "mobile": "+918800274630",
+    "name": "RUDRA DENTAL CLINIC",
+    "opening_hours": "24/7"
+  }
+},
+{
+  "type": "node",
+  "id": 13968539810,
+  "lat": 25.5753431,
+  "lon": 85.1424188,
+  "tags": {
+    "addr:city": "Patna",
+    "addr:district": "Patna",
+    "addr:postcode": "New Jaganpura",
+    "addr:street": "Rudra Dental Clinic Ram Krishna Nagar Near Indane Gas Godown Nalapar Patna",
+    "amenity": "dentist",
+    "email": "rudradentalclinicpatnabihar@gmail.com",
+    "healthcare": "dentist",
+    "healthcare:speciality": "dental_oral_maxillo_facial_surgery;general;surgery",
+    "mobile": "+918800274630",
+    "name": "Dr. Rajesh Raushan",
+    "opening_hours": "24/7"
+  }
+},
+{
+  "type": "node",
+  "id": 13968552629,
+  "lat": 25.5762680,
+  "lon": 85.1447834,
+  "tags": {
+    "addr:city": "Patna",
+    "addr:district": "Patna",
+    "addr:postcode": "New Jaganpura",
+    "addr:street": "Dr. Rajesh Raushan, A-8, Ekta Vihar Colony, Ram Krishna Nagar, Patna",
+    "amenity": "doctors",
+    "healthcare": "doctor",
+    "healthcare:speciality": "dental_oral_maxillo_facial_surgery;surgery;dentist;dentistry",
+    "mobile": "+919939032214",
+    "name": "Dr. Rajesh Raushan",
+    "opening_hours": "24/7"
+  }
+},
+{
+  "type": "way",
+  "id": 292253359,
+  "center": {
+    "lat": 25.5838169,
+    "lon": 85.0393061
+  },
+  "tags": {
+    "addr:city": "patna",
+    "addr:postcode": "801105",
+    "addr:street": "khagaul",
+    "amenity": "hospital",
+    "building": "hospital",
+    "healthcare": "hospital",
+    "name": "Rrailway hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 292256946,
+  "center": {
+    "lat": 25.5836887,
+    "lon": 85.0368089
+  },
+  "tags": {
+    "addr:city": "patna",
+    "addr:housenumber": "neora colony",
+    "addr:postcode": "801105",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "DR Seema saroj"
+  }
+},
+{
+  "type": "way",
+  "id": 292273330,
+  "center": {
+    "lat": 25.5846177,
+    "lon": 85.0401353
+  },
+  "tags": {
+    "addr:city": "khagaul,patna",
+    "addr:street": "medical colony",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "railway mandal hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 292626240,
+  "center": {
+    "lat": 25.5837359,
+    "lon": 85.0404050
+  },
+  "tags": {
+    "addr:city": "khagaul,patna",
+    "addr:street": "officer colony",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Railway hospital,indoor"
+  }
+},
+{
+  "type": "way",
+  "id": 324161840,
+  "center": {
+    "lat": 25.6901644,
+    "lon": 85.2081532
+  },
+  "tags": {
+    "addr:district": "Kishanganj",
+    "addr:postcode": "855101",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Bahadurganj",
+    "amenity": "hospital",
+    "contact:phone": "+91 6456-243040",
+    "emergency": "yes",
+    "name": "Goverment hospital,Hajipur",
+    "operator": "Government",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 379746271,
+  "center": {
+    "lat": 25.5780410,
+    "lon": 85.0809218
+  },
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Mahavir canser sansathan",
+    "operator": "Mahavir mandir trust"
+  }
+},
+{
+  "type": "way",
+  "id": 383774535,
+  "center": {
+    "lat": 25.5999323,
+    "lon": 85.2131328
+  },
+  "tags": {
+    "amenity": "hospital",
+    "building": "yes",
+    "healthcare": "hospital",
+    "name": "Nursing College"
+  }
+},
+{
+  "type": "way",
+  "id": 387137657,
+  "center": {
+    "lat": 25.6025741,
+    "lon": 85.1983601
+  },
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Nalanda Medical College & Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 688918175,
+  "center": {
+    "lat": 25.5604003,
+    "lon": 85.0423220
+  },
+  "tags": {
+    "addr:city": "Patna",
+    "addr:postcode": "801507",
+    "addr:street": "Phulwari Sarif",
+    "amenity": "hospital",
+    "contact:phone": "+91 612-2451070",
+    "email": "admin@aiimspatna.org",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "All India Institute of Medical Sciences",
+    "operator": "Public",
+    "phone": "+91 612 2920182",
+    "phone_1": "+91 612- 2451923",
+    "website": "http://aiimspatna.org/"
+  }
+},
+{
+  "type": "way",
+  "id": 688919783,
+  "center": {
+    "lat": 25.6205162,
+    "lon": 85.1601336
+  },
+  "tags": {
+    "addr:city": "Patna",
+    "addr:district": "Munger",
+    "addr:postcode": "800004",
+    "addr:state": "Bihar",
+    "addr:street": "Ashok Rajpath",
+    "amenity": "hospital",
+    "email": "info@patnamedicalcollege.com",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Patna Medical College and Hospital",
+    "operator": "Public",
+    "phone": "+91 612 230 0343",
+    "source": "OpenGovernmentData",
+    "website": "http://patnamedicalcollege.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 688923492,
+  "center": {
+    "lat": 25.6107288,
+    "lon": 85.0888249
+  },
+  "tags": {
+    "addr:city": "Patna",
+    "addr:district": "Patna",
+    "addr:full": "Bailey Road, Shiekhpura",
+    "addr:postcode": "800014",
+    "addr:state": "Bihar",
+    "addr:street": "Bailey Road, Shiekhpura",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Indira Gandhi Institute of Medical Sciences",
+    "name:etymology:wikidata": "Q1149",
+    "operator": "Public",
+    "operator:type": "government",
+    "phone": "+91 612 2297099",
+    "source": "OpenGovernmentData",
+    "website": "http://www.igims.org/",
+    "wikidata": "Q6024960",
+    "wikipedia": "en:Indira Gandhi Institute of Medical Sciences"
+  }
+},
+{
+  "type": "way",
+  "id": 729523512,
+  "center": {
+    "lat": 25.6193492,
+    "lon": 85.1253594
+  },
+  "tags": {
+    "addr:city": "Patna",
+    "addr:postcode": "800001",
+    "addr:street": "Mahavir Lane",
+    "amenity": "clinic",
+    "building": "yes",
+    "healthcare": "clinic",
+    "name": "Hospito India",
+    "name:hi": "होस्पिटो इंडिया"
+  }
+},
+{
+  "type": "way",
+  "id": 739875578,
+  "center": {
+    "lat": 25.5884066,
+    "lon": 85.1768836
+  },
+  "tags": {
+    "amenity": "pharmacy",
+    "building": "yes",
+    "healthcare": "pharmacy",
+    "name": "Zenithia Med Pvt Ltd"
+  }
+},
+{
+  "type": "way",
+  "id": 739875602,
+  "center": {
+    "lat": 25.5886968,
+    "lon": 85.1776289
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Dr Alok Tiwari Clinic"
+  }
+},
+{
+  "type": "way",
+  "id": 771282928,
+  "center": {
+    "lat": 25.6207181,
+    "lon": 85.1089973
+  },
+  "tags": {
+    "amenity": "clinic",
+    "building": "yes",
+    "contact:phone": "+91 72609 56035",
+    "healthcare": "clinic",
+    "healthcare:speciality": "otolaryngology",
+    "name": "Vellore ENT Centre"
+  }
+},
+{
+  "type": "way",
+  "id": 870840841,
+  "center": {
+    "lat": 25.6472165,
+    "lon": 85.0765908
+  },
+  "tags": {
+    "addr:postcode": "800018",
+    "amenity": "pharmacy",
+    "building": "yes",
+    "dispensing": "yes",
+    "healthcare": "pharmacy",
+    "name": "Patna Medical Hall"
+  }
+},
+{
+  "type": "way",
+  "id": 870841186,
+  "center": {
+    "lat": 25.6471937,
+    "lon": 85.0753818
+  },
+  "tags": {
+    "addr:postcode": "800018",
+    "amenity": "pharmacy",
+    "building": "yes",
+    "dispensing": "yes",
+    "healthcare": "pharmacy",
+    "name": "Royal Medical Hall"
+  }
+},
+{
+  "type": "way",
+  "id": 875652134,
+  "center": {
+    "lat": 25.6073240,
+    "lon": 85.1624014
+  },
+  "tags": {
+    "addr:district": "Munger",
+    "addr:full": "Rajendra nagar",
+    "addr:state": "Bihar",
+    "addr:subdistrict": "Sangrampur",
+    "amenity": "hospital",
+    "description": "Urban Health Centre",
+    "healthcare": "centre",
+    "name": "Rajendra Nagar Hospital",
+    "source": "OpenGovernmentData"
+  }
+},
+{
+  "type": "way",
+  "id": 960045440,
+  "center": {
+    "lat": 25.5871555,
+    "lon": 85.1039953
+  },
+  "tags": {
+    "healthcare": "laboratory",
+    "name": "Hind Medico"
+  }
+},
+{
+  "type": "way",
+  "id": 973005254,
+  "center": {
+    "lat": 25.6916163,
+    "lon": 85.2141827
+  },
+  "tags": {
+    "amenity": "dentist",
+    "building": "yes",
+    "healthcare": "dentist",
+    "name": "Ekdant Dental Care"
+  }
+},
+{
+  "type": "way",
+  "id": 1000505352,
+  "center": {
+    "lat": 25.5615511,
+    "lon": 85.0416962
+  },
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "no",
+    "healthcare": "hospital",
+    "healthcare:speciality": "cardiology;orthopaedics",
+    "name": "IPD A BLOCK",
+    "operator": "AIIMS PATNA",
+    "operator:type": "government"
+  }
+},
+{
+  "type": "way",
+  "id": 1000505661,
+  "center": {
+    "lat": 25.5618592,
+    "lon": 85.0414468
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "IPD B BLOCK",
+    "operator": "AIIMS PATNA",
+    "operator:type": "government"
+  }
+},
+{
+  "type": "way",
+  "id": 1103729329,
+  "center": {
+    "lat": 25.6279212,
+    "lon": 85.1105918
+  },
+  "tags": {
+    "amenity": "clinic",
+    "building": "yes",
+    "healthcare": "clinic",
+    "healthcare:speciality": "child_specialist",
+    "operator": "Dr Amrendra Kumar",
+    "operator:type": "private"
+  }
+},
+{
+  "type": "way",
+  "id": 1103729331,
+  "center": {
+    "lat": 25.6279742,
+    "lon": 85.1102477
+  },
+  "tags": {
+    "amenity": "clinic",
+    "building": "yes",
+    "healthcare": "clinic",
+    "healthcare:speciality": "gastroenterologists",
+    "operator": "Dr Manoj",
+    "operator:type": "private"
+  }
+},
+{
+  "type": "way",
+  "id": 1107287409,
+  "center": {
+    "lat": 25.5946132,
+    "lon": 85.0877095
+  },
+  "tags": {
+    "amenity": "doctors",
+    "building": "yes",
+    "healthcare": "doctor"
+  }
+},
+{
+  "type": "way",
+  "id": 1153404331,
+  "center": {
+    "lat": 25.5966918,
+    "lon": 85.1601075
+  },
+  "tags": {
+    "addr:city": "Patna",
+    "addr:housenumber": "V/492,",
+    "addr:postcode": "800020",
+    "addr:street": "Vidhyapuri Kankarbagh",
+    "amenity": "hospital",
+    "building": "hospital",
+    "healthcare": "hospital",
+    "healthcare:speciality": "child_psychiatry",
+    "name": "Saroj Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1257434633,
+  "center": {
+    "lat": 25.5974569,
+    "lon": 85.1299944
+  },
+  "tags": {
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Hope hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 1360711770,
+  "center": {
+    "lat": 25.6222019,
+    "lon": 85.0485592
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "vashu hospital"
+  }
+}
+
+  ]
+}

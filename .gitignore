@@ -1,0 +1,28 @@
+# secrets
+.env
+.env.*
+!.env.example
+
+# raw data too large for git (rebuild with scripts)
+C2. Data Itemwise Monthly (up to sub district)/
+HDI Reports/
+data/raw/hmis/
+
+# os / editor
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+
+# large raw pulls (SOURCES.txt and meta kept)
+data/raw/datagovin/*.csv
+data/raw/datagovin/fetch.log
+data/raw/india-gov/*
+!data/raw/india-gov/SOURCES.txt
+data/raw/apis/*.dbc
+data/processed/*.csv
+data/processed/*.log
+data/demo.duckdb
+data/raw/osm/
+data/raw/nominatim/

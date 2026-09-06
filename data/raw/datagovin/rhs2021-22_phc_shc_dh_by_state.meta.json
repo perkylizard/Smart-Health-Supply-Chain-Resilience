@@ -1,0 +1,40 @@
+{
+ "resource_id": "f1cd67be-1623-4e43-8410-d71bea7ba11d",
+ "url": "https://api.data.gov.in/resource/f1cd67be-1623-4e43-8410-d71bea7ba11d",
+ "licence": "Government Open Data License - India (GODL)",
+ "retrieved": "2026-09-06",
+ "title": "State/UT-wise Total Number of Primary Health Centres (PHCs), Sub-Health Centres (SHCs) and District Hospitals in the Country as per Rural Health Statistics (RHS) during 2021-22",
+ "desc": "State/UT-wise Total Number of Primary Health Centres (PHCs), Sub-Health Centres (SHCs) and District Hospitals in the Country as per Rural Health Statistics (RHS) during 2021-22",
+ "org": [
+  "Rajya Sabha"
+ ],
+ "sector": [
+  "All"
+ ],
+ "source": "data.gov.in",
+ "updated_date": "2024-11-03T06:22:31Z",
+ "created_date": "2024-11-03T06:22:31Z",
+ "total": 37,
+ "field": [
+  {
+   "id": "state_ut",
+   "name": "State/UT",
+   "type": "keyword"
+  },
+  {
+   "id": "sub_health_centres__shcs_",
+   "name": "Sub-Health Centres (SHCs)",
+   "type": "double"
+  },
+  {
+   "id": "primary_health_centres__phcs_",
+   "name": "Primary Health Centres (PHCs)",
+   "type": "double"
+  },
+  {
+   "id": "district_hospitals",
+   "name": "District Hospitals",
+   "type": "double"
+  }
+ ]
+}

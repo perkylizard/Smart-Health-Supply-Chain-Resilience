@@ -1,0 +1,60 @@
+{
+ "resource_id": "4e3c855c-c10c-479e-ae6e-187bfed35ac1",
+ "url": "https://api.data.gov.in/resource/4e3c855c-c10c-479e-ae6e-187bfed35ac1",
+ "licence": "Government Open Data License - India (GODL)",
+ "retrieved": "2026-09-06",
+ "title": "State/UTs-wise Number of PHCs (Primary Health Centre), CHCs (Community Health Centres) Functioning in Rural and Urban Areas as per RHS (Rural Health Statistics) 2020-21",
+ "desc": "State/UTs-wise Number of PHCs (Primary Health Centre), CHCs (Community Health Centres) Functioning in Rural and Urban Areas as per RHS (Rural Health Statistics) 2020-21",
+ "org": [
+  "Rajya Sabha"
+ ],
+ "sector": [
+  "All"
+ ],
+ "source": "data.gov.in",
+ "updated_date": "2023-11-19T18:32:24Z",
+ "created_date": "2023-11-18T05:30:51Z",
+ "total": 36,
+ "field": [
+  {
+   "id": "s__no_",
+   "name": "S. No.",
+   "type": "double"
+  },
+  {
+   "id": "state_ut",
+   "name": "State/UT",
+   "type": "keyword"
+  },
+  {
+   "id": "phcs___rural",
+   "name": "PHCs - Rural",
+   "type": "double"
+  },
+  {
+   "id": "phcs___urban",
+   "name": "PHCs - Urban",
+   "type": "double"
+  },
+  {
+   "id": "phcs___total",
+   "name": "PHCs - Total",
+   "type": "double"
+  },
+  {
+   "id": "chcs___rural",
+   "name": "CHCs - Rural",
+   "type": "double"
+  },
+  {
+   "id": "chcs___urban",
+   "name": "CHCs - Urban",
+   "type": "double"
+  },
+  {
+   "id": "chcs___total",
+   "name": "CHCs - Total",
+   "type": "double"
+  }
+ ]
+}

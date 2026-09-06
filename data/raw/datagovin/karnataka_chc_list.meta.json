@@ -1,0 +1,41 @@
+{
+ "resource_id": "b9afe1e5-d1c5-4b41-a736-881c97d32397",
+ "url": "https://api.data.gov.in/resource/b9afe1e5-d1c5-4b41-a736-881c97d32397",
+ "licence": "Government Open Data License - India (GODL)",
+ "retrieved": "2026-09-06",
+ "title": "District Wise Public Community Health Centers in Karnataka",
+ "desc": "District Wise Public Community Health Centers in Karnataka",
+ "org": [
+  "Karnataka",
+  "Health and Family Welfare Department, Karnataka"
+ ],
+ "sector": [
+  "Family Welfare"
+ ],
+ "source": "karnataka.data.gov.in",
+ "updated_date": "2022-07-26T09:11:29Z",
+ "created_date": "2022-06-09T20:46:16Z",
+ "total": 141,
+ "field": [
+  {
+   "id": "sl_no",
+   "name": "SL No",
+   "type": "double"
+  },
+  {
+   "id": "district_name",
+   "name": "DISTRICT_NAME",
+   "type": "keyword"
+  },
+  {
+   "id": "hospital",
+   "name": "Hospital",
+   "type": "keyword"
+  },
+  {
+   "id": "type_of_facility",
+   "name": "TYPE_OF_FACILITY",
+   "type": "keyword"
+  }
+ ]
+}

@@ -1,0 +1,65 @@
+{
+ "resource_id": "782c19ad-5833-4745-95b2-31656af47bed",
+ "url": "https://api.data.gov.in/resource/782c19ad-5833-4745-95b2-31656af47bed",
+ "licence": "Government Open Data License - India (GODL)",
+ "retrieved": "2026-09-06",
+ "title": "State/UTs-wise Vacancy status at Rural and Urban facilities as per Rural Health Statistics (RHS) during 2021",
+ "desc": "State/UTs-wise Vacancy status at Rural and Urban facilities as per Rural Health Statistics (RHS) during 2021",
+ "org": [
+  "Rajya Sabha"
+ ],
+ "sector": [
+  "All"
+ ],
+ "source": "data.gov.in",
+ "updated_date": "2023-11-20T16:40:14Z",
+ "created_date": "2023-11-20T11:25:13Z",
+ "total": 36,
+ "field": [
+  {
+   "id": "state_ut",
+   "name": "State/UT",
+   "type": "keyword"
+  },
+  {
+   "id": "doctors__dh_and_below_",
+   "name": "Doctors (DH and below)",
+   "type": "double"
+  },
+  {
+   "id": "specialist___physician__chc_",
+   "name": "Specialist - Physician (CHC)",
+   "type": "double"
+  },
+  {
+   "id": "lab_technicians__chc_and_below_",
+   "name": "Lab Technicians (CHC and below)",
+   "type": "double"
+  },
+  {
+   "id": "radiographer__chc_",
+   "name": "Radiographer (CHC)",
+   "type": "double"
+  },
+  {
+   "id": "pharmacists__chc_and_below_",
+   "name": "Pharmacists (CHC and below)",
+   "type": "double"
+  },
+  {
+   "id": "staff_nurses__chc_and_below_",
+   "name": "Staff Nurses (CHC and below)",
+   "type": "double"
+  },
+  {
+   "id": "mpw__m___f__at_phc_and_below",
+   "name": "MPW (M + F) at PHC and below",
+   "type": "double"
+  },
+  {
+   "id": "paramedical_staff__dh_and_sdh_",
+   "name": "Paramedical Staff (DH and SDH)",
+   "type": "double"
+  }
+ ]
+}
