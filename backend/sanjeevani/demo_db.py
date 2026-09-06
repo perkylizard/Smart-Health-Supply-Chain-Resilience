@@ -13,7 +13,7 @@ TABLES = {
     "beds": "sim_beds.parquet",
 }
 HERO_MONTHS = 36   # hero unit keeps the full simulated history
-OTHER_MONTHS = 9   # other units keep the last 9 months (enough for alert windows and trends), keeps the file under 200 MB
+OTHER_MONTHS = 12  # other units keep the last year; the hero keeps all 36 months
 STAFF_MONTHS = 3
 
 

@@ -15,10 +15,10 @@ def con():
     c.close()
 
 
-def test_size_under_200mb():
+def test_size_under_256mb():
     if not DB.exists():
         pytest.skip("demo.duckdb not built")
-    assert DB.stat().st_size < 200 * 1048576
+    assert DB.stat().st_size < 256 * 1048576  # budget raised from 200 MB when Assam became the 14th unit; still trivial for a Cloud Run image
 
 
 def test_bihar_phc_count(con):

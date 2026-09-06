@@ -268,7 +268,7 @@ def test_district_override():
 - Create: `backend/sanjeevani/demo_db.py`, `scripts/build_demo_db.py`, `backend/tests/test_demo_db.py`
 
 **Interfaces:**
-- Produces: `demo_db.build(out: Path)` creating tables districts, facilities, commodities, units, demand, ledger, hmis_ledger_real (district level real), scenarios; views `v_days_of_stock` (latest month per facility x commodity) and `v_district_summary`. File `data/demo.duckdb` under 200 MB.
+- Produces: `demo_db.build(out: Path)` creating tables districts, facilities, commodities, units, demand, ledger, hmis_ledger_real (district level real), scenarios; views `v_days_of_stock` (latest month per facility x commodity) and `v_district_summary`. File `data/demo.duckdb` under 256 MB (raised from 200 MB when Assam joined the demo set).
 - [ ] Test: `SELECT count(*) FROM facilities WHERE state='Bihar'` about 1,760 PHC rows; `v_days_of_stock` has no nulls in days_of_stock; file size < 200 MB.
 - [ ] Commit `feat: demo DuckDB with views for the backend`.
 
