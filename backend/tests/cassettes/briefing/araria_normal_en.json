@@ -1,0 +1,9 @@
+{
+ "key": "c9a23e9d853a1b14fc05c7c6",
+ "model": "gemini-3.6-flash",
+ "service": "briefing",
+ "case": "araria_normal_en",
+ "prompt_head": "Write in clear Indian English.\nNo scenario is active; these are the current figures.\nWrite the morning briefing for the District Health Officer from this JSON. Days of stock are for each PHC and commodity; 'cause' says why. Mention at most three facilities by name and always the number of days. Numb",
+ "response": "{\"headline\":\"Araria district faces 612 red stockouts across 64 facilities with zero stock of essential commodities.\",\"body\":[\"At Aadharbhut Community Health Center, Oxytocin injection and Paracetamol tablets have hit 0.0 days of stock because expected monthly supplies were missed.\",\"At CHC Araria 1, Doxycycline 100 mg capsules are at 0.0 days of stock due to an 88% increase in patient demand.\",\"Overall, 612 red alerts are active across 64 district facilities, while 0 stock transfers are currently ready for approval.\"],\"top_actions\":[\"Authorize priority stock replenishment for Aadharbhut Community Health Center to address missed indents.\",\"Direct emergency re-supply of Doxycycline capsules for CHC Araria 1 to handle the 88% demand surge.\",\"Instruct district warehouse officers to review missed supply indents across all 64 facilities.\"],\"lang\":\"en\"}",
+ "recorded": "2026-09-06"
+}

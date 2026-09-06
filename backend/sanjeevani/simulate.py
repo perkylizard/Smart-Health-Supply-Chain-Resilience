@@ -14,7 +14,7 @@ FY_BASE = {"2017-18": 0, "2018-19": 1, "2019-20": 2}
 SHIFT_YEARS = 7  # 2017-18 plays as 2024-25
 NOISE_SIGMA = 0.15
 BASE_MISS_PROB = 0.08
-TARGET_MONTHS = 1.5  # order-up-to level in months of recent demand (WHO min-max norm for monthly PHC indents)
+TARGET_MONTHS = 2.0  # order-up-to level in months of recent demand (WHO min-max norm for monthly PHC indents)
 BASE_LEAD_DAYS = {"PHC": 10, "CHC": 7, "DH": 4}
 
 

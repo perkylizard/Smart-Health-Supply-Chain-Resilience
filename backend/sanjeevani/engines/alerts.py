@@ -7,11 +7,14 @@ from sanjeevani.engines import scenario as S
 RED, AMBER, WATCH = 7.0, 14.0, 30.0
 BUFFER_DAYS = 7.0
 DONOR_FLOOR = 21.0
+LOW_DEMAND_WEEKLY = 1.0
 
 
 def _cause(row) -> tuple[str, str]:
     if row["data_issue"]:
         return "data_issue", row["data_issue_detail"]
+    if row["low_demand"]:
+        return "none", "negligible demand at this facility"
     if row["demand_prev3"] > 0 and row["demand"] > 1.3 * row["demand_prev3"]:
         return "cases_up", f"demand up {row['demand'] / row['demand_prev3'] - 1:.0%} vs prior 3 months"
     if row["received"] == 0 and row["demand"] > 0:
@@ -48,14 +51,16 @@ def compute_alerts(latest: pd.DataFrame, window: pd.DataFrame, fc: pd.DataFrame,
     df["data_issue_detail"] = np.select([neg, sudden_zero, absurd],
                                         ["negative closing stock", "closing zero after a large opening balance", "received more than 10x the usual"], "")
     thr = df["lead_days"] + BUFFER_DAYS
-    df["alert"] = (df["days_of_stock"] < thr) & ~df["data_issue"]
-    df["severity"] = np.select([df["data_issue"], df["days_of_stock"] < RED, df["days_of_stock"] < AMBER, df["days_of_stock"] < WATCH],
-                               ["data_issue", "red", "amber", "watch"], "ok")
+    # a commodity this facility barely uses (under one unit a week) cannot be "out of stock" in a meaningful sense
+    df["low_demand"] = df["weekly_demand_p90"] < LOW_DEMAND_WEEKLY
+    df["alert"] = (df["days_of_stock"] < thr) & ~df["data_issue"] & ~df["low_demand"]
+    df["severity"] = np.select([df["data_issue"], df["low_demand"], df["days_of_stock"] < RED, df["days_of_stock"] < AMBER, df["days_of_stock"] < WATCH],
+                               ["data_issue", "ok", "red", "amber", "watch"], "ok")
     causes = df.apply(_cause, axis=1, result_type="expand")
     df["cause"], df["cause_detail"] = causes[0], causes[1]
     df["surplus_days"] = (df["days_of_stock"] - DONOR_FLOOR).clip(lower=0).round(1)
     cols = ["facility_id", "facility_name", "type", "commodity_id", "commodity_name", "category", "unit_id", "state", "district", "lat", "lon",
             "closing", "demand", "weekly_demand_p90", "days_of_stock", "lead_days", "severity", "alert", "cause", "cause_detail",
-            "data_issue", "surplus_days", "scenario", "source"]
+            "data_issue", "low_demand", "surplus_days", "scenario", "source"]
     df["scenario"] = scenario
     return df[[c for c in cols if c in df.columns]].sort_values(["alert", "days_of_stock"], ascending=[False, True]).reset_index(drop=True)

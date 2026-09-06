@@ -1,15 +1,124 @@
 {
-  "normal": {"label": "Normal operations", "rules": []},
-  "monsoon_surge": {"label": "Monsoon diarrhoea surge",
-    "rules": [{"categories": ["outbreak"], "drivers": ["10.11", "14.4.7"], "months": [6, 7, 8, 9], "demand_mult": 2.5, "miss_prob_add": 0.10, "lead_days_add": 3}]},
-  "dengue_season": {"label": "Dengue season",
-    "rules": [{"categories": ["outbreak", "emergency"], "drivers": ["11.3.1", "14.4.2", "14.2.1"], "months": [9, 10, 11], "demand_mult": 3.0, "miss_prob_add": 0.05, "lead_days_add": 2}]},
-  "winter_closure": {"label": "Winter road closure (Himalayan)",
-    "units": ["ladakh", "jammu_kashmir", "arunachal_pradesh"],
-    "rules": [{"categories": ["*"], "drivers": ["*"], "months": [12, 1, 2, 3], "demand_mult": 1.0, "miss_prob_add": 0.45, "lead_days_add": 14}]},
-  "cyclone": {"label": "Cyclone landfall (coastal)",
-    "units": ["andhra_pradesh", "andaman_nicobar", "lakshadweep"],
-    "rules": [{"categories": ["*"], "drivers": ["*"], "months": [10, 11], "demand_mult": 1.3, "miss_prob_add": 0.35, "lead_days_add": 7}]},
-  "warehouse_shock": {"label": "State warehouse supply shock",
-    "rules": [{"categories": ["*"], "drivers": ["*"], "months": [7], "demand_mult": 1.0, "miss_prob_add": 0.9, "lead_days_add": 10}]}
+  "normal": {
+    "label": "Normal operations",
+    "rules": []
+  },
+  "monsoon_surge": {
+    "label": "Monsoon flood: diarrhoea surge",
+    "rules": [
+      {
+        "categories": [
+          "outbreak"
+        ],
+        "drivers": [
+          "10.11",
+          "14.4.7"
+        ],
+        "months": [
+          6,
+          7,
+          8,
+          9
+        ],
+        "demand_mult": 3.5,
+        "miss_prob_add": 0.1,
+        "lead_days_add": 3
+      }
+    ]
+  },
+  "dengue_season": {
+    "label": "Dengue season",
+    "rules": [
+      {
+        "categories": [
+          "outbreak",
+          "emergency"
+        ],
+        "drivers": [
+          "11.3.1",
+          "14.4.2",
+          "14.2.1"
+        ],
+        "months": [
+          9,
+          10,
+          11
+        ],
+        "demand_mult": 3.0,
+        "miss_prob_add": 0.05,
+        "lead_days_add": 2
+      }
+    ]
+  },
+  "winter_closure": {
+    "label": "Winter road closure (Himalayan)",
+    "units": [
+      "ladakh",
+      "jammu_kashmir",
+      "arunachal_pradesh"
+    ],
+    "rules": [
+      {
+        "categories": [
+          "*"
+        ],
+        "drivers": [
+          "*"
+        ],
+        "months": [
+          12,
+          1,
+          2,
+          3
+        ],
+        "demand_mult": 1.0,
+        "miss_prob_add": 0.45,
+        "lead_days_add": 14
+      }
+    ]
+  },
+  "cyclone": {
+    "label": "Cyclone landfall (coastal)",
+    "units": [
+      "andhra_pradesh",
+      "andaman_nicobar",
+      "lakshadweep"
+    ],
+    "rules": [
+      {
+        "categories": [
+          "*"
+        ],
+        "drivers": [
+          "*"
+        ],
+        "months": [
+          10,
+          11
+        ],
+        "demand_mult": 1.3,
+        "miss_prob_add": 0.35,
+        "lead_days_add": 7
+      }
+    ]
+  },
+  "warehouse_shock": {
+    "label": "State warehouse supply shock",
+    "rules": [
+      {
+        "categories": [
+          "*"
+        ],
+        "drivers": [
+          "*"
+        ],
+        "months": [
+          7
+        ],
+        "demand_mult": 1.0,
+        "miss_prob_add": 0.9,
+        "lead_days_add": 10
+      }
+    ]
+  }
 }
