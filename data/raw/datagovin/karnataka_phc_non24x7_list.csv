@@ -1,0 +1,13 @@
+sl_no,district_name,hospital,type_of_facility
+1,BENGALURU RURAL,PHC Doddahejjaji,PHC (Non 24*7)
+2,BENGALURU URBAN,PHC Kannalli,PHC (Non 24*7)
+3,DHARWAD,PHC Yaraguppi,PHC (Non 24*7)
+4,DHARWAD,PHC Mishrikoti,PHC (Non 24*7)
+5,HAVERI,PHC Agadi ,PHC (Non 24*7)
+6,MYSURU,PHC Hallare,PHC (Non 24*7)
+7,RAMANAGARA,PHC Gudemaranahalli,PHC (Non 24*7)
+8,TUMAKURU,PHC Thippur,PHC (Non 24*7)
+9,TUMAKURU,PHC Huralagere,PHC (Non 24*7)
+10,TUMAKURU,PHC Bidare,PHC (Non 24*7)
+11,TUMAKURU,PHC Thondagere,PHC (Non 24*7)
+0,NA,NA,NA

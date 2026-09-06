@@ -1,4 +1,6 @@
-.PHONY: test data
+.PHONY: test data dev
+dev:
+	uv run uvicorn app.main:app --reload --app-dir backend --port 8000
 test:
 	uv run pytest -q
 data:
