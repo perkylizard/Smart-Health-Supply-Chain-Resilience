@@ -53,3 +53,22 @@ def test_key_is_stable_and_media_sensitive():
     k1 = C.GeminiClient._key("m", "p", "S", None, "sys")
     k2 = C.GeminiClient._key("m", "p", "S", [(b"img", "image/png")], "sys")
     assert k1 != k2 and k1 == C.GeminiClient._key("m", "p", "S", None, "sys")
+
+
+def test_pacer_blocks_after_limit(monkeypatch):
+    import time as T
+    monkeypatch.setattr(C, "MAX_RPM", 3)
+    p = C._Pacer()
+    t0 = T.time()
+    for _ in range(3):
+        p.wait("m")
+    assert T.time() - t0 < 0.5
+    # 4th call must wait: shrink the window by faking old timestamps
+    p.hist["m"][0] -= 59.8
+    p.wait("m")
+    assert 0.1 <= T.time() - t0 < 5
+
+
+def test_service_model_map():
+    c = C.GeminiClient(mode="replay", api_key=None)
+    assert c.model_for("briefing").startswith("gemini") and c.model_for("unknown") == c.model

@@ -16,6 +16,31 @@ from sanjeevani.gemini.prompts import SYSTEM
 
 CASSETTES = paths.ROOT / "backend" / "tests" / "cassettes"
 DEFAULT_MODEL = "gemini-3.5-flash-lite"
+# Free-tier limits are per model per minute; spread services across models and pace each one.
+SERVICE_MODEL = {"briefing": "gemini-3.5-flash-lite", "explain": "gemini-3.1-flash-lite", "ask_guided": "gemini-2.5-flash-lite",
+                 "ask_sql": "gemini-3.5-flash-lite", "register": "gemini-3.5-flash", "voice": "gemini-3.5-flash", "brief": "gemini-3.1-flash-lite"}
+MAX_RPM = int(os.environ.get("GEMINI_MAX_RPM", "12"))
+
+
+class _Pacer:
+    """Per-model sliding window: blocks so that no model sees more than MAX_RPM requests in any 60 s."""
+    def __init__(self):
+        import collections, threading
+        self.hist = collections.defaultdict(collections.deque); self.lock = threading.Lock()
+
+    def wait(self, model: str):
+        while True:
+            with self.lock:
+                q = self.hist[model]; now = time.time()
+                while q and now - q[0] > 60:
+                    q.popleft()
+                if len(q) < MAX_RPM:
+                    q.append(now); return
+                sleep_for = 60 - (now - q[0]) + 0.05
+            time.sleep(min(max(sleep_for, 0.1), 61))
+
+
+PACER = _Pacer()
 
 
 class CassetteMiss(Exception):
@@ -67,11 +92,17 @@ class GeminiClient:
     def _cassette_path(self, service: str, case: str) -> Path:
         return CASSETTES / service / f"{case}.json"
 
-    def _call_live(self, prompt: str, schema: type[BaseModel], media, system: str, tools=None) -> str:
+    def model_for(self, service: str) -> str:
+        if os.environ.get("GEMINI_MODEL"):
+            return os.environ["GEMINI_MODEL"]
+        return SERVICE_MODEL.get(service, self.model)
+
+    def _call_live(self, prompt: str, schema: type[BaseModel], media, system: str, tools=None, model: str | None = None) -> str:
         if self._transport is not None:
             return self._transport(prompt, schema, media, system)
         if not self.api_key:
             raise GeminiUnavailable("no GEMINI_API_KEY")
+        model = model or self.model
         from google.genai import types
         parts = [types.Part.from_text(text=prompt)]
         for b, mime in media or []:
@@ -80,8 +111,9 @@ class GeminiClient:
         delay = 2.0
         for attempt in range(4):
             try:
+                PACER.wait(model)
                 self.calls += 1
-                r = self._sdk().models.generate_content(model=self.model, contents=[types.Content(role="user", parts=parts)], config=cfg)
+                r = self._sdk().models.generate_content(model=model, contents=[types.Content(role="user", parts=parts)], config=cfg)
                 return r.text
             except Exception as e:  # SDK raises typed errors; retry on rate limit / unavailable
                 msg = str(e)
@@ -98,10 +130,11 @@ class GeminiClient:
                 rec = json.loads(path.read_text())
                 return schema.model_validate_json(rec["response"])
             raise CassetteMiss(f"{service}/{case or key}")
-        text = self._call_live(prompt, schema, media, system)
+        model = self.model_for(service)
+        text = self._call_live(prompt, schema, media, system, model=model)
         out = schema.model_validate_json(text)
         if path and (self.mode == "record" or case):
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(json.dumps({"key": key, "model": self.model, "service": service, "case": case,
+            path.write_text(json.dumps({"key": key, "model": model, "service": service, "case": case,
                                         "prompt_head": prompt[:300], "response": text, "recorded": time.strftime("%Y-%m-%d")}, ensure_ascii=False, indent=1))
         return out
