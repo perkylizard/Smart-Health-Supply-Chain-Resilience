@@ -25,6 +25,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Redirect />} />
+      <Route path="/:unit" element={<UnitRedirect />} />
       <Route path="/:unit/:district/*" element={<WithLocation lang={lang} setLang={setLang} />} />
       <Route path="/facility/:id" element={<WithLocation lang={lang} setLang={setLang} facilityMode />} />
     </Routes>
@@ -37,6 +38,20 @@ function Redirect() {
   return null;
 }
 
+/** A unit alone in the URL: jump to its district with the most red alerts. */
+function UnitRedirect() {
+  const { unit } = useParams();
+  const nav = useNavigate();
+  const q = useQuery({ queryKey: ["districts", unit], queryFn: () => api.districts(unit!), enabled: !!unit });
+  useEffect(() => {
+    if (!q.data) return;
+    const worst = [...q.data.districts].sort((a, b) => (b.red_alerts ?? 0) - (a.red_alerts ?? 0))[0];
+    nav(worst ? `/${unit}/${encodeURIComponent(worst.district)}` : "/", { replace: true });
+  }, [q.data, unit, nav]);
+  if (q.isError) return <p style={{ padding: 24 }}>Unknown state. <a href="/">Back to Bihar</a></p>;
+  return <p className="skeleton" style={{ margin: 24, height: 40 }}>Loading the district with the most alerts</p>;
+}
+
 function WithLocation({ lang, setLang, facilityMode }: { lang: Lang; setLang: (l: Lang) => void; facilityMode?: boolean }) {
   const params = useParams();
   const nav = useNavigate();
@@ -44,7 +59,7 @@ function WithLocation({ lang, setLang, facilityMode }: { lang: Lang; setLang: (l
   useEffect(() => { if (params.unit && params.district) setLoc({ unit: params.unit, district: params.district }); }, [params.unit, params.district]);
   const ctx = useMemo<Ctx>(() => ({
     lang, setLang, t: strings[lang], unit: loc.unit, district: loc.district,
-    setLocation: (u, d) => { setLoc({ unit: u, district: d }); nav(`/${u}/${encodeURIComponent(d)}`); },
+    setLocation: (u, d) => { if (!d) { nav(`/${u}`); return; } setLoc({ unit: u, district: d }); nav(`/${u}/${encodeURIComponent(d)}`); },
   }), [lang, loc, nav]);
   const health = useQuery({ queryKey: ["health"], queryFn: api.health, refetchInterval: 30_000 });
   return (

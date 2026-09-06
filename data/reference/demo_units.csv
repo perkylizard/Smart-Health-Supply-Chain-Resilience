@@ -1,6 +1,7 @@
 unit_id,unit_name,kind,state,districts,is_hero
 bihar,Bihar,state,Bihar,,1
 uttar_pradesh,Uttar Pradesh,state,Uttar Pradesh,,0
+assam,Assam,state,Assam,,0
 rajasthan,Rajasthan,state,Rajasthan,,0
 madhya_pradesh,Madhya Pradesh,state,Madhya Pradesh,,0
 andhra_pradesh,Andhra Pradesh,state,Andhra Pradesh,,0

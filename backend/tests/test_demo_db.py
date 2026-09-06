@@ -29,7 +29,7 @@ def test_bihar_phc_count(con):
 def test_days_of_stock_view_complete(con):
     nulls = con.execute("SELECT count(*) FROM v_days_of_stock WHERE days_of_stock IS NULL").fetchone()[0]
     assert nulls == 0
-    assert con.execute("SELECT count(DISTINCT unit_id) FROM v_days_of_stock").fetchone()[0] == 13
+    assert con.execute("SELECT count(DISTINCT unit_id) FROM v_days_of_stock").fetchone()[0] == 14
 
 
 def test_real_ledger_present(con):

@@ -15,7 +15,7 @@ def client():
 def test_health_and_units(client):
     assert client.get("/health").json()["ok"]
     u = client.get("/units").json()["units"]
-    assert len(u) == 13 and u[0]["unit_id"] == "bihar"
+    assert len(u) == 14 and u[0]["unit_id"] == "bihar"
 
 
 def test_unit_districts_have_scores(client):

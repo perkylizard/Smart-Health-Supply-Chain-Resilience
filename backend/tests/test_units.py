@@ -13,7 +13,7 @@ def districts():
 
 
 def test_thirteen_units():
-    assert len(units.demo_units()) == 13
+    assert len(units.demo_units()) == 14
     assert units.demo_units().query("is_hero").unit_id.tolist() == ["bihar"]
 
 
