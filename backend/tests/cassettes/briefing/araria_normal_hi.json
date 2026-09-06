@@ -1,0 +1,9 @@
+{
+ "key": "29c4260f561b2be8ea5b0b80",
+ "model": "gemini-3.5-flash-lite",
+ "service": "briefing",
+ "case": "araria_normal_hi",
+ "prompt_head": "Write in simple Hindi (Devanagari script) as a district health officer would read it; keep medicine names in English.\nNo scenario is active; these are the current figures.\nWrite the morning briefing for the District Health Officer from this JSON. Days of stock are for each PHC and commodity; 'cause'",
+ "response": "{\n  \"headline\": \"जिला अररिया में आपूर्ति छूटने के कारण स्टॉक समाप्त हो रहा है।\",\n  \"body\": [\n    \"Aadharbhut Community Health Center में Oxytocin injection 10 IU, Paracetamol 500 mg tablet और RTI/STI colour-coded syndromic kits का स्टॉक 0.0 दिन पर है।\",\n    \"CHC Araria 1 में Calcium 500 mg tablet, Fluconazole tablet और IFA blue (adolescent) का स्टॉक 0.0 दिन पर है।\",\n    \"यह समस्या इस महीने अपेक्षित इंडेंट के विरुद्ध कोई स्टॉक न मिलने के कारण हुई है।\",\n    \"वर्तमान में कोई भी स्थानांतरण स्वीकृत करने के लिए तैयार नहीं है।\"\n  ],\n  \"top_actions\": [\n    \"Aadharbhut Community Health Center के लिए रुके हुए स्टॉक की आपूर्ति की समीक्षा करें।\",\n    \"CHC Araria 1 के छूटे हुए इंडेंट के संबंध में आवश्यक कार्रवाई करें।\"\n  ],\n  \"lang\": \"hi\"\n}",
+ "recorded": "2026-09-06"
+}

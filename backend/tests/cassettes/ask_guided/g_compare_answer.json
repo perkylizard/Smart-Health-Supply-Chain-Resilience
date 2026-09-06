@@ -1,0 +1,9 @@
+{
+ "key": "adcb3653a88eb472233ac0fd",
+ "model": "gemini-3.5-flash-lite",
+ "service": "ask_guided",
+ "case": "g_compare_answer",
+ "prompt_head": "Write in clear Indian English.\nAnswer in one or two sentences from these rows, citing numbers.\nQuestion: Compare the districts of Bihar on days of stock\nRows: [{\"district\": \"Kishanganj\", \"facilities\": 36, \"median_days_of_stock\": 34.400001525878906, \"share_under_14d\": 0.131, \"stockout_rate\": 0.033}, ",
+ "response": "{\n  \"answer\": \"Among the districts in Bihar, Kishanganj has the lowest median days of stock at 34.4 days, while Kaimur Bhabua has the highest at 49.6 days.\"\n}",
+ "recorded": "2026-09-06"
+}

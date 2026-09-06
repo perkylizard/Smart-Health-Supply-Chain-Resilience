@@ -1,0 +1,9 @@
+{
+ "key": "665f758453415305bd2ab38e",
+ "model": "gemini-3.5-flash-lite",
+ "service": "ask_guided",
+ "case": "g_hi_answer",
+ "prompt_head": "Write in simple Hindi (Devanagari script) as a district health officer would read it; keep medicine names in English.\nAnswer in one or two sentences from these rows, citing numbers.\nQuestion: अररिया में किस PHC में सबसे कम ORS बचा है?\nRows: [{\"facility_name\": \"PHC Araria 6\", \"type\": \"PHC\", \"district",
+ "response": "{\"answer\": \"\\u0905\\u0930\\u0930\\u0932\\u0933\\u0933 \\u0927\\u0932\\u0938\\u0923\\u0939\\u0947 PHC Araria 6 \\u092E\\u0947\\u0902 ORS sachet (WHO low-osmolarity) \\u0915\\u0932 0.1 \\u092C\\u0915\\u0936 \\u0914\\u0930 4.8 \\u0926\\u093F\\u0928 \\u0915\\u093E \\u0938\\u094D\\u091F\\u0949\\u0915 \\u092C\\u091A\\u093E \\u0939\\u0948\\u0964\"}",
+ "recorded": "2026-09-06"
+}

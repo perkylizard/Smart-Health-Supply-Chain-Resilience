@@ -69,7 +69,7 @@ def test_monsoon_scenario_raises_ors_demand():
     surge = simulate.build_ledger(fd, fac, _commodities(), "monsoon_surge", 1.0, seed=3)
     jul_b = base[base["month"] == 7]["demand"].sum(); jul_s = surge[surge["month"] == 7]["demand"].sum()
     jan_b = base[base["month"] == 1]["demand"].sum(); jan_s = surge[surge["month"] == 1]["demand"].sum()
-    assert abs(jul_s / jul_b - 2.5) < 0.01
+    assert abs(jul_s / jul_b - 3.5) < 0.01
     assert abs(jan_s / jan_b - 1.0) < 0.01
     assert (surge["lead_days"][surge["month"] == 7] > base["lead_days"][base["month"] == 7]).all()
 

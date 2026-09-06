@@ -1,0 +1,36 @@
+export type Lang = "en" | "hi";
+const en = {
+  briefing: "Briefing", dispatch: "Dispatch", ask: "Ask", system: "System", district: "District", language: "Language", scenario: "Scenario",
+  askPlaceholder: "Ask the district, for example: which PHCs have the least ORS?", offline: "The service is unreachable. Showing the last data loaded.",
+  whyLink: "Why?", days: "days", daysLeft: "days left", alerts: "Alerts", noAlerts: "No PHC is under 14 days of stock. Next review on Monday.",
+  resilience: "Resilience score", rankOf: (r: number, n: number) => `rank ${r} of ${n} districts`, trend: "Trends, last 12 months", opd: "Outpatient visits",
+  diarrhoea: "Diarrhoea, under five", stockouts: "Stock-outs", facilities: "facilities", real: "HMIS real", simulated: "simulated", forecast: "forecast",
+  needs: "Needs", proposed: "Proposed transfers", transit: "In transit", approve: "Approve", approveAll: "Approve all", reject: "Reject", delivered: "Mark delivered",
+  cannotSpare: "Donor cannot spare", roadClosed: "Road closed", confirmAll: (n: number) => `Approve all ${n} transfers?`, cancel: "Cancel",
+  guided: "Guided", advanced: "Advanced (SQL)", run: "Run", showSql: "Show SQL", answer: "Answer", rows: "rows", exportCsv: "Export CSV",
+  examples: ["Which PHCs have the least ORS?", "Show the zinc trend this year", "Compare districts on days of stock", "What ran out most last month?"],
+  stock: "Stock", staff: "Staff", beds: "Beds", entries: "Reported entries", occupied: "occupied", sanctioned: "sanctioned", inPosition: "in position", present: "days present",
+  dataHealth: "Data health", latestMonth: "Latest simulated month", federated: "Federated learning", comingSoon: "Available once the federated node is deployed.",
+  chatTitle: "PHC staff channel (simulated WhatsApp)", chatHint: "Send a stock update as text, a photo of the register, or a voice note.", send: "Send",
+  confirm: "Reply 1 to confirm, 2 to correct", causes: { cases_up: "cases up", supply_missed: "supply missed", written_off: "written off", data_issue: "data issue", none: "" } as Record<string, string>,
+  severity: { red: "under 7 days", amber: "under 14 days", watch: "under 30 days", ok: "ok", data_issue: "reporting error" } as Record<string, string>,
+  scenarioOff: "No scenario", intensity: "Intensity", whatIf: "What-if scenario active",
+};
+const hi: typeof en = {
+  ...en,
+  briefing: "ब्रीफिंग", dispatch: "डिस्पैच", ask: "पूछें", system: "सिस्टम", district: "ज़िला", language: "भाषा", scenario: "परिदृश्य",
+  askPlaceholder: "ज़िले से पूछें, जैसे: किस PHC में सबसे कम ORS बचा है?", offline: "सेवा उपलब्ध नहीं है। पिछला डेटा दिखाया जा रहा है।",
+  whyLink: "क्यों?", days: "दिन", daysLeft: "दिन शेष", alerts: "चेतावनियाँ", noAlerts: "कोई PHC 14 दिन से कम स्टॉक पर नहीं है। अगली समीक्षा सोमवार।",
+  resilience: "रेज़िलिएंस स्कोर", rankOf: (r, n) => `${n} ज़िलों में ${r}वाँ स्थान`, trend: "रुझान, पिछले 12 महीने", opd: "ओपीडी", diarrhoea: "दस्त, पाँच वर्ष से कम", stockouts: "स्टॉक-आउट",
+  facilities: "सुविधाएँ", real: "HMIS वास्तविक", simulated: "सिम्युलेटेड", forecast: "पूर्वानुमान", needs: "ज़रूरत", proposed: "प्रस्तावित स्थानांतरण", transit: "रास्ते में",
+  approve: "स्वीकृत करें", approveAll: "सभी स्वीकृत करें", reject: "अस्वीकार", delivered: "पहुँच गया", cannotSpare: "दाता नहीं दे सकता", roadClosed: "सड़क बंद",
+  confirmAll: (n) => `सभी ${n} स्थानांतरण स्वीकृत करें?`, cancel: "रद्द", guided: "निर्देशित", advanced: "उन्नत (SQL)", run: "चलाएँ", showSql: "SQL दिखाएँ", answer: "उत्तर", rows: "पंक्तियाँ",
+  exportCsv: "CSV निर्यात", examples: ["किस PHC में सबसे कम ORS बचा है?", "इस साल जिंक का रुझान दिखाएँ", "ज़िलों की तुलना करें", "पिछले महीने क्या सबसे ज़्यादा खत्म हुआ?"],
+  stock: "स्टॉक", staff: "स्टाफ", beds: "बिस्तर", entries: "रिपोर्ट की गई प्रविष्टियाँ", occupied: "भरे", sanctioned: "स्वीकृत पद", inPosition: "कार्यरत", present: "उपस्थित दिन",
+  dataHealth: "डेटा स्थिति", latestMonth: "नवीनतम सिम्युलेटेड महीना", federated: "फ़ेडरेटेड लर्निंग", comingSoon: "फ़ेडरेटेड नोड तैनात होने पर उपलब्ध।",
+  chatTitle: "PHC स्टाफ चैनल (सिम्युलेटेड WhatsApp)", chatHint: "स्टॉक अपडेट टेक्स्ट, रजिस्टर की फ़ोटो या वॉइस नोट से भेजें।", send: "भेजें", confirm: "पुष्टि के लिए 1, सुधार के लिए 2",
+  causes: { cases_up: "केस बढ़े", supply_missed: "आपूर्ति छूटी", written_off: "अनुपयोगी", data_issue: "डेटा त्रुटि", none: "" },
+  severity: { red: "7 दिन से कम", amber: "14 दिन से कम", watch: "30 दिन से कम", ok: "ठीक", data_issue: "रिपोर्टिंग त्रुटि" },
+  scenarioOff: "कोई परिदृश्य नहीं", intensity: "तीव्रता", whatIf: "क्या-हो-अगर परिदृश्य सक्रिय",
+};
+export const strings = { en, hi };

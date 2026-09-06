@@ -1,0 +1,9 @@
+{
+ "key": "9dad94b3bce274267b5fdf3a",
+ "model": "gemini-3.5-flash-lite",
+ "service": "ask_guided",
+ "case": "g_hi_pick",
+ "prompt_head": "Write in simple Hindi (Devanagari script) as a district health officer would read it; keep medicine names in English.\nChoose the single best query shape for the officer's question and fill its parameters. Shapes:\n- facilities_lowest_days: Facilities with the fewest days of stock for one commodity. p",
+ "response": "{\n  \"shape\": \"facilities_lowest_days\",\n  \"params\": [\n    {\n      \"name\": \"commodity\",\n      \"value\": \"ORS\"\n    },\n    {\n      \"name\": \"n\",\n      \"value\": \"1\"\n    }\n  ],\n  \"restate\": \"अररिया में किस PHC में सबसे कम ORS बचा है?\"\n}",
+ "recorded": "2026-09-06"
+}

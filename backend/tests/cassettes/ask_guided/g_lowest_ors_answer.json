@@ -1,0 +1,9 @@
+{
+ "key": "c9c5e90db58d30ed28c982db",
+ "model": "gemini-3.5-flash-lite",
+ "service": "ask_guided",
+ "case": "g_lowest_ors_answer",
+ "prompt_head": "Write in clear Indian English.\nAnswer in one or two sentences from these rows, citing numbers.\nQuestion: Which PHCs in Araria have the least ORS left?\nRows: [{\"facility_name\": \"PHC Araria 6\", \"type\": \"PHC\", \"district\": \"Araria\", \"days_of_stock\": 4.800000190734863, \"closing\": 0.10000000149011612, \"co",
+ "response": "{\n  \"answer\": \"PHC Araria 6 has the least ORS left with a closing stock of 0.1 and 4.8 days of stock remaining.\"\n}",
+ "recorded": "2026-09-06"
+}

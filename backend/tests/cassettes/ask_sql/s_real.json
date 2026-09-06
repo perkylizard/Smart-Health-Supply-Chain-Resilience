@@ -1,0 +1,9 @@
+{
+ "key": "a2ec30f2501cf1d1698dba41",
+ "model": "gemini-3.5-flash-lite",
+ "service": "ask_sql",
+ "case": "s_real",
+ "prompt_head": "Write in clear Indian English.\nWrite ONE DuckDB SELECT to answer the question. Use only these tables and columns:\nbeds(facility_id VARCHAR, month_index BIGINT, year BIGINT, month BIGINT, beds BIGINT, occupied BIGINT, source VARCHAR)\ncommodities(commodity_id VARCHAR, name VARCHAR, unit VARCHAR, categ",
+ "response": "{\n  \"sql\": \"SELECT month, closing FROM hmis_ledger_real WHERE district = 'Araria' AND fy = '2019-20' AND item_name LIKE '%ORS%' ORDER BY month\",\n  \"rationale\": \"This query retrieves the real HMIS closing stock for ORS by month for Araria district in the financial year 2019-20 from the hmis_ledger_real table.\"\n}",
+ "recorded": "2026-09-06"
+}

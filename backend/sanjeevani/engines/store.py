@@ -14,7 +14,12 @@ class Store:
         self._latest = None
 
     def q(self, sql: str, params: list | None = None) -> pd.DataFrame:
-        return self.con.execute(sql, params or []).df()
+        # a cursor per call: DuckDB connections are not safe to share across FastAPI's worker threads
+        cur = self.con.cursor()
+        try:
+            return cur.execute(sql, params or []).df()
+        finally:
+            cur.close()
 
     def units(self) -> pd.DataFrame:
         return self.q("SELECT unit_id, unit_name, kind, state, districts, CAST(is_hero AS INTEGER) AS is_hero FROM units ORDER BY is_hero DESC, unit_name")
@@ -30,7 +35,7 @@ class Store:
 
     def latest_month(self) -> int:
         if self._latest is None:
-            self._latest = int(self.con.execute("SELECT max(month_index) FROM ledger").fetchone()[0])
+            self._latest = int(self.q("SELECT max(month_index) AS m FROM ledger")["m"].iloc[0])
         return self._latest
 
     def ledger_window(self, unit_id: str, months: int = 12, district: str | None = None) -> pd.DataFrame:

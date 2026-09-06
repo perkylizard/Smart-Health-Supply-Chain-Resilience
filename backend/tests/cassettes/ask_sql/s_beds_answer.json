@@ -1,0 +1,9 @@
+{
+ "key": "a2248b6b7802ae438cc3149d",
+ "model": "gemini-3.5-flash-lite",
+ "service": "ask_sql",
+ "case": "s_beds_answer",
+ "prompt_head": "Write in clear Indian English.\nAnswer the question in one or two sentences from these rows, citing numbers.\nQuestion: Average bed occupancy of CHCs in Araria in the latest month\nRows: [{\"avg_occupancy_pct\": 58.46153846153845}]",
+ "response": "{\"answer\": \"The average bed occupancy of CHCs in Araria in the latest month is 58.46%, as per the recorded data.\"}",
+ "recorded": "2026-09-06"
+}

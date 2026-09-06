@@ -1,0 +1,9 @@
+{
+ "key": "246f6f4802b921a3240a8f7c",
+ "model": "gemini-3.5-flash-lite",
+ "service": "briefing",
+ "case": "araria_normal_en",
+ "prompt_head": "Write in clear Indian English.\nNo scenario is active; these are the current figures.\nWrite the morning briefing for the District Health Officer from this JSON. Days of stock are for each PHC and commodity; 'cause' says why. Mention at most three facilities by name and always the number of days. Numb",
+ "response": "{\n  \"headline\": \"Araria district currently has 133 red stockout alerts across facilities.\",\n  \"body\": [\n    \"Aadharbhut Community Health Center has 0.0 days of stock for Oxytocin injection because no stock was received this month against an expected indent.\",\n    \"CHC Araria 1 has 0.0 days of stock for Calcium tablets due to a missed supply.\",\n    \"CHC Araria 10 has 0.0 days of stock for Rotavirus vaccine because of a missed monthly indent.\",\n    \"No transfers are ready to approve at this time.\"\n  ],\n  \"top_actions\": [\n    \"Review delayed indents for Aadharbhut Community Health Center.\",\n    \"Coordinate emergency dispatches for CHC Araria 1.\",\n    \"Follow up on missed Rotavirus vaccine supplies for CHC Araria 10.\"\n  ],\n  \"lang\": \"en\"\n}",
+ "recorded": "2026-09-06"
+}

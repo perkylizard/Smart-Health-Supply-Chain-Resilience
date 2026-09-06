@@ -35,12 +35,18 @@ def _clean(df: pd.DataFrame) -> list[dict]:
     return out
 
 
-def create_app(store: Store | None = None, state: InMemoryState | None = None) -> FastAPI:
+def create_app(store: Store | None = None, state: InMemoryState | None = None, gemini=None, warm: bool = True) -> FastAPI:
     app = FastAPI(title="Sanjeevani Grid API", version="0.1.0")
     app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
     store = store or Store()
     state = state or InMemoryState()
     app.state.store, app.state.state = store, state
+    from sanjeevani.gemini.client import GeminiClient
+    app.state.gemini = gemini or GeminiClient()
+
+    import threading as _th
+    _locks: dict = {}
+    _lock_guard = _th.Lock()
 
     @lru_cache(maxsize=256)
     def _alerts_cached(unit_id: str, district: str | None, scenario: str, intensity: float, stamp: int) -> pd.DataFrame:
@@ -51,7 +57,11 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None) -
 
     def alerts_for(unit_id: str, district: str | None = None) -> pd.DataFrame:
         sc = state.get_scenario()
-        return _alerts_cached(unit_id, district, sc["name"], sc["intensity"], int(sc["updated"]))
+        key = (unit_id, district, sc["name"], sc["intensity"], int(sc["updated"]))
+        with _lock_guard:
+            lock = _locks.setdefault(key, _th.Lock())
+        with lock:  # one computation per key; concurrent callers wait for it instead of recomputing
+            return _alerts_cached(*key)
 
     def _unit_or_404(unit_id: str):
         if unit_id not in set(store.units()["unit_id"]):
@@ -79,8 +89,7 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None) -
         out = fac.merge(ds, on="district", how="left").merge(red, on="district", how="left").fillna({"red_alerts": 0})
         return {"unit_id": unit_id, "districts": _clean(out), "scenario": state.get_scenario(), "provenance": PROVENANCE["stock_ledger"]}
 
-    @app.get("/districts/{unit_id}/{district}/summary")
-    def district_summary(unit_id: str, district: str):
+    def summary_data(unit_id: str, district: str) -> dict:
         _unit_or_404(unit_id)
         al = alerts_for(unit_id, district)
         if al.empty:
@@ -98,13 +107,20 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None) -
             spark[name] = [float(x) for x in r["value"].tail(12)]
         w = store.ledger_window(unit_id, 12, district)
         spark["stockouts"] = [int(x) for x in w.groupby("month_index")["stockout"].sum().sort_index().tail(12)]
+        deltas = {k: (round(v[-1] / v[-2] - 1, 3) if len(v) >= 2 and v[-2] else None) for k, v in spark.items()}
         return {
             "unit_id": unit_id, "district": district, "scenario": state.get_scenario(),
             "counts": {k: int(v) for k, v in counts.items()}, "facilities": int(al["facility_id"].nunique()),
             "score": _clean(ds)[0] if len(ds) else None, "rank_in_unit": rank_pos, "of": int(len(rank)),
-            "alerts": _clean(top), "sparklines": spark,
+            "alerts": _clean(top), "sparklines": spark, "sparkline_deltas": deltas,
             "provenance": {"alerts": PROVENANCE["stock_ledger"], "sparklines": "HMIS real district counts (opd, diarrhoea_u5); simulated (stockouts)"},
         }
+
+    app.state.summary_data = summary_data
+
+    @app.get("/districts/{unit_id}/{district}/summary")
+    def district_summary(unit_id: str, district: str):
+        return summary_data(unit_id, district)
 
     @app.get("/districts/{unit_id}/{district}/facilities")
     def district_facilities(unit_id: str, district: str):
@@ -206,7 +222,24 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None) -
     def add_entry(body: EntryIn):
         return state.add_entry(body.model_dump())
 
+    from app.routes_ai import router as ai_router
+    app.include_router(ai_router)
+
+    # warm the hero unit so the first page a judge opens is fast
+    import threading
+    def _warm():
+        try:
+            hero = store.units().iloc[0]["unit_id"]
+            alerts_for(hero)
+        except Exception:
+            pass
+    if warm:
+        threading.Thread(target=_warm, daemon=True).start()
     return app
+
+
+def district_summary_data(app: FastAPI, unit_id: str, district: str) -> dict:
+    return app.state.summary_data(unit_id, district)
 
 
 app = create_app()

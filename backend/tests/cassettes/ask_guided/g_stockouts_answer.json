@@ -1,0 +1,9 @@
+{
+ "key": "50e24bee548cb536bcff2106",
+ "model": "gemini-3.5-flash-lite",
+ "service": "ask_guided",
+ "case": "g_stockouts_answer",
+ "prompt_head": "Write in clear Indian English.\nAnswer in one or two sentences from these rows, citing numbers.\nQuestion: What ran out most often last month?\nRows: [{\"commodity_name\": \"Metoprolol 50 mg tablet\", \"category\": \"chronic\", \"facilities_stocked_out\": 5.0, \"median_days\": 37.900001525878906}, {\"commodity_name",
+ "response": "{\n  \"answer\": \"Metoprolol 50 mg tablet, TT vaccine, Anti-rabies vaccine, and IV fluid normal saline 500 ml ran out most often last month, each stocked out in 5.0 facilities.\"\n}",
+ "recorded": "2026-09-06"
+}
