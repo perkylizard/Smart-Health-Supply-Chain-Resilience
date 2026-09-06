@@ -15,7 +15,7 @@ export function parseLocal(text: string): { commodity_id: string; quantity: numb
     if (!c) continue;
     const zero = /khatam|khatm|खत्म|zero|nil|nahi|नहीं/i.test(seg);
     const n = seg.match(/\d+/)?.[0];
-    const word = Object.keys(NUM).find((k) => new RegExp(`\\b${k}\\b`, "i").test(seg));
+    const word = Object.keys(NUM).find((k) => (/^[a-z]+$/i.test(k) ? new RegExp(`\\b${k}\\b`, "i") : new RegExp(k)).test(seg));
     out.push({ commodity_id: c, quantity: zero ? 0 : n ? Number(n) : word ? NUM[word] : 0 });
   }
   return out;
