@@ -1,0 +1,9 @@
+{
+ "key": "23b6c56c68f886e3d65e8dea",
+ "model": "gemini-3.5-flash-lite",
+ "service": "ask_guided",
+ "case": "g_stockouts_pick",
+ "prompt_head": "Write in clear Indian English.\nChoose the single best query shape for the officer's question and fill its parameters. Shapes:\n- facilities_lowest_days: Facilities with the fewest days of stock for one commodity. params: {'commodity': 'str', 'n': 'int'}\n- item_trend: Monthly demand trend of one commo",
+ "response": "{\n  \"shape\": \"stockouts_by_commodity\",\n  \"restate\": \"Which commodities stocked out most across the district in the latest month?\"\n}",
+ "recorded": "2026-09-06"
+}

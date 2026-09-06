@@ -70,9 +70,14 @@ SHAPES: dict[str, QueryShape] = {s.name: s for s in [
 ]}
 
 
+class Param(BaseModel):
+    name: str
+    value: str
+
+
 class PickOut(BaseModel):
     shape: str = Field(description="Exactly one shape name from the list")
-    params: dict[str, str] = Field(default_factory=dict, description="Parameter values as strings; only the listed parameters")
+    params: list[Param] = Field(default_factory=list, description="Parameter values as strings; only the listed parameters of that shape")
     restate: str = Field(description="The question restated in one short sentence")
 
 
@@ -116,8 +121,9 @@ def run(client: GeminiClient, con, question: str, unit_id: str, district: str | 
         f"Commodity parameters accept a name fragment like 'ORS' or 'zinc'. If nothing fits, choose 'stockouts_by_commodity'.\nQuestion: {question}",
         PickOut, service="ask_guided", case=f"{case}_pick" if case else None)
     shape = SHAPES.get(pick.shape) or SHAPES["stockouts_by_commodity"]
+    params = {p.name: p.value for p in pick.params if p.name in shape.params}
     try:
-        rows = execute(shape, pick.params, unit_id, district, con)
+        rows = execute(shape, params, unit_id, district, con)
         err = None
     except Exception as e:
         rows, err = pd.DataFrame(), str(e)[:200]
@@ -131,6 +137,6 @@ def run(client: GeminiClient, con, question: str, unit_id: str, district: str | 
         answer = f"{len(rows)} row(s) returned." if lang == "en" else f"{len(rows)} पंक्तियाँ मिलीं।"
     elif err is None:
         answer = "No rows matched." if lang == "en" else "कोई पंक्ति नहीं मिली।"
-    return {"mode": "guided", "question": question, "restate": pick.restate, "shape": shape.name, "params": pick.params,
+    return {"mode": "guided", "question": question, "restate": pick.restate, "shape": shape.name, "params": params,
             "rows": rows.to_dict(orient="records"), "row_count": int(len(rows)), "chart": shape.chart, "sql": shape.sql.strip(), "error": err,
             "answer": answer, "provenance": "Guided query over the demo database; shape and parameters chosen by Gemini, SQL is a fixed template"}

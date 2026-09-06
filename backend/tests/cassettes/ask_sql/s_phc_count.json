@@ -1,0 +1,9 @@
+{
+ "key": "2e1e4b4ff3c29b878796c85e",
+ "model": "gemini-3.5-flash-lite",
+ "service": "ask_sql",
+ "case": "s_phc_count",
+ "prompt_head": "Write in clear Indian English.\nWrite ONE DuckDB SELECT to answer the question. Use only these tables and columns:\nbeds(facility_id VARCHAR, month_index BIGINT, year BIGINT, month BIGINT, beds BIGINT, occupied BIGINT, source VARCHAR)\ncommodities(commodity_id VARCHAR, name VARCHAR, unit VARCHAR, categ",
+ "response": "{\n  \"sql\": \"SELECT f.district, COUNT(DISTINCT f.facility_id) AS phc_count FROM facilities f JOIN v_days_of_stock v ON f.facility_id = v.facility_id WHERE f.state = 'bihar' AND v.month_index = (SELECT mi FROM v_latest_month) AND v.days_of_stock < 7 GROUP BY f.district HAVING COUNT(DISTINCT v.commodity_id) > 3\",\n  \"rationale\": \"This query counts the number of PHCs per district in Bihar that have more than 3 commodities with less than 7 days of stock in the latest month.\"\n}",
+ "recorded": "2026-09-06"
+}

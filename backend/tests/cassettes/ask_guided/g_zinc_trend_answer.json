@@ -1,0 +1,9 @@
+{
+ "key": "8f76bf2c833b1e5d25db5873",
+ "model": "gemini-3.5-flash-lite",
+ "service": "ask_guided",
+ "case": "g_zinc_trend_answer",
+ "prompt_head": "Write in clear Indian English.\nAnswer in one or two sentences from these rows, citing numbers.\nQuestion: Show me the monthly trend of zinc demand in the district\nRows: [{\"year\": 2024, \"month\": 4, \"demand\": 1722.0999956130981, \"distributed\": 1722.0999956130981, \"stockouts\": 0.0}, {\"year\": 2024, \"mont",
+ "response": "{\n  \"answer\": \"Zinc demand across the district ranges from 560.2 in January 2025 to a peak of 3780.3 in June 2026. Please note that I only handle supply and logistics; for any clinical queries, kindly consult the medical officer.\"\n}",
+ "recorded": "2026-09-06"
+}

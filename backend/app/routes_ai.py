@@ -4,12 +4,24 @@ import time
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
-from sanjeevani.gemini import briefing as B, explain as E
+import duckdb
+
+from sanjeevani import paths
+from sanjeevani.gemini import ask_guided as G, ask_sql as Q, briefing as B, explain as E
 from sanjeevani.gemini.client import CassetteMiss, GeminiClient, GeminiUnavailable
 
 router = APIRouter(prefix="/ai", tags=["ai"])
 _cache: dict[tuple, tuple[float, dict]] = {}
 TTL = 600
+
+
+class AskIn(BaseModel):
+    question: str
+    unit: str
+    district: str | None = None
+    lang: str = "en"
+    mode: str = "guided"
+    sql: str | None = None
 
 
 class ExplainIn(BaseModel):
@@ -53,5 +65,26 @@ def explain(body: ExplainIn, request: Request):
         out = E.run(client, body.item, body.kind, body.lang).model_dump(); out["status"] = "ok"
     except (GeminiUnavailable, CassetteMiss) as e:
         out = {"explanation": body.item.get("reason") or body.item.get("cause_detail") or "Explanation unavailable.", "numbers_used": [], "confidence": "low", "status": f"fallback: {type(e).__name__}"}
+    out["model"] = client.model
+    return out
+
+
+@router.post("/ask")
+def ask(body: AskIn, request: Request):
+    client = _client(request)
+    if body.mode not in ("guided", "advanced"):
+        raise HTTPException(400, "mode must be guided or advanced")
+    try:
+        if body.mode == "guided":
+            con = duckdb.connect(str(paths.DATA / "demo.duckdb"), read_only=True)
+            try:
+                out = G.run(client, con, body.question[:2000], body.unit, body.district, body.lang)
+            finally:
+                con.close()
+        else:
+            out = Q.run(client, body.question[:2000], body.unit, body.district, body.lang, user_sql=body.sql)
+        out["status"] = "ok"
+    except (GeminiUnavailable, CassetteMiss) as e:
+        out = {"mode": body.mode, "question": body.question, "answer": "", "rows": [], "error": f"AI unavailable ({type(e).__name__})", "status": "fallback"}
     out["model"] = client.model
     return out
