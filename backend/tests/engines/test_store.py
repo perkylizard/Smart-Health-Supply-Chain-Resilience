@@ -17,7 +17,7 @@ def test_latest_month(store):
 
 def test_units_and_hero(store):
     u = store.units()
-    assert len(u) == 13 and u.iloc[0]["unit_id"] == "bihar"
+    assert len(u) == 14 and u.iloc[0]["unit_id"] == "bihar"
 
 
 def test_ledger_latest_ladakh(store):
