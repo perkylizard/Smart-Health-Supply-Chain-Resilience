@@ -138,7 +138,7 @@ One Python backend, one dashboard, Gemini in the middle.
 
 - [x] Primary demo state: **Bihar** (decided 6 Sep)
 - [x] Demo set (13 units, decided 6 Sep): Bihar (hero), Uttar Pradesh, Rajasthan, Madhya Pradesh, Andhra Pradesh, Telangana, Karnataka, Arunachal Pradesh, Jammu & Kashmir, Ladakh (Leh + Kargil, carved out of J&K files for 2017-19), Lakshadweep, Andaman & Nicobar, Bastar division of Chhattisgarh (tribal region, 7 districts). National map still covers all 36 states/UTs.
-- [x] Federated partner: **Brazil** via the Ministry of Health open API (real facility-level stock ledger). Decided 5 Sep.
+- [ ] Federated partner: OPEN. Options: Brazil (real open stock data, recommended by Claude, not yet confirmed), India-only two-state federation (e.g. Bihar + Assam), another BRICS nation (simulated node), or a combination.
 - [ ] Which drugs to track (suggestion: 15 to 20 from NLEM covering outbreak, chronic, maternal)
 - [ ] Bed availability: include in simulator, or focus on medicines and staff
 
