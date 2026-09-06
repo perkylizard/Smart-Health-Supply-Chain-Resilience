@@ -1,0 +1,367 @@
+{
+ "resource_id": "c66c0448-bc68-4e02-9d08-f6be029b8f54",
+ "url": "https://api.data.gov.in/resource/c66c0448-bc68-4e02-9d08-f6be029b8f54",
+ "licence": "Government Open Data License - India (GODL)",
+ "retrieved": "2026-09-06",
+ "title": "Item-wise HMIS report of Jammu and Kashmir for 2018-19",
+ "desc": "Item-wise HMIS report of Jammu and Kashmir for 2018-19",
+ "org": [
+  "Ministry of Health and Family Welfare",
+  "Department of Health and Family Welfare"
+ ],
+ "sector": [
+  "Health and Family welfare",
+  "Health"
+ ],
+ "source": "data.gov.in",
+ "updated_date": "2021-02-25T13:34:29Z",
+ "created_date": "2021-02-24T06:52:54Z",
+ "total": 11792,
+ "field": [
+  {
+   "id": "district",
+   "name": "District",
+   "type": "keyword"
+  },
+  {
+   "id": "_s_no_",
+   "name": "S.No.",
+   "type": "keyword"
+  },
+  {
+   "id": "parameters",
+   "name": "Parameters",
+   "type": "keyword"
+  },
+  {
+   "id": "type",
+   "name": "Type",
+   "type": "keyword"
+  },
+  {
+   "id": "april___total___a_b__or__c_d__",
+   "name": "April - Total [(A+B) or (C+D)]",
+   "type": "double"
+  },
+  {
+   "id": "april___public__a_",
+   "name": "April - Public [A]",
+   "type": "keyword"
+  },
+  {
+   "id": "april___private__b_",
+   "name": "April - Private [B]",
+   "type": "keyword"
+  },
+  {
+   "id": "april___urban__c_",
+   "name": "April - Urban [C]",
+   "type": "keyword"
+  },
+  {
+   "id": "april___rural__d_",
+   "name": "April - Rural [D]",
+   "type": "keyword"
+  },
+  {
+   "id": "may___total___a_b__or__c_d__",
+   "name": "May - Total [(A+B) or (C+D)]",
+   "type": "double"
+  },
+  {
+   "id": "may___public__a_",
+   "name": "May - Public [A]",
+   "type": "keyword"
+  },
+  {
+   "id": "may___private__b_",
+   "name": "May - Private [B]",
+   "type": "keyword"
+  },
+  {
+   "id": "may___urban__c_",
+   "name": "May - Urban [C]",
+   "type": "keyword"
+  },
+  {
+   "id": "may___rural__d_",
+   "name": "May - Rural [D]",
+   "type": "keyword"
+  },
+  {
+   "id": "june___total___a_b__or__c_d__",
+   "name": "June - Total [(A+B) or (C+D)]",
+   "type": "double"
+  },
+  {
+   "id": "june___public__a_",
+   "name": "June - Public [A]",
+   "type": "keyword"
+  },
+  {
+   "id": "june___private__b_",
+   "name": "June - Private [B]",
+   "type": "keyword"
+  },
+  {
+   "id": "june___urban__c_",
+   "name": "June - Urban [C]",
+   "type": "keyword"
+  },
+  {
+   "id": "june___rural__d_",
+   "name": "June - Rural [D]",
+   "type": "keyword"
+  },
+  {
+   "id": "july___total___a_b__or__c_d__",
+   "name": "July - Total [(A+B) or (C+D)]",
+   "type": "double"
+  },
+  {
+   "id": "july___public__a_",
+   "name": "July - Public [A]",
+   "type": "keyword"
+  },
+  {
+   "id": "july___private__b_",
+   "name": "July - Private [B]",
+   "type": "keyword"
+  },
+  {
+   "id": "july___urban__c_",
+   "name": "July - Urban [C]",
+   "type": "keyword"
+  },
+  {
+   "id": "july___rural__d_",
+   "name": "July - Rural [D]",
+   "type": "keyword"
+  },
+  {
+   "id": "august___total___a_b__or__c_d__",
+   "name": "August - Total [(A+B) or (C+D)]",
+   "type": "double"
+  },
+  {
+   "id": "august___public__a_",
+   "name": "August - Public [A]",
+   "type": "keyword"
+  },
+  {
+   "id": "august___private__b_",
+   "name": "August - Private [B]",
+   "type": "keyword"
+  },
+  {
+   "id": "august___urban__c_",
+   "name": "August - Urban [C]",
+   "type": "keyword"
+  },
+  {
+   "id": "august___rural__d_",
+   "name": "August - Rural [D]",
+   "type": "keyword"
+  },
+  {
+   "id": "september___total___a_b__or__c_d__",
+   "name": "September - Total [(A+B) or (C+D)]",
+   "type": "double"
+  },
+  {
+   "id": "september___public__a_",
+   "name": "September - Public [A]",
+   "type": "keyword"
+  },
+  {
+   "id": "september___private__b_",
+   "name": "September - Private [B]",
+   "type": "keyword"
+  },
+  {
+   "id": "september___urban__c_",
+   "name": "September - Urban [C]",
+   "type": "keyword"
+  },
+  {
+   "id": "september___rural__d_",
+   "name": "September - Rural [D]",
+   "type": "keyword"
+  },
+  {
+   "id": "october___total___a_b__or__c_d__",
+   "name": "October - Total [(A+B) or (C+D)]",
+   "type": "double"
+  },
+  {
+   "id": "october___public__a_",
+   "name": "October - Public [A]",
+   "type": "keyword"
+  },
+  {
+   "id": "october___private__b_",
+   "name": "October - Private [B]",
+   "type": "keyword"
+  },
+  {
+   "id": "october___urban__c_",
+   "name": "October - Urban [C]",
+   "type": "keyword"
+  },
+  {
+   "id": "october___rural__d_",
+   "name": "October - Rural [D]",
+   "type": "keyword"
+  },
+  {
+   "id": "november___total___a_b__or__c_d__",
+   "name": "November - Total [(A+B) or (C+D)]",
+   "type": "double"
+  },
+  {
+   "id": "november___public__a_",
+   "name": "November - Public [A]",
+   "type": "keyword"
+  },
+  {
+   "id": "november___private__b_",
+   "name": "November - Private [B]",
+   "type": "keyword"
+  },
+  {
+   "id": "november___urban__c_",
+   "name": "November - Urban [C]",
+   "type": "keyword"
+  },
+  {
+   "id": "november___rural__d_",
+   "name": "November - Rural [D]",
+   "type": "keyword"
+  },
+  {
+   "id": "december___total___a_b__or__c_d__",
+   "name": "December - Total [(A+B) or (C+D)]",
+   "type": "double"
+  },
+  {
+   "id": "december___public__a_",
+   "name": "December - Public [A]",
+   "type": "keyword"
+  },
+  {
+   "id": "december___private__b_",
+   "name": "December - Private [B]",
+   "type": "keyword"
+  },
+  {
+   "id": "december___urban__c_",
+   "name": "December - Urban [C]",
+   "type": "keyword"
+  },
+  {
+   "id": "december___rural__d_",
+   "name": "December - Rural [D]",
+   "type": "keyword"
+  },
+  {
+   "id": "january___total___a_b__or__c_d__",
+   "name": "January - Total [(A+B) or (C+D)]",
+   "type": "double"
+  },
+  {
+   "id": "january___public__a_",
+   "name": "January - Public [A]",
+   "type": "keyword"
+  },
+  {
+   "id": "january___private__b_",
+   "name": "January - Private [B]",
+   "type": "keyword"
+  },
+  {
+   "id": "january___urban__c_",
+   "name": "January - Urban [C]",
+   "type": "keyword"
+  },
+  {
+   "id": "january___rural__d_",
+   "name": "January - Rural [D]",
+   "type": "keyword"
+  },
+  {
+   "id": "february___total___a_b__or__c_d__",
+   "name": "February - Total [(A+B) or (C+D)]",
+   "type": "double"
+  },
+  {
+   "id": "february___public__a_",
+   "name": "February - Public [A]",
+   "type": "keyword"
+  },
+  {
+   "id": "february___private__b_",
+   "name": "February - Private [B]",
+   "type": "keyword"
+  },
+  {
+   "id": "february___urban__c_",
+   "name": "February - Urban [C]",
+   "type": "keyword"
+  },
+  {
+   "id": "february___rural__d_",
+   "name": "February - Rural [D]",
+   "type": "keyword"
+  },
+  {
+   "id": "march___total___a_b__or__c_d__",
+   "name": "March - Total [(A+B) or (C+D)]",
+   "type": "double"
+  },
+  {
+   "id": "march___public__a_",
+   "name": "March - Public [A]",
+   "type": "keyword"
+  },
+  {
+   "id": "march___private__b_",
+   "name": "March - Private [B]",
+   "type": "keyword"
+  },
+  {
+   "id": "march___urban__c_",
+   "name": "March - Urban [C]",
+   "type": "keyword"
+  },
+  {
+   "id": "march___rural__d_",
+   "name": "March - Rural [D]",
+   "type": "keyword"
+  },
+  {
+   "id": "total___total___a_b__or__c_d__",
+   "name": "Total - Total [(A+B) or (C+D)]",
+   "type": "double"
+  },
+  {
+   "id": "total___public__a_",
+   "name": "Total - Public [A]",
+   "type": "keyword"
+  },
+  {
+   "id": "total___private__b_",
+   "name": "Total - Private [B]",
+   "type": "keyword"
+  },
+  {
+   "id": "total___urban__c_",
+   "name": "Total - Urban [C]",
+   "type": "keyword"
+  },
+  {
+   "id": "total___rural__d_",
+   "name": "Total - Rural [D]",
+   "type": "keyword"
+  }
+ ]
+}

@@ -1,0 +1,69 @@
+# Commodity catalogue for the simulator. Hand-curated 6 Sep 2026.
+# Sources: NLEM 2022 (level P = PHC) for names; WHO "Managing Drug Supply" (3rd ed., ch. 20 morbidity method)
+# and India IPHS 2022 PHC drug lists for units-per-case norms. Ratios are demo-grade planning norms, labelled simulated.
+# hmis_item_code: set when HMIS carries a real monthly stock ledger for the item (sections M17-M20).
+# driver_item_code: HMIS count item whose monthly value drives demand; units_per_case multiplies it.
+# category: outbreak | maternal | child | chronic | emergency | vaccine | consumable | family_planning
+commodity_id,name,unit,category,hmis_item_code,nlem_match,driver_item_code,units_per_case,shelf_life_months,phc_level
+ors,ORS sachet (WHO low-osmolarity),sachet,outbreak,19.12,Oral rehydration,10.11,3,24,1
+zinc_20mg,Zinc 20 mg dispersible tablet,tablet,outbreak,19.14,Zinc sulphate,10.11,14,36,1
+ifa_adult,Iron folic acid tablet (adult),tablet,maternal,19.6,Iron,1.1,180,24,1
+ifa_blue,IFA blue (adolescent),tablet,child,19.7,Iron,14.2.1,0.05,24,1
+ifa_pink,IFA pink (junior 6-10),tablet,child,19.8,Iron,14.2.1,0.03,24,1
+ifa_syrup,IFA syrup (paediatric),bottle,child,19.9,Iron,9.1.2,0.5,24,1
+albendazole_400,Albendazole 400 mg tablet,tablet,child,19.15,Albendazole,1.1,1,36,1
+calcium_500,Calcium 500 mg tablet,tablet,maternal,19.16,Calcium,1.1,360,36,1
+vit_a_syrup,Vitamin A syrup,bottle,child,19.11,Vitamin A,9.2.1,0.1,24,1
+paed_antibiotics,Paediatric antibiotics (amoxicillin DT + gentamicin inj),course,child,19.10,Amoxicillin,10.1,1,24,1
+fluconazole,Fluconazole tablet,tablet,maternal,19.3,Fluconazole,1.1,0.05,36,1
+gloves,Examination gloves,pair,consumable,19.1,,14.2.1,0.08,36,1
+mva_syringes,MVA syringes,unit,maternal,19.2,,2.2,0.02,36,1
+bt_sets,Blood transfusion sets,unit,emergency,19.4,,14.3.1.b,0.05,36,0
+rti_sti_kits,RTI/STI colour-coded syndromic kits,kit,maternal,19.13,,14.2.1,0.002,24,1
+vac_bcg,BCG vaccine,dose,vaccine,17.6,,9.1.2,1.25,12,1
+vac_penta,Pentavalent vaccine,dose,vaccine,17.2,,9.1.6,1.1,24,1
+vac_opv,OPV vaccine,dose,vaccine,17.3,,9.1.10,1.1,24,1
+vac_tt,TT vaccine,dose,vaccine,17.4,,1.2.1,1.1,36,1
+vac_measles,Measles vaccine,dose,vaccine,17.7,,9.2.2,1.25,24,1
+vac_mr,Measles-rubella vaccine,dose,vaccine,17.14,,9.2.1,1.25,24,1
+vac_je,JE vaccine,dose,vaccine,17.8,,9.4.6,1.1,24,1
+vac_hepb,Hepatitis B vaccine,dose,vaccine,17.9,,9.1.9,1.1,36,1
+vac_ipv,IPV vaccine,dose,vaccine,17.13,,9.1.17,1.1,24,1
+vac_rota,Rotavirus vaccine,dose,vaccine,17.12,,9.1.6,1.1,24,1
+syr_ad_0_1,AD syringe 0.1 ml,unit,consumable,20.1,,9.1.2,1.1,60,1
+syr_ad_0_5,AD syringe 0.5 ml,unit,consumable,20.2,,9.1.6,3.3,60,1
+syr_5ml,Disposable syringe 5 ml,unit,consumable,20.3,,14.2.1,0.05,60,1
+ocp,Oral contraceptive pills,cycle,family_planning,18.4,,14.2.1,0.01,36,1
+condoms,Condoms,piece,family_planning,18.3,,14.2.1,0.1,48,1
+ecp,Emergency contraceptive pills,pack,family_planning,18.5,,14.2.1,0.001,36,1
+iucd_380a,IUCD 380 A,unit,family_planning,18.1,,2.2,0.05,60,1
+mpa_inj,Injectable contraceptive MPA,vial,family_planning,18.7,,14.2.1,0.003,36,1
+preg_kits,Pregnancy test kits,kit,maternal,18.9,,1.1,1.2,24,1
+paracetamol_500,Paracetamol 500 mg tablet,tablet,outbreak,,Paracetamol,14.2.1,1.5,36,1
+amoxicillin_500,Amoxicillin 500 mg capsule,capsule,outbreak,,Amoxicillin,14.2.1,0.3,24,1
+cotrimoxazole,Co-trimoxazole tablet,tablet,child,,Sulphamethoxazole,10.1,10,36,1
+azithromycin_500,Azithromycin 500 mg tablet,tablet,outbreak,,Azithromycin,14.2.1,0.05,36,1
+metronidazole_400,Metronidazole 400 mg tablet,tablet,outbreak,,Metronidazole,10.11,10,36,1
+ciprofloxacin_500,Ciprofloxacin 500 mg tablet,tablet,outbreak,,Ciprofloxacin,14.4.3,10,36,1
+doxycycline_100,Doxycycline 100 mg capsule,capsule,outbreak,,Doxycycline,14.4.6,14,36,1
+act_pf,Artemisinin combination therapy (Pf),course,outbreak,,Artesunate,10.10,1,24,1
+chloroquine_250,Chloroquine 250 mg tablet,tablet,outbreak,,Chloroquine,11.1.1.a,0.5,36,1
+primaquine,Primaquine tablet,tablet,outbreak,,Primaquine,10.10,14,36,1
+iv_fluids_rl,IV fluid Ringer lactate 500 ml,bottle,emergency,,Ringer,14.4.7,3,24,1
+iv_fluids_ns,IV fluid normal saline 500 ml,bottle,emergency,,Sodium chloride,14.5,1,24,1
+oxytocin_inj,Oxytocin injection 10 IU,ampoule,maternal,,Oxytocin,2.2,1.2,24,1
+misoprostol_200,Misoprostol 200 mcg tablet,tablet,maternal,,Misoprostol,2.1.2,3,24,1
+mgso4_inj,Magnesium sulphate injection,ampoule,maternal,,Magnesium sulphate,1.3.2,10,36,1
+antirabies_vac,Anti-rabies vaccine,vial,emergency,,Rabies vaccine,14.5,0.02,24,1
+antisnake_venom,Anti-snake venom,vial,emergency,,Snake venom,14.6.4,10,36,1
+tetanus_ig,Tetanus toxoid (adult),dose,emergency,,Tetanus,14.6.1,1,36,1
+metformin_500,Metformin 500 mg tablet,tablet,chronic,,Metformin,14.1.1,60,36,1
+glimepiride_2,Glimepiride 2 mg tablet,tablet,chronic,,Glimepiride,14.1.1,30,36,1
+amlodipine_5,Amlodipine 5 mg tablet,tablet,chronic,,Amlodipine,14.1.2,30,36,1
+metoprolol_50,Metoprolol 50 mg tablet,tablet,chronic,,Metoprolol,14.1.2,15,36,1
+salbutamol_inh,Salbutamol inhaler,inhaler,chronic,,Salbutamol,14.4.4,1,24,1
+phenytoin_100,Phenytoin 100 mg tablet,tablet,chronic,,Phenytoin,14.1.6,90,36,1
+cetirizine_10,Cetirizine 10 mg tablet,tablet,outbreak,,Cetirizine,14.2.1,0.2,36,1
+omeprazole_20,Omeprazole 20 mg capsule,capsule,chronic,,Omeprazole,14.2.1,0.3,36,1
+ibuprofen_400,Ibuprofen 400 mg tablet,tablet,outbreak,,Ibuprofen,14.2.1,0.4,36,1
+povidone_iodine,Povidone iodine solution,bottle,consumable,,Povidone iodine,14.6.1,0.2,36,1

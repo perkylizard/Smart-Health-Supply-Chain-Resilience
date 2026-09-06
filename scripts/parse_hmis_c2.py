@@ -133,7 +133,7 @@ def main():
                     recs.extend(parse_rows(rows,st,fy,mo))
                 except Exception as e:
                     errs.append(f"{f}: {type(e).__name__}: {e}")
-            outp=os.path.join(OUT,f"hmis_c2_{fy[:4]}-{fy[5:7]}_{st.replace(' ','_').replace('&','and')}.csv")
+            outp=os.path.join(OUT,f"hmis_c2_{fy[:4]}-{fy[7:9]}_{st.replace(' ','_').replace('&','and')}.csv")
             with open(outp,"w",newline="",encoding="utf-8") as fh:
                 w=csv.writer(fh); w.writerow(["state","district","fy","month","section","item_code","item_name","measure","value"]); w.writerows(recs)
             print(f"{fy} {st:22s} files={len(files):2d} rows={len(recs):8d} errors={len(errs)}"); 

@@ -42,7 +42,7 @@ def load_key():
                 return line.split("=", 1)[1].strip()
     sys.exit("DATA_GOV_IN_API_KEY not found in .env")
 
-def fetch(rid, key, limit=1000):
+def fetch(rid, key, limit=250):
     records, offset, meta = [], 0, None
     while True:
         url = f"https://api.data.gov.in/resource/{rid}?api-key={key}&format=json&limit={limit}&offset={offset}"
@@ -50,7 +50,7 @@ def fetch(rid, key, limit=1000):
         for attempt in range(3):
             try:
                 d = json.load(urllib.request.urlopen(req, timeout=120)); break
-            except (urllib.error.URLError, TimeoutError) as e:
+            except Exception as e:
                 if attempt == 2: raise
                 time.sleep(3 * (attempt + 1))
         if meta is None:
