@@ -17,7 +17,7 @@ class Store:
         return self.con.execute(sql, params or []).df()
 
     def units(self) -> pd.DataFrame:
-        return self.q("SELECT unit_id, unit_name, kind, state, districts, is_hero FROM units ORDER BY is_hero DESC, unit_name")
+        return self.q("SELECT unit_id, unit_name, kind, state, districts, CAST(is_hero AS INTEGER) AS is_hero FROM units ORDER BY is_hero DESC, unit_name")
 
     def facilities(self, unit_id: str | None = None, district: str | None = None) -> pd.DataFrame:
         sql, p = "SELECT * FROM facilities WHERE 1=1", []

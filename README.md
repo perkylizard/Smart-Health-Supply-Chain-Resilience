@@ -30,3 +30,32 @@ All data used by this project is public. Simulated values are labelled `source =
 | Brazil: primary care units, facility-level medicine stock (BNAFAR/Hórus), dengue notifications | Ministério da Saúde, Brazil, via apidadosabertos.saude.gov.br | Brazilian government open data (Lei de Acesso à Informação) | Federated learning partner node; facility contact fields are stripped before use |
 
 Weather data by Open-Meteo.com. Map data © OpenStreetMap contributors. This project is not affiliated with or endorsed by any of the providers above.
+
+
+## Evaluation
+
+Produced by `uv run python scripts/backtest.py` on the simulated hero-unit ledger (see Data sources for what is real and what is simulated).
+
+<!-- eval:start -->
+| Metric | Value |
+|---|---|
+| Hero unit | bihar |
+| Facilities sampled | 150 PHCs |
+| Holdout | last 3 months of 36 |
+| Forecast median MAPE (all categories) | 32.2% |
+| Red/amber alert precision vs stock-out in next 3 months | 30.1% |
+| Red/amber alert recall | 72.1% |
+| Series evaluated | 9,150 |
+| Runtime | 2 s |
+
+| Category | Median MAPE | Mean MAPE | Series |
+|---|---|---|---|
+| child | 31.9% | 49.8% | 1050 |
+| chronic | 51.0% | 59.4% | 1050 |
+| consumable | 30.8% | 33.7% | 750 |
+| emergency | 24.4% | 58.4% | 750 |
+| family_planning | 28.2% | 30.3% | 750 |
+| maternal | 28.6% | 33.6% | 1350 |
+| outbreak | 29.9% | 50.4% | 1950 |
+| vaccine | 38.1% | 52.8% | 1500 |
+<!-- eval:end -->
