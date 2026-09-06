@@ -6,10 +6,11 @@ from sanjeevani import hmis, paths
 
 @pytest.fixture(scope="module")
 def bihar():
-    p = paths.DATA_PROCESSED / "hmis_c2_2019-20_Bihar.csv"
+    p = paths.DATA_PROCESSED / "hmis_c2.parquet"
     if not p.exists():
-        pytest.skip("processed CSV not built")
-    return hmis.load_long_csvs(paths.DATA_PROCESSED, pattern="hmis_c2_2019-20_Bihar.csv")
+        pytest.skip("hmis_c2.parquet not built")
+    import duckdb
+    return duckdb.connect().execute(f"SELECT * FROM '{p}' WHERE state='Bihar' AND fy='2019-20'").df()
 
 
 def test_fy_normalised(bihar):

@@ -36,14 +36,18 @@ def facility_shares(facilities: pd.DataFrame) -> pd.DataFrame:
     return f[["facility_id", "state", "district", "type", "share"]]
 
 
-def district_demand(states: list[str], driver_codes: list[str], parquet=None) -> pd.DataFrame:
+def district_demand(states: list[str], driver_codes: list[str], parquet=None, single_district_states: set[str] | None = None) -> pd.DataFrame:
+    """District monthly totals for the driver items. State-total rows are excluded except for UTs whose only
+    'district' is the state itself (e.g. Lakshadweep), listed in single_district_states."""
     parquet = parquet or paths.DATA_PROCESSED / "hmis_c2.parquet"
+    singles = single_district_states or set()
     con = duckdb.connect()
     st = ",".join(f"'{s}'" for s in states); dr = ",".join(f"'{c}'" for c in driver_codes)
+    sg = ",".join(f"'{s}'" for s in singles) or "''"
     df = con.execute(
         f"""SELECT state, district, fy, month, item_code, value FROM '{parquet}'
             WHERE state IN ({st}) AND item_code IN ({dr}) AND measure='Total'
-              AND lower(district) <> lower(state)"""
+              AND (lower(district) <> lower(state) OR state IN ({sg}))"""
     ).df()
     con.close()
     df["month_index"] = [month_index(f, m) for f, m in zip(df["fy"], df["month"])]
