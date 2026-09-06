@@ -56,6 +56,7 @@ Your strengths as product and design managers cover 75% of this rubric. The tech
 ## 4. Submission package checklist
 
 - [ ] **Source code** in a public GitHub repository (or access granted to judges)
+  - Repo: https://github.com/perkylizard/Smart-Health-Supply-Chain-Resilience (created 6 Sep, currently PRIVATE; switch to public before submission on 29 Sep)
   - [ ] README with problem, architecture diagram, setup steps, and a CREDITS section listing every open-source library and its licence (Rule 3)
   - [ ] Commit history dated inside the hackathon window (Rule 2 proof)
   - [ ] A note that the code was developed with AI-assisted tooling, if the FAQ asks for disclosure
