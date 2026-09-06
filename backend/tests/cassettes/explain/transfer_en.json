@@ -1,0 +1,9 @@
+{
+ "key": "efeacfc981076cb58e38326c",
+ "model": "gemini-3.5-flash-lite",
+ "service": "explain",
+ "case": "transfer_en",
+ "prompt_head": "Write in clear Indian English.\nExplain a proposed stock transfer between two facilities to the District Health Officer. State what is happening, why (use the cause fields), and what happens if nothing is done. Cite the numbers. If data_issue is true, say the figures look like a reporting error, not ",
+ "response": "{\n  \"explanation\": \"We propose transferring 25 units of oxytocin_inj from PHC Araria 24 to Aadharbhut Community Health Center over 1.6 km with an estimated travel time of 1.2 days. Aadharbhut Community Health Center currently has 0 days of stock due to a missed supply, while PHC Araria 24 will retain 21.2 days of stock after the transfer. If nothing is done, the recipient facility will remain completely stocked out of this essential commodity.\",\n  \"numbers_used\": [\n    \"25 units\",\n    \"1.6 km\",\n    \"1.2 days\",\n    \"0 days\",\n    \"21.2 days\"\n  ],\n  \"confidence\": \"high\"\n}",
+ "recorded": "2026-09-06"
+}

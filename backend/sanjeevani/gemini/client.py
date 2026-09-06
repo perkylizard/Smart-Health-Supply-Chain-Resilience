@@ -15,7 +15,7 @@ from sanjeevani import paths
 from sanjeevani.gemini.prompts import SYSTEM
 
 CASSETTES = paths.ROOT / "backend" / "tests" / "cassettes"
-DEFAULT_MODEL = "gemini-3.6-flash"
+DEFAULT_MODEL = "gemini-3.5-flash-lite"
 
 
 class CassetteMiss(Exception):

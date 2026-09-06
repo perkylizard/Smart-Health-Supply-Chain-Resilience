@@ -1,0 +1,9 @@
+{
+ "key": "4cc7cc39ccfece498f27c0f4",
+ "model": "gemini-3.5-flash-lite",
+ "service": "explain",
+ "case": "alert_en",
+ "prompt_head": "Write in clear Indian English.\nExplain a stock alert for one PHC and one commodity to the District Health Officer. State what is happening, why (use the cause fields), and what happens if nothing is done. Cite the numbers. If data_issue is true, say the figures look like a reporting error, not a sto",
+ "response": "{\n  \"explanation\": \"Note that this is a simulated what-if scenario for the monsoon surge. Aadharbhut Community Health Center currently has 0 days of stock for Oxytocin injection 10 IU with a closing balance of 0.0 against a demand of 220.7 units, because supply_missed (no stock received this month against an expected indent). If nothing is done, stock-out will persist and severely disrupt emergency deliveries within 7.0 lead days. Please consult the medical officer for any clinical guidance.\",\n  \"numbers_used\": [\n    \"0 days of stock\",\n    \"0.0 closing balance\",\n    \"220.7 demand\",\n    \"7.0 lead days\"\n  ],\n  \"confidence\": \"high\"\n}",
+ "recorded": "2026-09-06"
+}
