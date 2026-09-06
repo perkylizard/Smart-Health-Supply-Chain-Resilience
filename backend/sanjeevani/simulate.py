@@ -14,6 +14,7 @@ FY_BASE = {"2017-18": 0, "2018-19": 1, "2019-20": 2}
 SHIFT_YEARS = 7  # 2017-18 plays as 2024-25
 NOISE_SIGMA = 0.15
 BASE_MISS_PROB = 0.08
+TARGET_MONTHS = 1.5  # order-up-to level in months of recent demand (WHO min-max norm for monthly PHC indents)
 BASE_LEAD_DAYS = {"PHC": 10, "CHC": 7, "DH": 4}
 
 
@@ -113,7 +114,8 @@ def build_ledger(fac_demand: pd.DataFrame, facilities: pd.DataFrame, commodities
         hist = []
         for j in range(len(months)):
             recent = np.mean(np.stack(hist[-3:] + [demand[:, j]]), axis=0) if hist else demand[:, j]
-            indent = np.round(recent * 1.2)
+            # order-up-to: target stock is TARGET_MONTHS of recent demand; indent only the gap (min-max replenishment)
+            indent = np.maximum(np.round(recent * TARGET_MONTHS - opening), 0.0)
             missed = rng.random(n) < np.clip(BASE_MISS_PROB + miss_add[:, j], 0, 0.98)
             received = np.where(missed, 0.0, indent)
             unusable = np.round(opening * rng.uniform(0.0, 0.02, n))

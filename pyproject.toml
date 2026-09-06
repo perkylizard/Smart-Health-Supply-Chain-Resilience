@@ -32,3 +32,4 @@ packages = ["backend/sanjeevani"]
 
 [tool.pytest.ini_options]
 testpaths = ["backend/tests"]
+pythonpath = ["backend"]
