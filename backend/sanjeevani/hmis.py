@@ -72,10 +72,9 @@ def consolidate_with_duckdb(csv_glob: str, out_dir: Path) -> dict:
         SELECT state, district,
                regexp_replace(fy, '^(\\d{{4}})-\\d{{2}}(\\d{{2}})$', '\\1-\\2') AS fy,
                CAST(month AS INTEGER) AS month, section,
-               CAST(item_code AS VARCHAR) AS item_code, item_name, measure,
+               regexp_replace(CAST(item_code AS VARCHAR), '(\\.\\d*?[1-9])0{{5,}}\\d*$', '\\1') AS item_code, item_name, measure,
                TRY_CAST(value AS DOUBLE) AS value
-        FROM read_csv('{csv_glob}', header=true, union_by_name=true,
-                      types={{'item_code':'VARCHAR','value':'VARCHAR','district':'VARCHAR','state':'VARCHAR'}})
+        FROM read_csv('{csv_glob}', header=true, union_by_name=true, all_varchar=true)
         """
     )
     con.execute(f"COPY (SELECT * FROM raw WHERE value IS NOT NULL) TO '{out_dir / 'hmis_c2.parquet'}' (FORMAT PARQUET, COMPRESSION ZSTD)")
