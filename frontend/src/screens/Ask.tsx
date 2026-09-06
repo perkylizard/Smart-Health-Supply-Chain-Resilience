@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import { api, type AskResult } from "../api";
@@ -14,7 +14,8 @@ export default function Ask() {
   const [history, setHistory] = useState<AskResult[]>([]);
   const ask = useMutation({ mutationFn: (body: Parameters<typeof api.ask>[0]) => api.ask(body), onSuccess: (r) => { setHistory((h) => [r, ...h]); if (r.sql) setSql(r.sql); } });
   const run = (question = q, userSql?: string) => { if (!question.trim() && !userSql) return; ask.mutate({ question: question || "(edited SQL)", unit, district, lang, mode, sql: userSql ?? null }); };
-  useEffect(() => { const qq = sp.get("q"); if (qq) { setQ(qq); run(qq); } // eslint-disable-next-line react-hooks/exhaustive-deps
+  const lastAuto = useRef<string | null>(null);
+  useEffect(() => { const qq = sp.get("q"); if (qq && lastAuto.current !== qq) { lastAuto.current = qq; setQ(qq); run(qq); } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sp.get("q")]);
   return (
     <div>
