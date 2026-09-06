@@ -26,3 +26,7 @@ data/processed/*.log
 data/demo.duckdb
 data/raw/osm/
 data/raw/nominatim/
+
+# regenerable simulation outputs (make data)
+data/processed/sim_*.parquet
+data/raw/datagovin/fetch*.log
