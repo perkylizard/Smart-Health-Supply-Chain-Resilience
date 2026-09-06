@@ -63,9 +63,9 @@ def explain(body: ExplainIn, request: Request):
     client = _client(request)
     try:
         out = E.run(client, body.item, body.kind, body.lang).model_dump(); out["status"] = "ok"
-    except (GeminiUnavailable, CassetteMiss) as e:
+    except Exception as e:
         out = {"explanation": body.item.get("reason") or body.item.get("cause_detail") or "Explanation unavailable.", "numbers_used": [], "confidence": "low", "status": f"fallback: {type(e).__name__}"}
-    out["model"] = client.model
+    out["model"] = client.model_for("explain")
     return out
 
 
@@ -86,5 +86,7 @@ def ask(body: AskIn, request: Request):
         out["status"] = "ok"
     except (GeminiUnavailable, CassetteMiss) as e:
         out = {"mode": body.mode, "question": body.question, "answer": "", "rows": [], "error": f"AI unavailable ({type(e).__name__})", "status": "fallback"}
-    out["model"] = client.model
+    except Exception as e:  # never 500 on an AI route
+        out = {"mode": body.mode, "question": body.question, "answer": "", "rows": [], "error": f"AI error: {str(e)[:160]}", "status": "fallback"}
+    out["model"] = client.model_for("ask_guided" if body.mode == "guided" else "ask_sql")
     return out

@@ -15,7 +15,8 @@ export default function Briefing() {
   const dots = useQuery({ queryKey: ["dots", unit, district], queryFn: () => api.facilities(unit, district), enabled: !!district });
   const brief = useQuery({ queryKey: ["briefing", unit, district, lang, summary.data?.scenario.updated], queryFn: () => api.briefing(unit, district, lang), enabled: !!summary.data });
   const s = summary.data;
-  const alerts = (s?.alerts ?? []).filter((a) => a.alert);
+  const perFacility: Record<string, number> = {};
+  const alerts = (s?.alerts ?? []).filter((a) => a.alert).filter((a) => { perFacility[a.facility_id] = (perFacility[a.facility_id] ?? 0) + 1; return perFacility[a.facility_id] <= 3; });
   const base = `/${unit}/${encodeURIComponent(district)}`;
   const whatIf = s && s.scenario.name !== "normal";
   return (

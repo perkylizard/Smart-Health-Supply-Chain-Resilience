@@ -116,7 +116,9 @@ def assign_to_districts(features: list[dict], geos: dict[str, dict]) -> dict[str
     for f in features:
         tag = f.get("district_tag")
         if tag and names.norm(tag) in by_norm:
-            out[by_norm[names.norm(tag)]].append(f); continue
+            d = by_norm[names.norm(tag)]; s, n, w, e = geos[d]["bbox"]
+            if s - 0.05 <= f["lat"] <= n + 0.05 and w - 0.05 <= f["lon"] <= e + 0.05:   # tag wins only if the point is there
+                out[d].append(f); continue
         best, bestd = None, 1e9
         for d, g in geos.items():
             s, n, w, e = g["bbox"]

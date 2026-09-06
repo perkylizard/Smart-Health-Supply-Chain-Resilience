@@ -35,7 +35,7 @@ def _clean(df: pd.DataFrame) -> list[dict]:
     return out
 
 
-def create_app(store: Store | None = None, state: InMemoryState | None = None, gemini=None) -> FastAPI:
+def create_app(store: Store | None = None, state: InMemoryState | None = None, gemini=None, warm: bool = True) -> FastAPI:
     app = FastAPI(title="Sanjeevani Grid API", version="0.1.0")
     app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
     store = store or Store()
@@ -43,6 +43,10 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
     app.state.store, app.state.state = store, state
     from sanjeevani.gemini.client import GeminiClient
     app.state.gemini = gemini or GeminiClient()
+
+    import threading as _th
+    _locks: dict = {}
+    _lock_guard = _th.Lock()
 
     @lru_cache(maxsize=256)
     def _alerts_cached(unit_id: str, district: str | None, scenario: str, intensity: float, stamp: int) -> pd.DataFrame:
@@ -53,7 +57,11 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
 
     def alerts_for(unit_id: str, district: str | None = None) -> pd.DataFrame:
         sc = state.get_scenario()
-        return _alerts_cached(unit_id, district, sc["name"], sc["intensity"], int(sc["updated"]))
+        key = (unit_id, district, sc["name"], sc["intensity"], int(sc["updated"]))
+        with _lock_guard:
+            lock = _locks.setdefault(key, _th.Lock())
+        with lock:  # one computation per key; concurrent callers wait for it instead of recomputing
+            return _alerts_cached(*key)
 
     def _unit_or_404(unit_id: str):
         if unit_id not in set(store.units()["unit_id"]):
@@ -216,6 +224,17 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
 
     from app.routes_ai import router as ai_router
     app.include_router(ai_router)
+
+    # warm the hero unit so the first page a judge opens is fast
+    import threading
+    def _warm():
+        try:
+            hero = store.units().iloc[0]["unit_id"]
+            alerts_for(hero)
+        except Exception:
+            pass
+    if warm:
+        threading.Thread(target=_warm, daemon=True).start()
     return app
 
 

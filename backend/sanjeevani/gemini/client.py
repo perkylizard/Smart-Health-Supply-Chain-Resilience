@@ -17,7 +17,8 @@ from sanjeevani.gemini.prompts import SYSTEM
 CASSETTES = paths.ROOT / "backend" / "tests" / "cassettes"
 DEFAULT_MODEL = "gemini-3.5-flash-lite"
 # Free-tier limits are per model per minute; spread services across models and pace each one.
-SERVICE_MODEL = {"briefing": "gemini-3.5-flash-lite", "explain": "gemini-3.1-flash-lite", "ask_guided": "gemini-2.5-flash-lite",
+# Only models confirmed available to new free-tier accounts (2.5-series models are retired for new users).
+SERVICE_MODEL = {"briefing": "gemini-3.5-flash-lite", "explain": "gemini-3.1-flash-lite", "ask_guided": "gemini-3.1-flash-lite",
                  "ask_sql": "gemini-3.5-flash-lite", "register": "gemini-3.5-flash", "voice": "gemini-3.5-flash", "brief": "gemini-3.1-flash-lite"}
 MAX_RPM = int(os.environ.get("GEMINI_MAX_RPM", "12"))
 
