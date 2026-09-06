@@ -83,11 +83,17 @@ def fetch_osm_state(state: str, bbox: list[float], sleep: float = 2.0) -> list[d
     q = (f"[out:json][timeout:180][maxsize:1073741824];(node[healthcare=centre]{bb};way[healthcare=centre]{bb};"
          f"node[amenity=hospital]{bb};way[amenity=hospital]{bb};node[amenity=clinic][name~'PHC|CHC|Health',i]{bb};);out center tags;")
     r = None
-    for attempt in range(3):
-        r = requests.post(OVERPASS, data={"data": q}, headers=UA, timeout=300)
+    for attempt in range(2):
+        try:
+            r = requests.post(OVERPASS, data={"data": q}, headers=UA, timeout=300)
+        except requests.RequestException as e:
+            print(f"overpass {state}: request error {type(e).__name__}", flush=True); r = None; continue
+        print(f"overpass {state}: HTTP {r.status_code}, {len(r.content)/1e6:.1f} MB", flush=True)
+        if r.status_code in (403, 429):
+            raise RuntimeError(f"Overpass returned HTTP {r.status_code} for {state}; stopping per policy (report to user)")
         if r.status_code == 200:
             break
-        time.sleep(60 * (attempt + 1))
+        time.sleep(45)
     time.sleep(sleep)
     if r is None or r.status_code != 200:
         return []
@@ -125,11 +131,13 @@ def assign_to_districts(features: list[dict], geos: dict[str, dict]) -> dict[str
 
 def classify(name: str, tags: dict) -> str | None:
     n = name.upper()
+    if re.search(r"\b(HSC|SUB[- ]?CENT|ANM)\b", n):
+        return None
     if re.search(r"\b(CHC|COMMUNITY HEALTH)\b", n):
         return "CHC"
-    if re.search(r"\b(A?PHC|UPHC|PRIMARY HEALTH|HEALTH CENTRE|HEALTH CENTER)\b", n) or tags.get("healthcare") == "centre":
+    if re.search(r"\b(A?PHC|UPHC|PRIMARY HEALTH)\b", n):
         return "PHC"
-    if re.search(r"\b(DISTRICT HOSPITAL|SADAR HOSPITAL|CIVIL HOSPITAL|GENERAL HOSPITAL)\b", n):
+    if re.search(r"\b(DISTRICT HOSPITAL|SADAR HOSPITAL|CIVIL HOSPITAL|GENERAL HOSPITAL|DISTT\.? HOSPITAL)\b", n):
         return "DH"
     return None
 
@@ -195,8 +203,17 @@ def build(unit_ids: list[str], districts: pd.DataFrame, seed: int = 7, fetch: bo
                     continue
                 seen.add(key)
                 real.append({"name": f["name"].strip(), "type": kind, "lat": f["lat"], "lon": f["lon"], "block": f.get("subdistrict") or "", "source": "osm"})
-            n_phc_real = sum(1 for r in real if r["type"] == "PHC")
             target = int(targets.get(district, 1))
+            phc_real = [r for r in real if r["type"] == "PHC"]
+            if len(phc_real) > target:
+                phc_real.sort(key=lambda r: (0 if re.search(r"\bPHC\b", r["name"].upper()) else 1, r["name"]))
+                keep = set(id(r) for r in phc_real[:target])
+                real = [r for r in real if r["type"] != "PHC" or id(r) in keep]
+            dh_real = [r for r in real if r["type"] == "DH"]
+            if len(dh_real) > 1:
+                dh_real.sort(key=lambda r: (0 if "DISTRICT" in r["name"].upper() else 1, r["name"]))
+                real = [r for r in real if r["type"] != "DH"] + dh_real[:1]
+            n_phc_real = sum(1 for r in real if r["type"] == "PHC")
             pop = float(districts.loc[(districts["state"] == state) & (districts["district"] == district), "census_pop_2011"].iloc[0])
             if not any(r["type"] == "DH" for r in real):
                 real.append({"name": f"District Hospital {district}", "type": "DH", "lat": geo["lat"], "lon": geo["lon"], "block": "", "source": "simulated"})

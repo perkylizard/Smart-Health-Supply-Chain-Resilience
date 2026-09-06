@@ -10,7 +10,8 @@ def test_classify():
     assert facilities.classify("Community Health Centre Barh", {}) == "CHC"
     assert facilities.classify("Sadar Hospital Araria", {}) == "DH"
     assert facilities.classify("Perfect Vision Eye Clinic", {}) is None
-    assert facilities.classify("Some centre", {"healthcare": "centre"}) == "PHC"
+    assert facilities.classify("Asthawan", {"healthcare": "centre"}) is None
+    assert facilities.classify("HSC Rampur", {}) is None
 
 
 def test_assign_to_districts_prefers_tag_then_nearest():
