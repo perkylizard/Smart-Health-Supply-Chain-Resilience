@@ -1,0 +1,142 @@
+sl_no,district_name,hospital,type_of_facility
+1,BAGALKOTE,CHC Rabakavi- Banahatti,CHC
+2,BALLARI,Community Health Center Moka,CHC
+3,BALLARI,Community Health Centre Kampli,CHC
+4,BALLARI,"Community Health Centre Roopanagudi, Ballari",CHC
+5,BALLARI,"Community Health Centre Thoranagallu,Sandur Tq, Ballary",CHC
+6,BALLARI,CHC Ujjaini,CHC
+7,BALLARI,CHC Hampasagara,CHC
+8,BALLARI,"CHC Ittagi, Huvinahadagali",CHC
+9,BALLARI,"CHC Thekkal kote, Shiraguppa",CHC
+10,BALLARI,CHC Korugodu,CHC
+11,BALLARI,CHC Tekkalakote ,CHC
+12,BALLARI,CHC Tekkalakote,CHC
+13,BENGALURU URBAN,Ulsoor Referral Hospital,CHC
+14,BENGALURU URBAN,Hosahalli Referral Hospital,CHC
+15,BENGALURU URBAN,JJR Nagar Referral Hospital,CHC
+16,BENGALURU RURAL,"Community Health Centre Vijayapura, Bangalore Rural",CHC
+17,BENGALURU RURAL,"Community Health Center,Thyamagodlu,Nelamagala",CHC
+18,BENGALURU RURAL,CHC Vijayapura,CHC
+19,BENGALURU RURAL,CHC Thyamagondlu,CHC
+20,BENGALURU URBAN,"Community Health Centre Avalahalli, KR Puram, Bangalore",CHC
+21,BENGALURU URBAN,"Community Health Centre Kaggalipura, Bangalore south ",CHC
+22,BENGALURU URBAN,"Community Health Centre Kengeri, Bangalore South.",CHC
+23,BENGALURU URBAN,"Community Health Centre Chandappa Circle, ",CHC
+24,BENGALURU URBAN,"Community Health Centre K G Halli, Bangalore",CHC
+25,BENGALURU URBAN,ESI Peenya,CHC
+26,BBMP,Refereal Hospital Banashankari,CHC
+27,BBMP,Refereal Hospital Srirampura,CHC
+28,BBMP,Refereal Hospital Hosahalli,CHC
+29,BBMP,Refereal Hospital Halasuru,CHC
+30,BBMP,Referal Hospitol Siddaiah Road,CHC
+31,BBMP,Referrall Hospitol H Siddiah Road,CHC
+32,BBMP,Referral HospitalHalsuru ,CHC
+33,BBMP,A Dasarahalli Referral Hospital,CHC
+34,BELAGAVI,CHC Kagawad,CHC
+35,BELAGAVI,CHC Nippani,CHC
+36,BELAGAVI,CHC Ammanagi,CHC
+37,BELAGAVI,CHC Shakeshwar,CHC
+38,BELAGAVI,CHC Hirebagewadi,CHC
+39,BELAGAVI,CHC-Mudalagi,CHC
+40,BELAGAVI,CHC Honnuru,CHC
+41,BELAGAVI,CHC Naganuru,CHC
+42,BELAGAVI,CHC Kitturu,CHC
+43,BELAGAVI,CHC Yargatti,CHC
+44,BELAGAVI,CHC Mugalkod Belagavi,CHC
+45,BELAGAVI,CHC Belawadi ,CHC
+46,BELAGAVI,CHC Examba,CHC
+47,BAGALKOTE,CHC Keruru,CHC
+48,BAGALKOTE,MCH Ilkal,CHC
+49,BAGALKOTE,CHC Girisagar,CHC
+50,BAGALKOTE,50 Beded Hospital Bagalkot,CHC
+51,BIDAR,CHC Hallikhed,CHC
+52,BIDAR,CHC Nitturu,CHC
+53,BIDAR,CHC Maenackhelli,CHC
+54,BIDAR,CHC Chituguppa,CHC
+55,BIDAR,CHC Rajeswar,CHC
+56,CHIKKAMAGALURU,CHC Sringeri,CHC
+57,CHITRADURGA,"Community Health Center, Maradihalli Chitradurga",CHC
+58,CHITRADURGA,"Community Health Center,Belaguru (Srirampura )Hosadurga",CHC
+59,CHITRADURGA,CHC Bharamasagara/Sirigeri,CHC
+60,CHITRADURGA,CHC Sirigeri,CHC
+61,CHITRADURGA,CHC Bharamasagara,CHC
+62,CHITRADURGA,CHC B Durga,CHC
+63,DAKSHINA KANNADA,CHC Vamadapadvu,CHC
+64,DAVANGERE,"Community Health Center,Nayakanahati,Challkere",CHC
+65,DAVANGERE,"Community Health Center,Santhebennur",CHC
+66,DAVANGERE,Community Health Center Rampura,CHC
+67,DAVANGERE,CHC Bankapur,CHC
+68,DAVANGERE,CHC Nyamathi Davangiri,CHC
+69,DAVANGERE,CHC Kerebilachi,CHC
+70,DHARWAD,CHC Kerebilchi,CHC
+71,GADAG,CHC Lakshmeswar,CHC
+72,HASSAN,CHC Shanthigrama,CHC
+73,HASSAN,CHC Arehalli,CHC
+74,HASSAN,CHC J C Pura,CHC
+75,HASSAN,CHC Halebeedu,CHC
+76,HASSAN,CHC Udaipura,CHC
+77,HASSAN,CHC Mosalehosahalli,CHC
+78,HASSAN,CHC Dudda,CHC
+79,HASSAN,CHC Shravanabelagola,CHC
+80,HASSAN,CHC Padavalahippe,CHC
+81,HAVERI,"Community Health Center, Masur  Haveri",CHC
+82,HAVERI,Community Health Centre Rattihally Haveri,CHC
+83,HAVERI,CHC Santhebennur,CHC
+84,HAVERI,CHC Akkihalur,CHC
+85,HAVERI,CHC Guttal,CHC
+86,KALABURAGI,"Community Health Center,Devalgangapur, Kalaburagi",CHC
+87,KALABURAGI,"Community Health Centre Malkhed, Kalbugi",CHC
+88,KALABURAGI,Community Health Center Hebbal,CHC
+89,KALABURAGI,CHC Narona,CHC
+90,KALABURAGI,CHC Wadi,CHC
+91,KALABURAGI,CHC Shahabad,CHC
+92,KALABURAGI,CHC Kalagi,CHC
+93,KALABURAGI,CHC Narona Kalaburagi,CHC
+94,KALABURAGI,CHC Station Gangapur Kalaburagi,CHC
+95,KALABURAGI,CHC D Ghanagapura,CHC
+96,KALABURAGI,CHC Kunchavaram,CHC
+97,KALABURAGI,CHC Yedrami,CHC
+98,KOLAR,Community Health Centre Bethamangala,CHC
+99,KOLAR,CHC Bethamangala,CHC
+100,KOPPAL,"Community Health Centre Kanakagiri,Gangavathi Tq",CHC
+101,KOPPAL,"Community Health Centre Munirabad, Koppal",CHC
+102,KOPPAL,"CHC Tavaregere, Kustagi",CHC
+103,KOPPAL,"CHC Karatagi, Gangavathi",CHC
+104,KOPPAL,CHC Kookanoor,CHC
+105,KOPPAL,CHC Mangalore,CHC
+106,MANDYA,CHC Chinakuruli,CHC
+107,MANDYA,CHC K M Doddi,CHC
+108,MANDYA,CHC Kirugavalu,CHC
+109,MANDYA,CHC Kikkari,CHC
+110,MANDYA,CHC Shivalli,CHC
+111,DAKSHINA KANNADA,CHC Mulki,CHC
+112,DAKSHINA KANNADA,CHC Mudbidre,CHC
+113,MYSURU,"Community Health Centre, Jayapura, Mysore",CHC
+114,MYSURU,Nagamma Perumal Chittiyar Hospital Mysore,CHC
+115,MYSURU,"Community Health Centre, Ashokapuram Mysore",CHC
+116,MYSURU,Community Health Center Saligrama,CHC
+117,MYSURU,Community Health Centre Sarguru,CHC
+118,MYSURU,Community Health Centre Ullahalli,CHC
+119,MYSURU,CHC Jayanagara Mysore,CHC
+120,MYSURU,Maternity HospitalV.V Puram Mysore,CHC
+121,MYSURU,Maternity Hospital K R Nagar Mysore,CHC
+122,RAICHUR,"Community Health Centre J Mallapura, Raichur",CHC
+123,RAICHUR,CHC Arakera,CHC
+124,RAICHUR,CHC Anehosuru,CHC
+125,RAICHUR,CHC Mudagal,CHC
+126,RAMANAGARA,CHC Sollur,CHC
+127,RAMANAGARA,"Community Health Centre Harohalli, Kanakapura, Ramnagar",CHC
+128,RAMANAGARA,"Community Health Centre Satanur, Kanakapura, Ramnagar",CHC
+129,RAMANAGARA,"Community Health Center,Bidadi, Ramanagara",CHC
+130,RAMANAGARA,CHC Sathnuru,CHC
+131,SHIVAMOGGA,CHC Ayanur Shivamogga,CHC
+132,SHIVAMOGGA,CHC Ayanoor,CHC
+133,SHIVAMOGGA,CHC Anandpuram,CHC
+134,TUMAKURU,"Community Health Centre Amruthur, Tumkur",CHC
+135,TUMAKURU,CHC M N Kote,CHC
+136,UDUPI,Community Health Center Hebri ,CHC
+137,UTTARA KANNADA,"CHC Shirali, Bhatkal",CHC
+138,UTTARA KANNADA,CHC Brahmavara,CHC
+139,VIJAYAPURA,"Community Health Centre Kalagi, Muddebihal Vijaypura",CHC
+140,VIJAYAPURA,CHC Tadvalaga,CHC
+141,VIJAYAPURA,CHC Talikoti,CHC

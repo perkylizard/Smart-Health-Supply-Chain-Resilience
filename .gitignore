@@ -16,10 +16,13 @@ __pycache__/
 node_modules/
 
 # large raw pulls (SOURCES.txt and meta kept)
-data/raw/datagovin/*.csv
+data/raw/datagovin/hmis_itemwise_*.csv
 data/raw/datagovin/fetch.log
 data/raw/india-gov/*
 !data/raw/india-gov/SOURCES.txt
+!data/raw/india-gov/census2011_PCA_district.xlsx
+!data/raw/india-gov/nlem_2022.txt
+!data/raw/india-gov/ncvbdc_dengue_statewise_2021-2026.csv
 data/raw/apis/*.dbc
 data/processed/*.csv
 data/processed/*.log
