@@ -1,0 +1,64 @@
+{
+  "hash": "c2815daa",
+  "configHash": "f466ce74",
+  "lockfileHash": "cd34944d",
+  "browserHash": "ee92d872",
+  "optimized": {
+    "@radix-ui/react-dialog": {
+      "src": "../../node_modules/@radix-ui/react-dialog/dist/index.mjs",
+      "file": "@radix-ui_react-dialog.js",
+      "fileHash": "9fd1f35e",
+      "needsInterop": false
+    },
+    "@tanstack/react-query": {
+      "src": "../../node_modules/@tanstack/react-query/build/modern/index.js",
+      "file": "@tanstack_react-query.js",
+      "fileHash": "4dafa514",
+      "needsInterop": false
+    },
+    "maplibre-gl": {
+      "src": "../../node_modules/maplibre-gl/dist/maplibre-gl.js",
+      "file": "maplibre-gl.js",
+      "fileHash": "b6637f6d",
+      "needsInterop": true
+    },
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "1058b082",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "7aeeb7a0",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.js",
+      "file": "react-router-dom.js",
+      "fileHash": "092de3fe",
+      "needsInterop": false
+    },
+    "react/jsx-dev-runtime": {
+      "src": "../../node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "f3767bc8",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "chunk-67B2QI2E": {
+      "file": "chunk-67B2QI2E.js"
+    },
+    "chunk-NUJMPPPB": {
+      "file": "chunk-NUJMPPPB.js"
+    },
+    "chunk-3EX3NYWH": {
+      "file": "chunk-3EX3NYWH.js"
+    },
+    "chunk-3O7X656O": {
+      "file": "chunk-3O7X656O.js"
+    }
+  }
+}

@@ -26,13 +26,6 @@ export default function Shell({ children, offline }: { children: React.ReactNode
   };
   return (
     <div className="shell">
-      <nav className="rail" aria-label="Main">
-        <div className="brand" aria-hidden>S</div>
-        <NavLink to={base} end title={t.briefing} aria-label={t.briefing}><Icon d={icons.briefing} /></NavLink>
-        <NavLink to={`${base}/dispatch`} title={t.dispatch} aria-label={t.dispatch}><Icon d={icons.dispatch} /></NavLink>
-        <NavLink to={`${base}/ask`} title={t.ask} aria-label={t.ask}><Icon d={icons.ask} /></NavLink>
-        <NavLink to={`${base}/system`} title={t.system} aria-label={t.system}><Icon d={icons.system} /></NavLink>
-      </nav>
       <header className="strip">
         <select className="select" aria-label={t.district} value={unit} onChange={(e) => { const u = e.target.value; setLocation(u, ""); }}>
           {(units.data?.units ?? [{ unit_id: unit, unit_name: unit }]).map((u) => <option key={u.unit_id} value={u.unit_id}>{u.unit_name}</option>)}
@@ -47,6 +40,14 @@ export default function Shell({ children, offline }: { children: React.ReactNode
         </form>
         <button className="btn quiet" onClick={() => setLang(lang === "en" ? "hi" : "en")} aria-label={t.language}>{lang === "en" ? "हिंदी" : "English"}</button>
       </header>
+      <nav className="tabs" aria-label="Main">
+        <span className="brand"><i aria-hidden>S</i>Sanjeevani Grid</span>
+        <NavLink to={base} end><Icon d={icons.briefing} />{t.briefing}</NavLink>
+        <NavLink to={`${base}/dispatch`}><Icon d={icons.dispatch} />{t.dispatch}</NavLink>
+        <NavLink to={`${base}/ask`}><Icon d={icons.ask} />{t.ask}</NavLink>
+        <span className="spacer" />
+        <NavLink to={`${base}/system`} className="settings-link"><Icon d={icons.system} />{t.system}</NavLink>
+      </nav>
       <main className="content">
         {offline && <div className="banner" role="status">{t.offline}</div>}
         {children}

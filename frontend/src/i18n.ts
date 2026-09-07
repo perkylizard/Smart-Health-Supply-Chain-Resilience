@@ -1,6 +1,9 @@
 export type Lang = "en" | "hi";
 const en = {
-  briefing: "Briefing", dispatch: "Dispatch", ask: "Ask", system: "System", district: "District", language: "Language", scenario: "Scenario",
+  briefing: "Today", dispatch: "Move stock", ask: "Ask", system: "Settings", district: "District", language: "Language", scenario: "Scenario",
+  q1: "What will run out?", q2: "Where?", q3: "What can I do now?", howAreWe: "How is the district doing?",
+  readyToApprove: (n: number) => n === 1 ? "1 transfer is ready to approve" : `${n} transfers are ready to approve`, noneReady: "No transfers are needed right now",
+  openDispatch: "Open the dispatch board", suggested: "Suggested now", showAll: "Show all alerts", showFewer: "Show fewer",
   askPlaceholder: "Ask the district, for example: which PHCs have the least ORS?", offline: "The service is unreachable. Showing the last data loaded.",
   whyLink: "Why?", days: "days", daysLeft: "days left", alerts: "Alerts", noAlerts: "No PHC is under 14 days of stock. Next review on Monday.",
   resilience: "Resilience score", rankOf: (r: number, n: number) => `rank ${r} of ${n} districts`, trend: "Trends, last 12 months", opd: "Outpatient visits",
@@ -18,7 +21,10 @@ const en = {
 };
 const hi: typeof en = {
   ...en,
-  briefing: "ब्रीफिंग", dispatch: "डिस्पैच", ask: "पूछें", system: "सिस्टम", district: "ज़िला", language: "भाषा", scenario: "परिदृश्य",
+  briefing: "आज", dispatch: "स्टॉक भेजें", ask: "पूछें", system: "सेटिंग", district: "ज़िला", language: "भाषा", scenario: "परिदृश्य",
+  q1: "क्या खत्म होने वाला है?", q2: "कहाँ?", q3: "अभी क्या कर सकते हैं?", howAreWe: "ज़िले की स्थिति कैसी है?",
+  readyToApprove: (n) => `${n} स्थानांतरण स्वीकृति के लिए तैयार`, noneReady: "अभी किसी स्थानांतरण की ज़रूरत नहीं",
+  openDispatch: "डिस्पैच बोर्ड खोलें", suggested: "अभी सुझाव", showAll: "सभी चेतावनियाँ", showFewer: "कम दिखाएँ",
   askPlaceholder: "ज़िले से पूछें, जैसे: किस PHC में सबसे कम ORS बचा है?", offline: "सेवा उपलब्ध नहीं है। पिछला डेटा दिखाया जा रहा है।",
   whyLink: "क्यों?", days: "दिन", daysLeft: "दिन शेष", alerts: "चेतावनियाँ", noAlerts: "कोई PHC 14 दिन से कम स्टॉक पर नहीं है। अगली समीक्षा सोमवार।",
   resilience: "रेज़िलिएंस स्कोर", rankOf: (r, n) => `${n} ज़िलों में ${r}वाँ स्थान`, trend: "रुझान, पिछले 12 महीने", opd: "ओपीडी", diarrhoea: "दस्त, पाँच वर्ष से कम", stockouts: "स्टॉक-आउट",

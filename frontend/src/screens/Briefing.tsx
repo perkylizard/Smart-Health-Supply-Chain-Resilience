@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { api, type Alert } from "../api";
@@ -11,57 +12,74 @@ import Sparkline from "../components/Sparkline";
 export default function Briefing() {
   const { unit, district, lang, t } = useApp();
   const nav = useNavigate();
-  const summary = useQuery({ queryKey: ["summary", unit, district], queryFn: () => api.summary(unit, district), enabled: !!district });
+  const summary = useQuery({ queryKey: ["summary", unit, district], queryFn: () => api.summary(unit, district), enabled: !!district,
+    refetchInterval: (q) => (q.state.data?.rank_pending ? 6000 : false) });
   const dots = useQuery({ queryKey: ["dots", unit, district], queryFn: () => api.facilities(unit, district), enabled: !!district });
   const brief = useQuery({ queryKey: ["briefing", unit, district, lang, summary.data?.scenario.updated], queryFn: () => api.briefing(unit, district, lang), enabled: !!summary.data });
+  const transfers = useQuery({ queryKey: ["transfers", unit, district, undefined], queryFn: () => api.transfers(unit, district), enabled: !!summary.data });
+  const [showAll, setShowAll] = useState(false);
   const s = summary.data;
   const perFacility: Record<string, number> = {};
   const alerts = (s?.alerts ?? []).filter((a) => a.alert).filter((a) => { perFacility[a.facility_id] = (perFacility[a.facility_id] ?? 0) + 1; return perFacility[a.facility_id] <= 3; });
   const base = `/${unit}/${encodeURIComponent(district)}`;
   const whatIf = s && s.scenario.name !== "normal";
+  const ready = (transfers.data?.transfers ?? []).filter((x) => x.status === "proposed").length;
   return (
     <div>
-      <section className="section">
-        {whatIf && <p className="chip amber" style={{ marginBottom: 12 }}>{t.whatIf}: {s.scenario.name.replace("_", " ")} {Math.round(s.scenario.intensity * 100)}%</p>}
-        {brief.data ? (<>
-          <h1 className="headline">{brief.data.headline}</h1>
-          <p className="lead">{brief.data.body.join(" ")}</p>
-          <p style={{ marginTop: 8, display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-            {alerts[0] && <Explain kind="alert" item={alerts[0]}><button className="btn quiet" style={{ color: "var(--teal)", paddingLeft: 0 }}>{t.whyLink}</button></Explain>}
-            <Badge kind="ai" title={`${brief.data.model} · ${brief.data.status}`} />
-          </p>
-        </>) : (<>
-          <h1 className="headline skeleton">Loading the morning briefing for this district</h1>
-          <p className="lead skeleton">Three or four sentences will appear here once the briefing service answers.</p>
-        </>)}
-      </section>
-
+      {whatIf && <p className="chip amber" style={{ marginBottom: 12 }}>{t.whatIf}: {s.scenario.name.replace(/_/g, " ")} {Math.round(s.scenario.intensity * 100)}%</p>}
       <div className="two-col">
         <div>
-          <section className="section">
+          <section className="qsection">
+            <h2><span className="n">1</span>{t.q1} <span className="count">{s ? `${s.counts.red ?? 0} ${t.severity.red}, ${s.counts.amber ?? 0} ${t.severity.amber}` : ""}</span></h2>
+            {brief.data ? (<>
+              <h1 className="headline">{brief.data.headline}</h1>
+              <p className="lead">{brief.data.body.join(" ")}</p>
+              <p style={{ marginTop: 8, display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+                {alerts[0] && <Explain kind="alert" item={alerts[0]}><button className="btn quiet" style={{ color: "var(--teal)", paddingLeft: 0 }}>{t.whyLink}</button></Explain>}
+                <Badge kind="ai" title={`${brief.data.model} · ${brief.data.status}`} />
+              </p>
+            </>) : (<>
+              <h1 className="headline skeleton">Loading the morning briefing for this district</h1>
+              <p className="lead skeleton">Three or four sentences will appear here once the briefing service answers.</p>
+            </>)}
+            {s && alerts.length === 0 && <div className="quiet" style={{ marginTop: 16 }}>{t.noAlerts}</div>}
+            <div className="list" style={{ marginTop: 16 }}>
+              {alerts.slice(0, showAll ? 60 : 8).map((a) => <AlertRow key={a.facility_id + a.commodity_id} a={a} base={base} />)}
+            </div>
+            {alerts.length > 8 && <button className="btn quiet" style={{ color: "var(--teal)", paddingLeft: 0 }} onClick={() => setShowAll((v) => !v)}>{showAll ? t.showFewer : `${t.showAll} (${alerts.length})`}</button>}
+          </section>
+
+          <section className="qsection">
+            <h2><span className="n">2</span>{t.q2} <span className="count">{dots.data ? `${dots.data.facilities.length} ${t.facilities}` : ""}</span></h2>
             {dots.data && <MapView dots={dots.data.facilities} onSelect={(f) => nav(`/facility/${f.facility_id}`)} />}
             <div className="legend">
               <span><i className="dot" style={{ background: "var(--red)" }} />{t.severity.red}</span>
               <span><i className="dot" style={{ background: "var(--amber)" }} />{t.severity.amber}</span>
               <span><i className="dot" style={{ background: "var(--green)" }} />{t.severity.ok}</span>
               <span><i className="dot" style={{ background: "var(--blue)" }} />{t.severity.data_issue}</span>
-              <span className="faint">{dots.data ? `${dots.data.facilities.length} ${t.facilities}` : ""}</span>
             </div>
           </section>
-          <section className="section">
-            <h2>{t.alerts} <span className="faint" style={{ fontWeight: 400, fontSize: "var(--t-sm)" }}>{s ? `${s.counts.red ?? 0} ${t.severity.red}, ${s.counts.amber ?? 0} ${t.severity.amber}` : ""}</span></h2>
-            {s && alerts.length === 0 && <div className="quiet">{t.noAlerts}</div>}
-            <div className="list">
-              {alerts.slice(0, 30).map((a) => <AlertRow key={a.facility_id + a.commodity_id} a={a} base={base} />)}
+
+          <section className="qsection">
+            <h2><span className="n">3</span>{t.q3}</h2>
+            <div className="action-card">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                <strong style={{ fontSize: "var(--t-md)" }}>{(!transfers.data) ? <span className="skeleton">Counting transfers ready to approve</span> : ready > 0 ? t.readyToApprove(ready) : t.noneReady}</strong>
+                <Link className="btn primary" to={`${base}/dispatch`}>{t.openDispatch}</Link>
+              </div>
+              {brief.data && brief.data.top_actions.length > 0 && (<>
+                <p className="faint" style={{ marginTop: 12, marginBottom: 0, fontSize: 13 }}>{t.suggested} <Badge kind="ai" /></p>
+                <ul>{brief.data.top_actions.map((a, i) => <li key={i}>{a}</li>)}</ul>
+              </>)}
             </div>
           </section>
         </div>
         <aside>
           <section className="section">
-            <h2>{t.resilience}</h2>
+            <h2>{t.howAreWe}</h2>
             {s?.score ? (<>
               <div className="gauge"><span className="n">{Math.round(s.score.score)}</span><span className="of">/ 100</span></div>
-              <p className="muted">{s.rank_in_unit ? t.rankOf(s.rank_in_unit, s.of) : ""}</p>
+              <p className="muted">{s.rank_in_unit ? t.rankOf(s.rank_in_unit, s.of) : <span className="skeleton">rank pending for this scenario</span>}</p>
               <p className="faint" style={{ fontSize: 13 }}>Median {Math.round(s.score.median_days_of_stock)} {t.days} · {Math.round(s.score.share_under_14d * 100)}% under 14 · staffing gap {Math.round(s.score.staffing_gap * 100)}% <Badge kind="computed" /></p>
             </>) : <div className="gauge skeleton"><span className="n">00</span></div>}
           </section>
