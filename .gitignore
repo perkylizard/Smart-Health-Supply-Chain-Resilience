@@ -33,3 +33,7 @@ data/raw/nominatim/
 # regenerable simulation outputs (make data)
 data/processed/sim_*.parquet
 data/raw/datagovin/fetch*.log
+
+# cloud credentials, never committed
+secrets/
+*.json.key
