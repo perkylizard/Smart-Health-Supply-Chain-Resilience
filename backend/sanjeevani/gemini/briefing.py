@@ -31,7 +31,11 @@ def trim_payload(summary: dict) -> dict:
 
 def build_prompt(payload: dict, lang: str) -> str:
     sc = payload.get("scenario")
-    sc_line = (f"A what-if scenario is active: '{sc}' at intensity {payload.get('scenario_intensity')}. Say so in the first sentence."
+    label = {"monsoon_surge": "monsoon flood with a diarrhoea surge", "dengue_season": "dengue season", "winter_closure": "winter road closure",
+             "cyclone": "cyclone landfall", "warehouse_shock": "state warehouse supply shock"}.get(sc, str(sc).replace("_", " "))
+    pct = int(round(float(payload.get("scenario_intensity") or 1.0) * 100))
+    sc_line = (f"A what-if scenario is active: {label} at {pct} percent intensity. The headline must still be the most important stock fact "
+               f"(a facility, a commodity, days left); mention the scenario in the body, not the headline, e.g. 'Under the {label} scenario, ...'."
                if sc and sc != "normal" else "No scenario is active; these are the current figures.")
     return (
         f"{lang_line(lang)}\n{sc_line}\n"

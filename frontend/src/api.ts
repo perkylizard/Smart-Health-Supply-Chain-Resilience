@@ -22,7 +22,7 @@ export interface Alert {
 export interface Score { score: number; median_days_of_stock: number; share_under_14d: number; staffing_gap: number; transfer_latency_days: number; reporting_share: number }
 export interface Summary {
   unit_id: string; district: string; scenario: Scenario; counts: Partial<Record<Severity, number>>; facilities: number; score: Score | null;
-  rank_in_unit: number | null; of: number; alerts: Alert[]; sparklines: Record<string, number[]>; sparkline_deltas: Record<string, number | null>; provenance: Record<string, string>;
+  rank_in_unit: number | null; of: number; rank_pending?: boolean; alerts: Alert[]; sparklines: Record<string, number[]>; sparkline_deltas: Record<string, number | null>; provenance: Record<string, string>;
 }
 export interface FacilityDot { facility_id: string; facility_name: string; type: string; lat: number; lon: number; worst_severity: Severity; worst_days: number; worst_commodity: string; red: number; amber: number; data_issues: number; source: string; dist_to_warehouse_km: number; beds: number }
 export interface DistrictRow { district: string; facilities: number; lat: number; lon: number; score: number | null; median_days_of_stock: number | null; red_alerts: number }

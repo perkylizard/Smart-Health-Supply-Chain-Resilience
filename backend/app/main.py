@@ -55,13 +55,29 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
         fc = F.forecast_frame(window[["facility_id", "commodity_id", "month_index", "demand"]])
         return A.compute_alerts(latest, window, fc, scenario, intensity)
 
-    def alerts_for(unit_id: str, district: str | None = None) -> pd.DataFrame:
+    _ready: set = set()
+
+    def _key_for(unit_id: str, district: str | None):
         sc = state.get_scenario()
-        key = (unit_id, district, sc["name"], sc["intensity"], int(sc["updated"]))
+        return (unit_id, district, sc["name"], sc["intensity"], int(sc["updated"]))
+
+    def alerts_for(unit_id: str, district: str | None = None) -> pd.DataFrame:
+        key = _key_for(unit_id, district)
         with _lock_guard:
             lock = _locks.setdefault(key, _th.Lock())
         with lock:  # one computation per key; concurrent callers wait for it instead of recomputing
+            out = _alerts_cached(*key)
+            _ready.add(key)
+            return out
+
+    def alerts_for_unit_if_ready(unit_id: str) -> pd.DataFrame | None:
+        """Unit-wide alerts are expensive (whole state). Return them if cached; otherwise compute in the
+        background and return None so the district page renders now and fills the rank on the next fetch."""
+        key = _key_for(unit_id, None)
+        if key in _ready:
             return _alerts_cached(*key)
+        _th.Thread(target=lambda: alerts_for(unit_id), daemon=True).start()
+        return None
 
     def _unit_or_404(unit_id: str):
         if unit_id not in set(store.units()["unit_id"]):
@@ -97,8 +113,13 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
         top = al[al["alert"]].head(50)
         counts = al["severity"].value_counts().to_dict()
         ds = Rs.district_scores(al, store.staff_latest(unit_id, district))
-        rank = Rs.district_scores(alerts_for(unit_id), store.staff_latest(unit_id))
-        rank_pos = int(rank.index[rank["district"] == district][0]) + 1 if (rank["district"] == district).any() else None
+        al_unit = alerts_for_unit_if_ready(unit_id)
+        if al_unit is not None:
+            rank = Rs.district_scores(al_unit, store.staff_latest(unit_id))
+            rank_pos = int(rank.index[rank["district"] == district][0]) + 1 if (rank["district"] == district).any() else None
+            n_rank = int(len(rank))
+        else:
+            rank_pos, n_rank = None, len(store.districts(unit_id))
         # sparklines: last 12 months of OPD driver demand (14.2.1) and diarrhoea (10.11) from the real district counts, plus red alerts trend proxy
         real = store.real_counts(al["state"].iloc[0], district, ["14.2.1", "10.11"])
         spark = {}
@@ -111,7 +132,7 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
         return {
             "unit_id": unit_id, "district": district, "scenario": state.get_scenario(),
             "counts": {k: int(v) for k, v in counts.items()}, "facilities": int(al["facility_id"].nunique()),
-            "score": _clean(ds)[0] if len(ds) else None, "rank_in_unit": rank_pos, "of": int(len(rank)),
+            "score": _clean(ds)[0] if len(ds) else None, "rank_in_unit": rank_pos, "of": n_rank, "rank_pending": rank_pos is None,
             "alerts": _clean(top), "sparklines": spark, "sparkline_deltas": deltas,
             "provenance": {"alerts": PROVENANCE["stock_ledger"], "sparklines": "HMIS real district counts (opd, diarrhoea_u5); simulated (stockouts)"},
         }
@@ -201,7 +222,10 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
     def set_scenario(body: ScenarioIn):
         if body.name not in {n["name"] for n in S.names()}:
             raise HTTPException(400, "unknown scenario")
-        return state.set_scenario(body.name, body.intensity)
+        out = state.set_scenario(body.name, body.intensity)
+        hero = store.units().iloc[0]["unit_id"]
+        _th.Thread(target=lambda: alerts_for(hero), daemon=True).start()
+        return out
 
     @app.get("/forecast/{facility_id}/{commodity_id}")
     def forecast(facility_id: str, commodity_id: str):
