@@ -19,7 +19,9 @@ def env():
     for line in (paths.ROOT / ".env").read_text().splitlines():
         if "=" in line and not line.startswith("#"):
             k, v = line.split("=", 1); vals[k.strip()] = v.strip()
-    os.environ.setdefault("GOOGLE_APPLICATION_CREDENTIALS", str(paths.ROOT / vals.get("GOOGLE_APPLICATION_CREDENTIALS", "secrets/gcp-sa.json")))
+    key = paths.ROOT / vals.get("GOOGLE_APPLICATION_CREDENTIALS", "secrets/gcp-sa.json")
+    if key.exists():  # service-account key if one exists; otherwise Application Default Credentials from `gcloud auth application-default login`
+        os.environ.setdefault("GOOGLE_APPLICATION_CREDENTIALS", str(key))
     return vals.get("GCP_PROJECT_ID"), vals.get("BQ_DATASET", "sanjeevani")
 
 
@@ -65,6 +67,7 @@ if __name__ == "__main__":
     project, dataset = env()
     if not project:
         sys.exit("GCP_PROJECT_ID missing in .env")
-    if not os.path.exists(os.environ["GOOGLE_APPLICATION_CREDENTIALS"]):
-        sys.exit(f"key file not found at {os.environ['GOOGLE_APPLICATION_CREDENTIALS']}")
+    adc = os.path.expanduser("~/.config/gcloud/application_default_credentials.json")
+    if "GOOGLE_APPLICATION_CREDENTIALS" not in os.environ and not os.path.exists(adc):
+        sys.exit("no credentials: run `gcloud auth application-default login` (or place a service-account key at secrets/gcp-sa.json)")
     {"check": check, "load": load}[sys.argv[1] if len(sys.argv) > 1 else "check"](project, dataset)
