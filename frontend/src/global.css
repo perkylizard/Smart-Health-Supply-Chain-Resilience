@@ -65,7 +65,12 @@ h1 { font-size: var(--t-xl); line-height: 1.15; } h2 { font-size: var(--t-lg); l
 .list { border-top: 1px solid var(--rule); }
 .row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) 220px auto; gap: var(--s3); align-items: center; padding: var(--s3) 0; border-bottom: 1px solid var(--rule); }
 @media (max-width: 900px) { .row { grid-template-columns: 1fr 1fr; } .row .scale { grid-column: 1 / -1; } .row .btn { justify-self: end; } .headline { font-size: 24px; } .content { padding: var(--s4); } .map { height: 300px; } }
-@media (max-width: 600px) { .row { grid-template-columns: 1fr; } .row .btn { justify-self: start; } .strip .grow { flex-basis: 100%; order: 9; } }
+@media (max-width: 900px) { .row .btn { grid-column: 1 / -1; justify-self: end; } .qsection > h2 { flex-wrap: wrap; } .qsection > h2 .count { flex-basis: 100%; padding-left: 38px; } }
+@media (max-width: 600px) {
+  .row { grid-template-columns: 1fr; } .row .btn { justify-self: start; }
+  .strip { gap: var(--s2); } .strip .select { flex: 1 1 42%; min-width: 0; } .strip .dial { flex: 1 1 60%; } .strip .dial .select { flex: 1; } .strip .grow { flex-basis: 100%; order: 9; }
+  .strip > button { margin-left: auto; }
+}
 .row .name { font-weight: 500; } .row .sub { color: var(--ink-3); font-size: var(--t-xs); }
 .card { background: var(--paper); border: 1px solid var(--rule); border-radius: var(--r2); padding: var(--s4); box-shadow: var(--shadow); }
 .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--ink-3); border: 1px dashed var(--rule); border-radius: 4px; padding: 1px 6px; cursor: help; }
