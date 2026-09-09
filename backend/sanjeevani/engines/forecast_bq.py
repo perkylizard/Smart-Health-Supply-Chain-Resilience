@@ -55,23 +55,40 @@ def facility_shares(hist: pd.DataFrame, meta: pd.DataFrame, months: int = 12) ->
 
 
 def forecast_frame(hist: pd.DataFrame, meta: pd.DataFrame, horizon_weeks: int = 8) -> pd.DataFrame:
-    """Hybrid forecast. meta: one row per (facility_id, commodity_id) with state, district, driver_item_code, units_per_case."""
+    """Hybrid forecast, vectorised. meta: one row per (facility_id, commodity_id) with state, district, driver_item_code, units_per_case."""
     if not available():
         return F.forecast_frame(hist, horizon_weeks)
-    shares = facility_shares(hist, meta)
-    m = meta.drop_duplicates(["facility_id", "commodity_id"]).set_index(["facility_id", "commodity_id"])
-    rows = []
-    for (fid, cid), g in hist.sort_values("month_index").groupby(["facility_id", "commodity_id"], sort=False):
-        info = m.loc[(fid, cid)] if (fid, cid) in m.index else None
-        dw = district_weekly(info["state"], info["district"], info["driver_item_code"], horizon_weeks) if info is not None else None
-        share = float(shares.get((cid, fid), 0.0)) if dw is not None else 0.0
-        if dw is not None and share > 0:
-            point = dw[0] * float(info["units_per_case"]) * share
-            p90 = np.maximum(dw[1] * float(info["units_per_case"]) * share, point * (1 + F.P90_FLOOR))
-            method = "bigquery_timesfm"
-        else:
-            fc = F.forecast_series(g["demand"].to_numpy(), horizon_weeks)
-            point, p90, method = fc.point, fc.p90, fc.method
-        for w in range(horizon_weeks):
-            rows.append((fid, cid, w + 1, float(point[w]), float(p90[w]), method))
-    return pd.DataFrame(rows, columns=["facility_id", "commodity_id", "week", "point", "p90", "method"]).assign(source="forecast")
+    c = load_cache()
+    key = ["facility_id", "commodity_id"]
+    m = meta.drop_duplicates(key)[key + ["state", "district", "driver_item_code", "units_per_case"]]
+    # district weekly forecast arrays, one row per (state, district, item_code): first horizon_weeks weeks
+    reps = int(np.ceil(F.WEEKS_PER_MONTH)) + 1
+    need = m[["state", "district", "driver_item_code"]].drop_duplicates()
+    cc = c.merge(need.rename(columns={"driver_item_code": "item_code"}), on=["state", "district", "item_code"])
+    dist = {}
+    for (st, d, ic), g in cc.groupby(["state", "district", "item_code"], sort=False):
+        monthly = np.maximum(g["forecast_value"].to_numpy(float), 0.0); hi = np.maximum(g["hi"].to_numpy(float), monthly)
+        pt = np.repeat(monthly / F.WEEKS_PER_MONTH, reps)[:horizon_weeks]; p9 = np.repeat(hi / F.WEEKS_PER_MONTH, reps)[:horizon_weeks]
+        if len(pt) == horizon_weeks:
+            dist[(st, d, ic)] = (pt, p9)
+    shares = facility_shares(hist, meta)  # index (commodity_id, facility_id)
+    sh = shares.rename("share").reset_index()
+    m = m.merge(sh, on=["commodity_id", "facility_id"], how="left").fillna({"share": 0.0})
+    series = hist.drop_duplicates(key)[key]
+    m = series.merge(m, on=key, how="left")
+    keys = list(zip(m["state"], m["district"], m["driver_item_code"]))
+    have = np.array([k in dist for k in keys]) & (m["share"].to_numpy() > 0)
+    out_pt = np.zeros((len(m), horizon_weeks)); out_p9 = np.zeros((len(m), horizon_weeks)); method = np.array(["baseline"] * len(m), dtype=object)
+    upc = m["units_per_case"].to_numpy(float); share = m["share"].to_numpy(float)
+    for i in np.flatnonzero(have):
+        pt, p9 = dist[keys[i]]
+        out_pt[i] = pt * upc[i] * share[i]; out_p9[i] = np.maximum(p9 * upc[i] * share[i], out_pt[i] * (1 + F.P90_FLOOR)); method[i] = "bigquery_timesfm"
+    if (~have).any():
+        fb = F.forecast_frame(hist.merge(m.loc[~have, key], on=key), horizon_weeks)
+        fb_pt = fb.pivot(index=key, columns="week", values="point"); fb_p9 = fb.pivot(index=key, columns="week", values="p90"); fb_m = fb.groupby(key)["method"].first()
+        idx = pd.MultiIndex.from_frame(m.loc[~have, key])
+        out_pt[~have] = fb_pt.reindex(idx).to_numpy(); out_p9[~have] = fb_p9.reindex(idx).to_numpy(); method[~have] = fb_m.reindex(idx).to_numpy()
+    fid = np.repeat(m["facility_id"].to_numpy(), horizon_weeks); cid = np.repeat(m["commodity_id"].to_numpy(), horizon_weeks)
+    week = np.tile(np.arange(1, horizon_weeks + 1), len(m))
+    return pd.DataFrame({"facility_id": fid, "commodity_id": cid, "week": week, "point": out_pt.ravel(), "p90": out_p9.ravel(),
+                         "method": np.repeat(method, horizon_weeks), "source": "forecast"})
