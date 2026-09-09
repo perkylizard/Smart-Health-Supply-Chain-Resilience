@@ -1,0 +1,216 @@
+"""Persona routes: state officer (unit-wide transfers, national view on real HMIS) and PHC staff (own deliveries)."""
+import time
+
+import numpy as np
+import pandas as pd
+from fastapi import APIRouter, HTTPException, Request
+
+from sanjeevani.engines import redistribute as R
+
+router = APIRouter(tags=["personas"])
+
+# State centroids (approximate, degrees) for the all-India view; public knowledge, no lookup needed.
+STATE_CENTROIDS = {
+    "A & N Islands": (11.7, 92.7), "Andhra Pradesh": (15.9, 79.7), "Arunachal Pradesh": (28.2, 94.7), "Assam": (26.2, 92.9), "Bihar": (25.7, 85.6),
+    "Chandigarh": (30.7, 76.8), "Chhattisgarh": (21.3, 81.9), "Dadra & Nagar Haveli": (20.2, 73.0), "Daman & Diu": (20.4, 72.8), "Delhi": (28.6, 77.2),
+    "Goa": (15.4, 74.0), "Gujarat": (22.7, 71.6), "Haryana": (29.2, 76.3), "Himachal Pradesh": (31.8, 77.2), "Jammu & Kashmir": (33.8, 75.0),
+    "Jharkhand": (23.6, 85.3), "Karnataka": (15.0, 75.9), "Kerala": (10.5, 76.3), "Lakshadweep": (10.6, 72.6), "Madhya Pradesh": (23.5, 78.5),
+    "Maharashtra": (19.6, 76.0), "Manipur": (24.7, 93.9), "Meghalaya": (25.5, 91.3), "Mizoram": (23.3, 92.9), "Nagaland": (26.1, 94.5),
+    "Odisha": (20.5, 84.6), "Puducherry": (11.9, 79.8), "Punjab": (31.0, 75.4), "Rajasthan": (26.6, 73.8), "Sikkim": (27.5, 88.5),
+    "Tamil Nadu": (11.0, 78.4), "Telangana": (17.9, 79.3), "Tripura": (23.8, 91.6), "Uttar Pradesh": (26.9, 80.8), "Uttarakhand": (30.1, 79.2), "West Bengal": (23.9, 87.8),
+}
+LEDGER_ITEMS = ["19.12", "19.14", "19.6", "19.15", "19.16", "19.10", "17.2", "17.3", "17.6", "17.7", "20.2"]
+
+
+def _clean(df: pd.DataFrame) -> list[dict]:
+    from app.main import _clean as c
+    return c(df)
+
+
+@router.get("/units/{unit_id}/transfers")
+def unit_transfers(unit_id: str, request: Request, top_districts: int = 6):
+    """Cross-district proposals for the unit's worst districts; the state officer approves these."""
+    app = request.app; store, state = app.state.store, app.state.state
+    if unit_id not in set(store.units()["unit_id"]):
+        raise HTTPException(404, "unknown unit")
+    al = app.state.alerts_for(unit_id)
+    worst = al[al["severity"] == "red"].groupby("district").size().sort_values(ascending=False).head(top_districts).index.tolist()
+    parts = []
+    for d in worst:
+        al_d = al[al["district"] == d]
+        cids = al_d[al_d["alert"]]["commodity_id"].value_counts().head(4).index.tolist()
+        for cid in cids:
+            pool = al[(al["commodity_id"] == cid) & ((al["district"] == d) | ((~al["alert"]) & (al["days_of_stock"] > 24)))]
+            p = R.propose(pool, cid)
+            if not p.empty:
+                p = p[(p["to_district"] == d) & (p["cross_district"])]
+                parts.append(p)
+    out = pd.concat(parts, ignore_index=True) if parts else R._empty()
+    recs = _clean(out)
+    for r in recs:
+        st = state.transfer_status(r["transfer_id"])
+        if st: r["status"], r["decision_reason"] = st["status"], st.get("reason")
+    return {"unit_id": unit_id, "districts_considered": worst, "transfers": recs, "scenario": state.get_scenario(),
+            "provenance": "OR-Tools min-cost flow across districts; distances haversine x1.3"}
+
+
+@router.get("/facilities/{facility_id}/transfers")
+def facility_transfers(facility_id: str, request: Request):
+    """Transfers that touch one facility (as donor or recipient), with status; PHC staff confirm deliveries here."""
+    app = request.app; store, state = app.state.store, app.state.state
+    f = store.q("SELECT unit_id, district FROM facilities WHERE facility_id = ?", [facility_id])
+    if f.empty:
+        raise HTTPException(404, "unknown facility")
+    unit_id, district = f.iloc[0]["unit_id"], f.iloc[0]["district"]
+    al = app.state.alerts_for(unit_id)
+    mine = al[al["facility_id"] == facility_id]
+    cids = mine[mine["alert"]]["commodity_id"].tolist()[:6]
+    parts = []
+    for cid in cids:
+        pool = al[(al["commodity_id"] == cid) & ((al["district"] == district) | ((~al["alert"]) & (al["days_of_stock"] > 24)))]
+        p = R.propose(pool, cid)
+        if not p.empty:
+            parts.append(p[(p["to_id"] == facility_id) | (p["from_id"] == facility_id)])
+    out = pd.concat(parts, ignore_index=True) if parts else R._empty()
+    recs = _clean(out)
+    for r in recs:
+        st = state.transfer_status(r["transfer_id"])
+        if st: r["status"], r["decision_reason"] = st["status"], st.get("reason")
+        r["direction"] = "incoming" if r["to_id"] == facility_id else "outgoing"
+    # include approved/delivered decisions for this facility that came from the district board
+    return {"facility_id": facility_id, "transfers": recs, "provenance": "OR-Tools proposals filtered to this facility"}
+
+
+@router.get("/national/states")
+def national_states(request: Request):
+    """All 36 states from the real HMIS district ledgers: months of stock on hand for the latest reported month (Mar 2020)."""
+    store = request.app.state.store
+    from sanjeevani import paths
+    import duckdb
+    con = duckdb.connect()  # the full national ledger parquet (all 36 states); the demo DB only keeps demo-state ledgers
+    led = con.execute("SELECT state, district, item_code, closing, distributed FROM '%s' WHERE fy='2019-20' AND month=3 AND item_code IN (%s) AND lower(district) <> lower(state)"
+                      % (paths.DATA_PROCESSED / "hmis_ledger.parquet", ",".join(f"'{i}'" for i in LEDGER_ITEMS))).df()
+    con.close()
+    led["months_of_stock"] = np.where(led["distributed"] > 0, led["closing"] / led["distributed"], np.nan)
+    d = led.groupby(["state", "district"]).agg(months_of_stock=("months_of_stock", "median"), items=("item_code", "count")).reset_index()
+    d["share_under_1_month"] = led.assign(u=led["months_of_stock"] < 1).groupby(["state", "district"])["u"].mean().values
+    s = d.groupby("state").agg(districts=("district", "count"), median_months_of_stock=("months_of_stock", "median"),
+                               share_districts_under_1_month=("months_of_stock", lambda x: float((x < 1).mean()))).reset_index()
+    s["lat"] = s["state"].map(lambda x: STATE_CENTROIDS.get(x, (None, None))[0]); s["lon"] = s["state"].map(lambda x: STATE_CENTROIDS.get(x, (None, None))[1])
+    demo = set(store.units()["state"])
+    s["phc_level_available"] = s["state"].isin(demo)
+    return {"states": _clean(s.sort_values("median_months_of_stock")), "month": "March 2020 (latest public HMIS ledger month)",
+            "provenance": "HMIS sections M17/M19/M20 district stock ledgers (MoHFW, GODL): closing stock / monthly distribution, median over 11 commodities"}
+
+
+@router.get("/national/states/{state_name}/districts")
+def national_state_districts(state_name: str, request: Request):
+    store = request.app.state.store
+    from sanjeevani import paths
+    import duckdb
+    con = duckdb.connect()
+    led = con.execute("SELECT district, item_code, closing, distributed FROM '%s' WHERE state = ? AND fy='2019-20' AND month=3 AND item_code IN (%s) AND lower(district) <> lower(state)"
+                      % (paths.DATA_PROCESSED / "hmis_ledger.parquet", ",".join(f"'{i}'" for i in LEDGER_ITEMS)), [state_name]).df()
+    so = con.execute("SELECT district, value AS stockout_reports FROM '%s' WHERE state = ? AND fy='2019-20' AND month=3 AND item_code='14.17' AND measure='Total' AND lower(district) <> lower(state)"
+                     % (paths.DATA_PROCESSED / "hmis_c2.parquet"), [state_name]).df()
+    con.close()
+    if led.empty:
+        raise HTTPException(404, "no ledger for this state")
+    led["months_of_stock"] = np.where(led["distributed"] > 0, led["closing"] / led["distributed"], np.nan)
+    d = led.groupby("district").agg(months_of_stock=("months_of_stock", "median"), items_reported=("item_code", "count")).reset_index()
+    d = d.merge(so, on="district", how="left")
+    units = store.units(); unit = units[units["state"] == state_name]["unit_id"].tolist()
+    d["unit_id"] = unit[0] if unit else None
+    return {"state": state_name, "districts": _clean(d.sort_values("months_of_stock")), "provenance": "HMIS real district ledger, March 2020; stockout_reports = HMIS item 14.17 (stock-out rate of essential drugs, as reported)"}
+
+
+# ---------- District Magistrate and district warehouse ----------
+
+def _months_of_stock(closing, distributed):
+    return float(closing / distributed) if distributed and distributed > 0 else None
+
+
+@router.get("/districts/{unit_id}/{district}/indents")
+def indents(unit_id: str, district: str, request: Request):
+    """Warehouse queue: facilities whose indent was missed or whose stock is under lead time, with the quantity that
+    brings them to two months of forecast demand. Status (dispatched/delivered) is kept in the state store."""
+    app = request.app; state = app.state.state
+    al = app.state.alerts_for(unit_id, district)
+    need = al[(al["alert"]) & (al["cause"].isin(["supply_missed", "cases_up", "none"]))].copy()
+    need["quantity"] = np.ceil((60.0 - need["days_of_stock"]).clip(lower=0) * need["weekly_demand_p90"] / 7.0).astype(int)
+    need = need[need["quantity"] > 0].sort_values(["days_of_stock"])
+    need["indent_id"] = "indent:" + need["facility_id"] + ":" + need["commodity_id"]
+    recs = _clean(need[["indent_id", "facility_id", "facility_name", "type", "commodity_id", "commodity_name", "category", "days_of_stock", "cause", "quantity", "lead_days"]])
+    for r in recs:
+        st = state.transfer_status(r["indent_id"])
+        r["status"] = st["status"] if st else "pending"
+    return {"district": district, "indents": recs, "scenario": state.get_scenario(),
+            "provenance": "Quantity = stock to reach 60 days of P90 forecast demand; facilities and stock are simulated, forecast from BigQuery TimesFM where cached"}
+
+
+@router.post("/indents/{indent_id:path}/{status}")
+def indent_status(indent_id: str, status: str, request: Request):
+    if status not in ("dispatched", "delivered", "cancelled"):
+        raise HTTPException(400, "status must be dispatched, delivered or cancelled")
+    return request.app.state.state.set_transfer(indent_id, status)
+
+
+@router.get("/districts/{unit_id}/{district}/warehouse")
+def warehouse_stock(unit_id: str, district: str, request: Request):
+    """The district store's own stock book: the real HMIS district ledger, latest reported month, per commodity."""
+    store = request.app.state.store
+    units = store.units(); st = units[units["unit_id"] == unit_id]["state"].iloc[0]
+    led = store.real_ledger(st, district)
+    if led.empty:
+        raise HTTPException(404, "no real ledger for this district")
+    last = led.sort_values(["fy", "month"]).groupby("item_code").tail(1)  # latest month per item within the FY ordering
+    latest_fy = led["fy"].max(); m = led[led["fy"] == latest_fy]
+    order = {4: 0, 5: 1, 6: 2, 7: 3, 8: 4, 9: 5, 10: 6, 11: 7, 12: 8, 1: 9, 2: 10, 3: 11}
+    m = m.assign(o=m["month"].map(order)); last = m[m["o"] == m["o"].max()]
+    last = last.assign(months_of_stock=[_months_of_stock(c, d) for c, d in zip(last["closing"], last["distributed"])])
+    hist = m.sort_values("o").groupby("item_code")["distributed"].apply(lambda x: [None if pd.isna(v) else float(v) for v in x]).rename("distributed_by_month").reset_index()
+    out = last.merge(hist, on="item_code", how="left")
+    return {"district": district, "state": st, "fy": latest_fy, "month": int(last["month"].iloc[0]),
+            "rows": _clean(out[["item_code", "item_name", "opening", "received", "unusable", "distributed", "closing", "months_of_stock", "distributed_by_month"]].sort_values("months_of_stock")),
+            "provenance": "HMIS sections M17/M19/M20, real district monthly stock ledger (MoHFW, GODL), not simulated"}
+
+
+@router.get("/districts/{unit_id}/{district}/brief")
+def weekly_brief(unit_id: str, district: str, request: Request, lang: str = "en"):
+    """The District Magistrate's one-page brief: assembled from engine outputs; Gemini narrative when available."""
+    app = request.app; state = app.state.state
+    summary = app.state.summary_data(unit_id, district)
+    al = app.state.alerts_for(unit_id, district)
+    tr = {k: v for k, v in state.all_transfers().items()}
+    approved = sum(1 for v in tr.values() if v["status"] == "approved"); delivered = sum(1 for v in tr.values() if v["status"] == "delivered")
+    data_issues = int(al["data_issue"].sum())
+    top = al[al["alert"]].sort_values("days_of_stock").head(5)
+    risks = [f"{r.facility_name}: {r.commodity_name}, {r.days_of_stock:.0f} days ({r.cause.replace('_', ' ')})" for r in top.itertuples()]
+    staff = app.state.store.staff_latest(unit_id, district)
+    gap = 1 - staff["in_position"].sum() / max(1, staff["sanctioned"].sum()) if len(staff) else None
+    facts = {"district": district, "score": summary["score"], "rank": summary["rank_in_unit"], "of": summary["of"], "counts": summary["counts"],
+             "facilities": summary["facilities"], "transfers_approved": approved, "transfers_delivered": delivered, "data_issues": data_issues,
+             "staffing_gap": round(gap, 3) if gap is not None else None, "top_risks": risks, "scenario": summary["scenario"], "trends": summary["sparkline_deltas"]}
+    narrative, status = None, "template"
+    client = app.state.gemini
+    try:
+        from sanjeevani.gemini import brief as B
+        narrative = B.run(client, facts, lang).model_dump(); status = "ok"
+    except Exception as e:
+        status = f"fallback: {type(e).__name__}"
+    return {"facts": facts, "narrative": narrative, "status": status, "generated": time.strftime("%Y-%m-%d"),
+            "provenance": "Assembled from the alert, transfer and staffing engines; narrative by Gemini when available"}
+
+
+@router.post("/escalations")
+def escalate(body: dict, request: Request):
+    """District Magistrate escalates to the state: recorded with reason; the state officer sees it on the State screen."""
+    state = request.app.state.state
+    rec = state.add_entry({"kind": "escalation", "unit_id": body.get("unit_id"), "district": body.get("district"), "reason": body.get("reason", "")[:500], "by": "district_magistrate"})
+    return rec
+
+
+@router.get("/escalations/{unit_id}")
+def escalations(unit_id: str, request: Request):
+    state = request.app.state.state
+    return {"escalations": [e for e in state.entries() if e.get("kind") == "escalation" and e.get("unit_id") == unit_id]}

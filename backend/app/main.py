@@ -256,7 +256,10 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
         return state.add_entry(body.model_dump())
 
     from app.routes_ai import router as ai_router
+    from app.routes_personas import router as persona_router
     app.include_router(ai_router)
+    app.include_router(persona_router)
+    app.state.alerts_for = alerts_for
 
     # warm the hero unit so the first page a judge opens is fast
     import threading
