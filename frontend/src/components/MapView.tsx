@@ -4,7 +4,9 @@ import type { FacilityDot } from "../api";
 
 const colour: Record<string, string> = { red: "#c8372d", amber: "#c77c11", watch: "#2e7d5b", ok: "#2e7d5b", data_issue: "#3b6fb6" };
 
-/** Facility or district dots on an OpenStreetMap base. Robust to data arriving before or after the style loads. */
+/** Facility or district dots on an OpenStreetMap base. Created once the container has a size; draws on load and on data
+ * changes. Note for anyone testing with automation: MapLibre paints on requestAnimationFrame, so a hidden browser tab
+ * shows a blank map until it is brought to the front. */
 export default function MapView({ dots, onSelect, center, line }: { dots: FacilityDot[]; onSelect?: (f: FacilityDot) => void; center?: [number, number]; line?: [number, number][] }) {
   const ref = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
@@ -31,25 +33,30 @@ export default function MapView({ dots, onSelect, center, line }: { dots: Facili
     if (valid.length) {
       const b = new maplibregl.LngLatBounds();
       valid.forEach((d) => b.extend([d.lon, d.lat]));
-      m.fitBounds(b, { padding: 30, maxZoom: 11, duration: 0 });
+      m.resize();
+      m.fitBounds(b, { padding: 30, maxZoom: 11, animate: false });
     }
   };
 
   useEffect(() => {
-    let cancelled = false;
-    // create the map one frame later: creating it synchronously in the page's first commit can leave the style never loading
-    const raf = requestAnimationFrame(() => {
-    if (cancelled || !ref.current || map.current) return;
-    const m = new maplibregl.Map({
-      container: ref.current,
-      style: { version: 8, sources: { osm: { type: "raster", tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"], tileSize: 256, attribution: "© OpenStreetMap contributors" } }, layers: [{ id: "osm", type: "raster", source: "osm" }] },
-      center: center ?? [85.1, 25.6], zoom: 6,
-    });
-    m.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
-    m.on("load", () => { loaded.current = true; draw(); });
-    map.current = m;
-    });
-    return () => { cancelled = true; cancelAnimationFrame(raf); if (map.current) { map.current.remove(); map.current = null; loaded.current = false; } };
+    const el = ref.current; if (!el) return;
+    let m: maplibregl.Map | null = null;
+    let tries = 0;
+    let timer = 0;
+    const create = () => {
+      if (map.current) return;
+      if (el.clientWidth < 50 || el.clientHeight < 50) { if (tries++ < 40) timer = window.setTimeout(create, 50); return; }
+      m = new maplibregl.Map({
+        container: el,
+        style: { version: 8, sources: { osm: { type: "raster", tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"], tileSize: 256, attribution: "© OpenStreetMap contributors" } }, layers: [{ id: "osm", type: "raster", source: "osm" }] },
+        center: center ?? [85.1, 25.6], zoom: 6,
+      });
+      m.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+      m.on("load", () => { loaded.current = true; m?.resize(); draw(); });
+      map.current = m;
+    };
+    timer = window.setTimeout(create, 30);
+    return () => { window.clearTimeout(timer); if (map.current) { map.current.remove(); map.current = null; loaded.current = false; } };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
