@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.schemas import EntryIn, RejectIn, ScenarioIn
 from app.state import InMemoryState
-from sanjeevani.engines import alerts as A, forecast as F, redistribute as R, resilience as Rs, scenario as S
+from sanjeevani.engines import alerts as A, forecast as F, forecast_bq as FB, redistribute as R, resilience as Rs, scenario as S
 from sanjeevani.engines.store import Store
 
 PROVENANCE = {
@@ -18,7 +18,7 @@ PROVENANCE = {
     "district_demand": "HMIS item-wise district monthly 2017-18 to 2019-20 (MoHFW), time-shifted to 2024-27; facility split is simulated",
     "stock_ledger": "Simulated at facility level; district totals calibrated to HMIS real ledgers (sections M17, M19, M20)",
     "facility_names": "OpenStreetMap contributors (ODbL) where source=osm; otherwise simulated",
-    "forecast": "Seasonal-naive with trend and P90 residual band (fallback engine); BigQuery AI.FORECAST when configured",
+    "forecast": "BigQuery AI.FORECAST (TimesFM) district forecast x facility share, cached daily; seasonal-naive baseline for series without a cached district forecast",
     "transfers": "OR-Tools min-cost flow; distances haversine x1.3 (Google Maps Distance Matrix when configured)",
 }
 
@@ -51,9 +51,11 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
     @lru_cache(maxsize=256)
     def _alerts_cached(unit_id: str, district: str | None, scenario: str, intensity: float, stamp: int) -> pd.DataFrame:
         latest = store.ledger_latest(unit_id, district)
-        window = store.ledger_window(unit_id, 4, district)
-        fc = F.forecast_frame(window[["facility_id", "commodity_id", "month_index", "demand"]])
-        return A.compute_alerts(latest, window, fc, scenario, intensity)
+        window = store.ledger_window(unit_id, 13, district)
+        meta = window[["facility_id", "commodity_id", "state", "district", "driver_item_code"]].drop_duplicates(["facility_id", "commodity_id"])
+        meta = meta.merge(store.commodities()[["commodity_id", "units_per_case"]], on="commodity_id", how="left")
+        fc = FB.forecast_frame(window[["facility_id", "commodity_id", "month_index", "demand"]], meta)
+        return A.compute_alerts(latest, window[window["month_index"] > window["month_index"].max() - 4], fc, scenario, intensity)
 
     _ready: set = set()
 
@@ -232,7 +234,14 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
         hist = store.q("SELECT facility_id, commodity_id, month_index, year, month, demand FROM ledger WHERE facility_id = ? AND commodity_id = ? ORDER BY month_index", [facility_id, commodity_id])
         if hist.empty:
             raise HTTPException(404, "no history")
-        fc = F.forecast_frame(hist[["facility_id", "commodity_id", "month_index", "demand"]])
+        # hierarchical share needs the district's other facilities for this commodity
+        f = store.q("SELECT state, district, unit_id FROM facilities WHERE facility_id = ?", [facility_id]).iloc[0]
+        dist = store.q("SELECT l.facility_id, l.commodity_id, l.month_index, l.demand FROM ledger l JOIN facilities x USING (facility_id) WHERE x.district = ? AND x.unit_id = ? AND l.commodity_id = ? AND l.month_index > (SELECT max(month_index) FROM ledger) - 12", [f["district"], f["unit_id"], commodity_id])
+        c = store.commodities().set_index("commodity_id").loc[commodity_id]
+        meta = store.q("SELECT facility_id, state, district FROM facilities WHERE district = ? AND unit_id = ?", [f["district"], f["unit_id"]])
+        meta["commodity_id"] = commodity_id; meta["driver_item_code"] = c["driver_item_code"]; meta["units_per_case"] = c["units_per_case"]
+        fc = FB.forecast_frame(dist, meta)
+        fc = fc[fc["facility_id"] == facility_id]
         return {"history": _clean(hist[["year", "month", "demand"]]), "forecast": _clean(fc), "provenance": PROVENANCE["forecast"]}
 
     @app.get("/real/{state_name}/{district}/ledger")
