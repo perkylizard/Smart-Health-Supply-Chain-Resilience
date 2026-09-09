@@ -11,7 +11,7 @@ Legend: effort in build-days for Claude Code; rubric = the judging criterion it 
   Re-run the 36-month ledger with the redistribution engine active each month; report stock-out facility-months avoided per unit; show on Today and in README.
   Data: simulated ledger (on disk, derived from HMIS real district counts). No new data.
 
-- [ ] **A2. National view on real data** (2 d, Depth and Reach)
+- [x] **A2. National view on real data** (done 9 Sep as the state officer's India tab) (2 d, Depth and Reach)
   India map coloured by district resilience for all 36 states from the real HMIS district ledgers; 14 demo units drill down to PHC level; others stop at district and say so.
   Data: HMIS district ledger 2017-2020 (on disk, GODL). District boundaries: none needed for a dot or choropleth-by-centroid version; if polygon boundaries are wanted, use the Survey of India / data.gov.in district boundary shapefile or the DataMeet community GeoJSON (both public, downloadable, licensed for reuse; check the licence line on the dataset page before adding). No scraping.
 
@@ -35,7 +35,7 @@ Legend: effort in build-days for Claude Code; rubric = the judging criterion it 
   Five-step overlay: open Araria, move the dial, watch alerts flip, approve a transfer, ask a question.
   Data: none.
 
-- [ ] **A8. Weekly brief** (1 d, Deployability)
+- [x] **A8. Weekly brief** (done 9 Sep as the District Magistrate persona) (1 d, Deployability)
   Two-page printable brief for the District Magistrate, Gemini-written, from the summary and transfers.
   Data: none new. Gemini calls: about 1 per district per week, cached.
 
@@ -46,8 +46,8 @@ Legend: effort in build-days for Claude Code; rubric = the judging criterion it 
 - [ ] **B3. Fewer, ranked proposals** (0.5 d): rank by patient-days protected; top ten visible. Data: none.
 - [ ] **B4. Merge duplicate facility names** (0.5 d): normalise punctuation in the roster build. Data: none new; rebuild from cache.
 - [ ] **B5. Staffing and bed alerts** (1 d): doctor absent over 10 days; CHC occupancy over 90 percent during a surge; referral suggestion to the nearest facility with free beds. Data: simulated staff and beds (on disk), RHS staffing vacancies (on disk, GODL).
-- [ ] **B6. Real HMIS stock-out rate on the district page** (0.5 d): item 14.17 shown beside our alerts and used as ground truth in the backtest. Data: on disk.
-- [ ] **B7. Precompute all units at startup** (0.5 d). Data: none.
+- [x] **B6. Real HMIS stock-out rate (done 9 Sep in the India drill-down) on the district page** (0.5 d): item 14.17 shown beside our alerts and used as ground truth in the backtest. Data: on disk.
+- [x] **B7. Precompute all units at startup** (hero unit at startup and on scenario change; others on demand) (0.5 d). Data: none.
 
 ## C. Reach and deployability extras
 
@@ -73,3 +73,9 @@ IoT sensors, blockchain, patient-facing app, full authentication, bed forecastin
 | Gemini | Documented API, free tier, paced, synthetic data only | Google terms | No |
 
 Nothing in this list requires logging into any portal, reading any interactive dashboard, or collecting any personal data.
+
+
+## Added outside the list
+- [x] Google predictive modelling in BigQuery (TimesFM, ARIMA_PLUS), backtest in README, cached forecasts used hierarchically (9 Sep)
+- [x] Five personas with own screens and flows (9 Sep)
+- [x] India-only hierarchical federated learning with replay and live run (9 Sep, user decision)
