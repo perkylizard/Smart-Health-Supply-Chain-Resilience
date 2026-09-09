@@ -59,3 +59,16 @@ Produced by `uv run python scripts/backtest.py` on the simulated hero-unit ledge
 | outbreak | 29.9% | 50.4% | 1950 |
 | vaccine | 38.1% | 52.8% | 1500 |
 <!-- eval:end -->
+
+
+### Google predictive modelling: district-level backtest
+
+<!-- bq-eval:start -->
+| Method | Median MAPE | Mean MAPE | Best on N series |
+|---|---|---|---|
+| Seasonal-naive baseline (Python, always on) | 34.2% | 130.0% | 92 |
+| BigQuery ML ARIMA_PLUS (Google) | 20.6% | 173.6% | 236 |
+| BigQuery AI.FORECAST, TimesFM (Google) | 17.7% | 146.4% | 413 |
+
+Real HMIS district series for Bihar, 738 district x item series with mean monthly value >= 20, trained to Dec 2019, held out Jan-Mar 2020. Produced by `uv run python scripts/bq_forecast.py backtest` on 2026-09-09.
+<!-- bq-eval:end -->

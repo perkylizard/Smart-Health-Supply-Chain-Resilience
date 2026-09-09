@@ -55,7 +55,8 @@ def load(project, dataset):
     fm = con.execute("""
         SELECT l.facility_id, f.state, f.district, f.type, l.commodity_id, c.category, c.driver_item_code,
                make_date(l.year, l.month, 1) AS month_start, l.demand, l.closing, l.stockout
-        FROM ledger l JOIN facilities f USING (facility_id) JOIN commodities c USING (commodity_id)""").df()
+        FROM ledger l JOIN facilities f USING (facility_id) JOIN commodities c USING (commodity_id)
+        WHERE l.unit_id = (SELECT unit_id FROM units WHERE is_hero = 1)""").df()
     con.close()
     for name, df in (("district_monthly_real", dm), ("facility_monthly_sim", fm)):
         job = c.load_table_from_dataframe(df, f"{project}.{dataset}.{name}", job_config=bigquery.LoadJobConfig(write_disposition="WRITE_TRUNCATE"))
