@@ -2,6 +2,7 @@
 through consumption ratios, and run a monthly stock ledger with scenario multipliers.
 All outputs carry source='simulated' except where noted."""
 import json
+from typing import Callable
 
 import duckdb
 import numpy as np
@@ -81,8 +82,13 @@ def _rule_applies(rule, category, driver, cal_month):
 
 
 def build_ledger(fac_demand: pd.DataFrame, facilities: pd.DataFrame, commodities: pd.DataFrame,
-                 scenario: str = "normal", intensity: float = 1.0, seed: int = 7) -> pd.DataFrame:
-    """Monthly ledger per facility x commodity over all month_index values present in fac_demand."""
+                 scenario: str = "normal", intensity: float = 1.0, seed: int = 7,
+                 redistribute: Callable[[pd.DataFrame], pd.DataFrame | None] | None = None) -> pd.DataFrame:
+    """Monthly ledger per facility x commodity over all month_index values present in fac_demand.
+    redistribute: optional hook called once per commodity per month, after receipts are known and before demand is served,
+    with one row per facility (facility_id, commodity_id, month_index, available, recent_demand, lead_days, type); returns
+    transfers (from_id, to_id, quantity) that move stock between facilities within the month. Random draws are identical
+    with or without the hook, so runs are directly comparable."""
     rng = np.random.default_rng(seed)
     sc = scenario_rules(scenario, intensity)
     fac = facilities.set_index("facility_id")
@@ -120,19 +126,30 @@ def build_ledger(fac_demand: pd.DataFrame, facilities: pd.DataFrame, commodities
             received = np.where(missed, 0.0, indent)
             unusable = np.round(opening * rng.uniform(0.0, 0.02, n))
             available = np.maximum(opening + received - unusable, 0.0)
+            lead = np.array([BASE_LEAD_DAYS[t] for t in ftype]) + lead_add[:, j]
+            t_in, t_out = np.zeros(n), np.zeros(n)
+            if redistribute is not None:
+                # decision point of the product: receipts are known, the month's demand is not yet served
+                tr = redistribute(pd.DataFrame({"facility_id": fids, "commodity_id": c["commodity_id"], "month_index": months[j],
+                                                "available": available, "recent_demand": recent, "lead_days": lead, "type": ftype}))
+                if tr is not None and len(tr):
+                    pos = pd.Series(np.arange(n), index=fids)
+                    q = tr["quantity"].to_numpy(dtype=float)
+                    np.add.at(t_out, pos.loc[tr["from_id"]].to_numpy(), q)
+                    np.add.at(t_in, pos.loc[tr["to_id"]].to_numpy(), q)
+                    available = np.maximum(available + t_in - t_out, 0.0)
             distributed = np.minimum(demand[:, j], available)
             closing = available - distributed
             stockout = demand[:, j] > available
             daily = np.maximum(demand[:, j] / 30.0, 1e-6)
             dos = np.minimum(closing / daily, 365.0)
-            lead = np.array([BASE_LEAD_DAYS[t] for t in ftype]) + lead_add[:, j]
             y, m = calendar_of(months[j])
             out.append(pd.DataFrame({
                 "facility_id": fids, "commodity_id": c["commodity_id"], "month_index": months[j], "year": y, "month": m,
                 "demand": np.round(demand[:, j], 1), "opening": np.round(opening, 1), "received": received,
                 "unusable": unusable, "distributed": np.round(distributed, 1), "closing": np.round(closing, 1),
                 "stockout": stockout, "days_of_stock": np.round(dos, 1), "lead_days": np.round(lead, 1),
-                "scenario": scenario, "source": "simulated",
+                "scenario": scenario, "source": "simulated", "transferred_in": t_in, "transferred_out": t_out,
             }))
             hist.append(demand[:, j]); opening = closing
     return pd.concat(out, ignore_index=True) if out else pd.DataFrame()

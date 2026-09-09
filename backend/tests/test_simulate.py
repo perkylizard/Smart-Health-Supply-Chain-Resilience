@@ -80,3 +80,42 @@ def test_staff_and_beds_shapes():
     assert len(beds) == 4 * 2 and (beds["occupied"] <= beds["beds"]).all()
     assert set(staff["cadre"]) == {"medical_officer", "pharmacist", "staff_nurse", "lab_technician"}
     assert (staff["in_position"] <= staff["sanctioned"]).all()
+
+
+def _ledger_inputs():
+    dd = _district_demand(); fac = _facilities(); shares = simulate.facility_shares(fac)
+    return simulate.disaggregate(dd, shares, seed=1), fac
+
+
+def test_ledger_noop_redistribute_hook_is_identical():
+    fd, fac = _ledger_inputs()
+    base = simulate.build_ledger(fd, fac, _commodities(), seed=3)
+    hooked = simulate.build_ledger(fd, fac, _commodities(), seed=3, redistribute=lambda month_df: pd.DataFrame(columns=["from_id", "to_id", "quantity"]))
+    assert hooked["transferred_in"].eq(0).all() and hooked["transferred_out"].eq(0).all()
+    cols = ["transferred_in", "transferred_out"]
+    assert base[cols].eq(0).all().all()
+    assert base.drop(columns=cols).equals(hooked.drop(columns=cols))
+
+
+def test_ledger_transfer_is_available_in_the_same_month():
+    """The hook runs after receipts are known and before demand is served: a transfer that arrives within
+    the month counts against that month's demand, which is how a missed indent gets covered."""
+    fd, fac = _ledger_inputs()
+    seen = []
+
+    def hook(month_df):
+        seen.append(set(month_df.columns))
+        if int(month_df["month_index"].iloc[0]) == 0:
+            return pd.DataFrame([{"from_id": "f2", "to_id": "f1", "quantity": 50}])
+        return None
+
+    led = simulate.build_ledger(fd, fac, _commodities(), seed=3, redistribute=hook)
+    assert {"facility_id", "commodity_id", "month_index", "available", "recent_demand", "lead_days", "type"} <= seen[0]
+    m0 = led[led["month_index"] == 0].set_index("facility_id")
+    assert m0.loc["f1", "transferred_in"] == 50 and m0.loc["f2", "transferred_out"] == 50
+    assert m0.loc["f3", "transferred_in"] == 0 and m0.loc["f3", "transferred_out"] == 0
+    ident = led["opening"] + led["received"] - led["unusable"] + led["transferred_in"] - led["transferred_out"] - led["distributed"] - led["closing"]
+    assert (ident.abs() < 0.2).all()
+    base = simulate.build_ledger(fd, fac, _commodities(), seed=3)
+    b0 = base[base["month_index"] == 0].set_index("facility_id")
+    assert m0.loc["f1", "closing"] == pytest.approx(b0.loc["f1", "closing"] + 50, abs=0.2) or m0.loc["f1", "distributed"] > b0.loc["f1", "distributed"]
