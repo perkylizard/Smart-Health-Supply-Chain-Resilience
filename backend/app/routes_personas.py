@@ -46,11 +46,14 @@ def unit_transfers(unit_id: str, request: Request, top_districts: int = 6):
                 p = p[(p["to_district"] == d) & (p["cross_district"])]
                 parts.append(p)
     out = pd.concat(parts, ignore_index=True) if parts else R._empty()
+    total = int(len(out))
+    if not out.empty:  # the officer sees the most urgent forty; recipients with the fewest days first
+        out = out.sort_values(["recipient_days_after", "km"]).head(40)
     recs = _clean(out)
     for r in recs:
         st = state.transfer_status(r["transfer_id"])
         if st: r["status"], r["decision_reason"] = st["status"], st.get("reason")
-    return {"unit_id": unit_id, "districts_considered": worst, "transfers": recs, "scenario": state.get_scenario(),
+    return {"unit_id": unit_id, "districts_considered": worst, "transfers": recs, "total_proposals": total, "scenario": state.get_scenario(),
             "provenance": "OR-Tools min-cost flow across districts; distances haversine x1.3"}
 
 

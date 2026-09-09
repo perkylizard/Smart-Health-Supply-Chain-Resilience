@@ -18,6 +18,15 @@ const en = {
   confirm: "Reply 1 to confirm, 2 to correct", causes: { cases_up: "cases up", supply_missed: "supply missed", written_off: "written off", data_issue: "data issue", none: "" } as Record<string, string>,
   severity: { red: "under 7 days", amber: "under 14 days", watch: "under 30 days", ok: "ok", data_issue: "reporting error" } as Record<string, string>,
   scenarioOff: "No scenario", intensity: "Intensity", whatIf: "What-if scenario active",
+  persona: "I am", personas: { dho: "District Health Officer", state: "State officer", phc: "PHC staff", dm: "District Magistrate", warehouse: "District warehouse" } as Record<string, string>,
+  stateTab: "State", districtsTab: "Districts", indiaTab: "India", myStock: "My stock", report: "Report", deliveries: "Deliveries", brief: "Weekly brief", compare: "Compare", indents: "Indents", storeStock: "Store stock",
+  facility: "Facility", pickFacility: "Choose your facility", crossDistrict: "Cross-district transfers awaiting state approval", escalationsTitle: "Escalations from districts",
+  leagueTitle: "District league table", monthsOfStock: "months of stock", underOneMonth: "districts under one month", phcLevel: "PHC-level detail", districtLevel: "district level only",
+  indiaTitle: "All India, real HMIS district ledgers", indiaMonth: "Latest public ledger month",
+  incoming: "Arriving", outgoing: "Leaving", confirmArrived: "Confirm it arrived", nothingArriving: "Nothing on its way to you right now.",
+  markDispatched: "Mark dispatched", markDelivered: "Mark delivered", pending: "pending", dispatched: "dispatched", deliveredStatus: "delivered", qtyToSend: "to send",
+  escalate: "Escalate to state", escalateReason: "Reason for escalation", escalated: "Escalated", printBrief: "Print", riskNext: "Risks next week",
+  neighbours: "Your district against the state", stockPosition: "Stock position", actionsTaken: "Actions taken", dataQuality: "Data quality",
 };
 const hi: typeof en = {
   ...en,
@@ -38,5 +47,14 @@ const hi: typeof en = {
   causes: { cases_up: "केस बढ़े", supply_missed: "आपूर्ति छूटी", written_off: "अनुपयोगी", data_issue: "डेटा त्रुटि", none: "" },
   severity: { red: "7 दिन से कम", amber: "14 दिन से कम", watch: "30 दिन से कम", ok: "ठीक", data_issue: "रिपोर्टिंग त्रुटि" },
   scenarioOff: "कोई परिदृश्य नहीं", intensity: "तीव्रता", whatIf: "क्या-हो-अगर परिदृश्य सक्रिय",
+  persona: "मैं हूँ", personas: { dho: "ज़िला स्वास्थ्य अधिकारी", state: "राज्य अधिकारी", phc: "PHC स्टाफ", dm: "ज़िलाधिकारी", warehouse: "ज़िला भंडार" },
+  stateTab: "राज्य", districtsTab: "ज़िले", indiaTab: "भारत", myStock: "मेरा स्टॉक", report: "रिपोर्ट", deliveries: "डिलीवरी", brief: "साप्ताहिक ब्रीफ", compare: "तुलना", indents: "इंडेंट", storeStock: "भंडार स्टॉक",
+  facility: "सुविधा", pickFacility: "अपनी सुविधा चुनें", crossDistrict: "राज्य स्वीकृति हेतु अंतर-ज़िला स्थानांतरण", escalationsTitle: "ज़िलों से एस्केलेशन",
+  leagueTitle: "ज़िला तालिका", monthsOfStock: "महीनों का स्टॉक", underOneMonth: "ज़िले एक महीने से कम", phcLevel: "PHC-स्तर विवरण", districtLevel: "केवल ज़िला स्तर",
+  indiaTitle: "पूरा भारत, वास्तविक HMIS ज़िला लेजर", indiaMonth: "नवीनतम सार्वजनिक लेजर महीना",
+  incoming: "आ रहा है", outgoing: "जा रहा है", confirmArrived: "पहुँच गया, पुष्टि करें", nothingArriving: "अभी आपके लिए कुछ रास्ते में नहीं है।",
+  markDispatched: "रवाना किया", markDelivered: "पहुँचा दिया", pending: "लंबित", dispatched: "रवाना", deliveredStatus: "पहुँचा", qtyToSend: "भेजना है",
+  escalate: "राज्य को एस्केलेट करें", escalateReason: "एस्केलेशन का कारण", escalated: "एस्केलेट किया", printBrief: "प्रिंट", riskNext: "अगले सप्ताह के जोखिम",
+  neighbours: "राज्य में आपका ज़िला", stockPosition: "स्टॉक स्थिति", actionsTaken: "की गई कार्रवाई", dataQuality: "डेटा गुणवत्ता",
 };
 export const strings = { en, hi };
