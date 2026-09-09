@@ -106,3 +106,5 @@ textarea.input { min-height: 120px; padding: var(--s3); font-family: ui-monospac
 .bubble.me { align-self: flex-end; background: var(--teal-soft); border-color: transparent; }
 .dialog-overlay { position: fixed; inset: 0; background: rgba(27,34,38,.45); }
 .dialog { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(560px, calc(100vw - 32px)); background: var(--paper); border-radius: var(--r2); padding: var(--s5); box-shadow: var(--shadow); max-height: 85vh; overflow: auto; }
+.select.persona { border-color: var(--teal); color: var(--teal-2); font-weight: 600; }
+@media print { .strip, .tabs, .btn, textarea { display: none !important; } .content { padding: 0; } body { background: #fff; color: #000; } }
