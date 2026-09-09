@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../api";
 import { useApp } from "../App";
 import ScenarioDial from "../components/ScenarioDial";
+import Federated from "../components/Federated";
 
 export default function System() {
   const { t, unit } = useApp();
@@ -13,7 +14,7 @@ export default function System() {
     <div className="two-col">
       <div>
         <section className="section"><h2>{t.scenario}</h2><ScenarioDial large /></section>
-        <section className="section"><h2>{t.federated}</h2><div className="quiet">{t.comingSoon}</div></section>
+        <section className="section"><h2>{t.federated}</h2><Federated /></section>
       </div>
       <aside>
         <section className="section"><h2>{t.dataHealth}</h2>

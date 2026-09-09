@@ -78,9 +78,14 @@ def backtest(project, dataset, state="Bihar"):
           f"Produced by `uv run python scripts/bq_forecast.py backtest` on {time.strftime('%Y-%m-%d')}."]
     table = "\n".join(md)
     readme = (paths.ROOT / "README.md").read_text()
-    block = f"<!-- bq-eval:start -->\n{table}\n<!-- bq-eval:end -->"
-    if "<!-- bq-eval:start -->" in readme:
+    tag = re.sub(r"[^a-z0-9]+", "-", state.lower())
+    block = f"<!-- bq-eval:{tag}:start -->\n**{state}**\n\n{table}\n<!-- bq-eval:{tag}:end -->"
+    if f"<!-- bq-eval:{tag}:start -->" in readme:
+        readme = re.sub(rf"<!-- bq-eval:{tag}:start -->.*?<!-- bq-eval:{tag}:end -->", block, readme, flags=re.S)
+    elif "<!-- bq-eval:start -->" in readme:  # migrate the first single-state block
         readme = re.sub(r"<!-- bq-eval:start -->.*?<!-- bq-eval:end -->", block, readme, flags=re.S)
+    elif "### Google predictive modelling" in readme:
+        readme = readme.rstrip() + f"\n\n{block}\n"
     else:
         readme += f"\n\n### Google predictive modelling: district-level backtest\n\n{block}\n"
     (paths.ROOT / "README.md").write_text(readme)
@@ -102,4 +107,7 @@ def cache(project, dataset):
 
 if __name__ == "__main__":
     project, dataset = env()
-    {"backtest": backtest, "cache": cache}[sys.argv[1]](project, dataset)
+    if sys.argv[1] == "backtest":
+        backtest(project, dataset, sys.argv[2] if len(sys.argv) > 2 else "Bihar")
+    else:
+        cache(project, dataset)
