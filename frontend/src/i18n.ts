@@ -13,7 +13,7 @@ const en = {
   guided: "Guided", advanced: "Advanced (SQL)", run: "Run", showSql: "Show SQL", answer: "Answer", rows: "rows", exportCsv: "Export CSV",
   examples: ["Which PHCs have the least ORS?", "Show the zinc trend this year", "Compare districts on days of stock", "What ran out most last month?"],
   stock: "Stock", staff: "Staff", beds: "Beds", entries: "Reported entries", occupied: "occupied", sanctioned: "sanctioned", inPosition: "in position", present: "days present",
-  dataHealth: "Data health", latestMonth: "Latest simulated month", federated: "Federated learning", comingSoon: "Available once the federated node is deployed.",
+  dataHealth: "Data health", latestMonth: "Latest simulated month", federated: "Federated learning across India", comingSoon: "Available once the federated node is deployed.",
   chatTitle: "PHC staff channel (simulated WhatsApp)", chatHint: "Send a stock update as text, a photo of the register, or a voice note.", send: "Send",
   confirm: "Reply 1 to confirm, 2 to correct", causes: { cases_up: "cases up", supply_missed: "supply missed", written_off: "written off", data_issue: "data issue", none: "" } as Record<string, string>,
   severity: { red: "under 7 days", amber: "under 14 days", watch: "under 30 days", ok: "ok", data_issue: "reporting error" } as Record<string, string>,
@@ -27,6 +27,9 @@ const en = {
   markDispatched: "Mark dispatched", markDelivered: "Mark delivered", pending: "pending", dispatched: "dispatched", deliveredStatus: "delivered", qtyToSend: "to send",
   escalate: "Escalate to state", escalateReason: "Reason for escalation", escalated: "Escalated", printBrief: "Print", riskNext: "Risks next week",
   neighbours: "Your district against the state", stockPosition: "Stock position", actionsTaken: "Actions taken", dataQuality: "Data quality",
+  fedIntro: "Each node trains on its own data and shares only model weights. The counter below is measured from the aggregators, not assumed.",
+  replay: "Replay", runLive: "Run live", running: "Training across nodes now", rowsCrossed: "rows that left a node", localOnly: "local only", federatedLbl: "federated", personalised: "federated, then tuned locally",
+  tierColdstart: "Bihar districts, first months of reporting", tierDistricts: "Bihar districts, three years", tierStates: "States and UTs",
 };
 const hi: typeof en = {
   ...en,
@@ -42,7 +45,7 @@ const hi: typeof en = {
   confirmAll: (n) => `सभी ${n} स्थानांतरण स्वीकृत करें?`, cancel: "रद्द", guided: "निर्देशित", advanced: "उन्नत (SQL)", run: "चलाएँ", showSql: "SQL दिखाएँ", answer: "उत्तर", rows: "पंक्तियाँ",
   exportCsv: "CSV निर्यात", examples: ["किस PHC में सबसे कम ORS बचा है?", "इस साल जिंक का रुझान दिखाएँ", "ज़िलों की तुलना करें", "पिछले महीने क्या सबसे ज़्यादा खत्म हुआ?"],
   stock: "स्टॉक", staff: "स्टाफ", beds: "बिस्तर", entries: "रिपोर्ट की गई प्रविष्टियाँ", occupied: "भरे", sanctioned: "स्वीकृत पद", inPosition: "कार्यरत", present: "उपस्थित दिन",
-  dataHealth: "डेटा स्थिति", latestMonth: "नवीनतम सिम्युलेटेड महीना", federated: "फ़ेडरेटेड लर्निंग", comingSoon: "फ़ेडरेटेड नोड तैनात होने पर उपलब्ध।",
+  dataHealth: "डेटा स्थिति", latestMonth: "नवीनतम सिम्युलेटेड महीना", federated: "पूरे भारत में फ़ेडरेटेड लर्निंग", comingSoon: "फ़ेडरेटेड नोड तैनात होने पर उपलब्ध।",
   chatTitle: "PHC स्टाफ चैनल (सिम्युलेटेड WhatsApp)", chatHint: "स्टॉक अपडेट टेक्स्ट, रजिस्टर की फ़ोटो या वॉइस नोट से भेजें।", send: "भेजें", confirm: "पुष्टि के लिए 1, सुधार के लिए 2",
   causes: { cases_up: "केस बढ़े", supply_missed: "आपूर्ति छूटी", written_off: "अनुपयोगी", data_issue: "डेटा त्रुटि", none: "" },
   severity: { red: "7 दिन से कम", amber: "14 दिन से कम", watch: "30 दिन से कम", ok: "ठीक", data_issue: "रिपोर्टिंग त्रुटि" },
@@ -56,5 +59,8 @@ const hi: typeof en = {
   markDispatched: "रवाना किया", markDelivered: "पहुँचा दिया", pending: "लंबित", dispatched: "रवाना", deliveredStatus: "पहुँचा", qtyToSend: "भेजना है",
   escalate: "राज्य को एस्केलेट करें", escalateReason: "एस्केलेशन का कारण", escalated: "एस्केलेट किया", printBrief: "प्रिंट", riskNext: "अगले सप्ताह के जोखिम",
   neighbours: "राज्य में आपका ज़िला", stockPosition: "स्टॉक स्थिति", actionsTaken: "की गई कार्रवाई", dataQuality: "डेटा गुणवत्ता",
+  fedIntro: "हर नोड अपने डेटा पर सीखता है और सिर्फ़ मॉडल के वज़न साझा करता है। नीचे का काउंटर एग्रीगेटर से मापा गया है।",
+  replay: "रीप्ले", runLive: "लाइव चलाएँ", running: "नोड्स पर प्रशिक्षण चल रहा है", rowsCrossed: "पंक्तियाँ जो नोड से बाहर गईं", localOnly: "केवल स्थानीय", federatedLbl: "फ़ेडरेटेड", personalised: "फ़ेडरेटेड, फिर स्थानीय ट्यून",
+  tierColdstart: "बिहार के ज़िले, रिपोर्टिंग के पहले महीने", tierDistricts: "बिहार के ज़िले, तीन साल", tierStates: "राज्य और केंद्र शासित प्रदेश",
 };
 export const strings = { en, hi };

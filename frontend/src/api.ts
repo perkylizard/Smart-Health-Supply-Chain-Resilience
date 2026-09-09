@@ -35,7 +35,14 @@ export interface Indent { indent_id: string; facility_id: string; facility_name:
 export interface WarehouseRow { item_code: string; item_name: string; opening: number; received: number; unusable: number; distributed: number; closing: number; months_of_stock: number | null; distributed_by_month: (number | null)[] }
 export interface Brief { facts: { district: string; score: Score | null; rank: number | null; of: number; counts: Partial<Record<Severity, number>>; facilities: number; transfers_approved: number; transfers_delivered: number; data_issues: number; staffing_gap: number | null; top_risks: string[]; scenario: Scenario; trends: Record<string, number | null> }; narrative: { title: string; sections: { heading: string; bullets: string[] }[]; next_week_risks: string[] } | null; status: string; generated: string; provenance: string }
 
+export interface FedMetrics { auc: number; logloss: number; precision: number; recall: number; n: number; positives: number }
+export interface FedRound { round: number; global: FedMetrics; rows_crossed: number; per_node: Record<string, { federated: FedMetrics; local_only: FedMetrics; personalised?: FedMetrics; group: string; rows: number }> }
+export interface FedTier { tier: string; summary: { nodes: number; groups: string[]; rounds: number; federated_better_or_equal_nodes: number; personalised_better_or_equal_nodes?: number; mean_auc_federated: number; mean_auc_local_only: number; mean_auc_personalised?: number; rows_crossed_border: number; global: FedMetrics }; nodes: { name: string; group: string; rows: number; holdout_rows?: number }[]; rounds: FedRound[]; seconds?: number; provenance?: string }
+export interface FedReplay { generated: string; method: string; features: string[]; tiers: Record<string, FedTier> }
+
 export const api = {
+  fedReplay: () => get<FedReplay>("/federated/replay"),
+  fedRun: (tier: string, rounds: number) => post<FedTier>("/federated/run", { tier, rounds }),
   unitTransfers: (u: string) => get<{ transfers: Transfer[]; districts_considered: string[]; provenance: string }>(`/units/${u}/transfers`),
   facilityTransfers: (id: string) => get<{ transfers: (Transfer & { direction: "incoming" | "outgoing" })[] }>(`/facilities/${id}/transfers`),
   nationalStates: () => get<{ states: NationalState[]; month: string; provenance: string }>("/national/states"),

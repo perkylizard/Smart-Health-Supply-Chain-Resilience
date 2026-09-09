@@ -93,6 +93,8 @@ All runtime intelligence is Google. Gemini via AI Studio free tier for language 
 Rules: system prompt forbids clinical advice; every response carries source refs; no personal data is sent; prompts and outputs logged locally for the demo, not to third parties.
 
 ### 3.5 Federated learning demo
+
+**Decision 9 Sep 2026 (user): India-only federation.** Tiers: Bihar districts -> state aggregator; demo states -> national aggregator. Hand-rolled hierarchical FedAvg in numpy (transparent, no heavy dependency); a personalised variant fine-tunes the global model locally. Brazil is parked and not part of the build. The original two-nation text below is retained for history.
 - Framework: Flower. Two clients: India (simulated PHC ledger seeded from HMIS) and Brazil (real Hórus ledger, product codes mapped to NLEM names for shared commodities like ORS, albendazole, amoxicillin).
 - Model: small gradient-boosted or MLP demand model on lag and weather features, shared architecture, FedAvg for 5 rounds.
 - Shown: per-round MAE for local-only versus federated on each node, and a counter "patient records that crossed the border: 0".
