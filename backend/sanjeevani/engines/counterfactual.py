@@ -103,3 +103,8 @@ def compare(res: Result, facilities: pd.DataFrame, unit_id: str, scenario: str) 
     out.insert(0, "scenario", scenario); out.insert(0, "unit_id", unit_id)
     return out[["unit_id", "scenario", "district", "facility_months", "stockout_months_without", "stockout_months_with",
                 "avoided", "avoided_pct", "transfers", "units_moved"]]
+
+
+def jobs(unit_ids: list[str], scenarios: dict) -> list[tuple[str, str]]:
+    """(unit, scenario) pairs: a scenario restricted to some units runs only for those units."""
+    return [(u, name) for u in unit_ids for name, sc in scenarios.items() if not sc.get("units") or u in sc["units"]]

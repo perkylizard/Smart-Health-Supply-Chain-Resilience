@@ -61,3 +61,10 @@ def test_compare_reports_per_district_and_unit_total():
     assert total["avoided"] == total["stockout_months_without"] - total["stockout_months_with"]
     assert total["stockout_months_without"] == res.without["stockout"].sum()
     assert total["transfers"] == len(res.transfers)
+
+
+def test_jobs_pair_every_unit_with_the_scenarios_that_apply_to_it():
+    units = ["bihar", "ladakh", "andhra_pradesh"]
+    scenarios = {"normal": {"units": None}, "winter_closure": {"units": ["ladakh"]}, "cyclone": {"units": ["andhra_pradesh"]}}
+    jobs = CF.jobs(units, scenarios)
+    assert jobs == [("bihar", "normal"), ("ladakh", "normal"), ("ladakh", "winter_closure"), ("andhra_pradesh", "normal"), ("andhra_pradesh", "cyclone")]

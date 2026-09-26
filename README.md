@@ -63,7 +63,9 @@ Produced by `uv run python scripts/backtest.py` on the simulated hero-unit ledge
 
 ### Google predictive modelling: district-level backtest
 
-<!-- bq-eval:start -->
+<!-- bq-eval:bihar:start -->
+**Bihar**
+
 | Method | Median MAPE | Mean MAPE | Best on N series |
 |---|---|---|---|
 | Seasonal-naive baseline (Python, always on) | 34.2% | 130.0% | 92 |
@@ -71,4 +73,16 @@ Produced by `uv run python scripts/backtest.py` on the simulated hero-unit ledge
 | BigQuery AI.FORECAST, TimesFM (Google) | 17.7% | 146.4% | 413 |
 
 Real HMIS district series for Bihar, 738 district x item series with mean monthly value >= 20, trained to Dec 2019, held out Jan-Mar 2020. Produced by `uv run python scripts/bq_forecast.py backtest` on 2026-09-09.
-<!-- bq-eval:end -->
+<!-- bq-eval:bihar:end -->
+
+<!-- bq-eval:uttar-pradesh:start -->
+**Uttar Pradesh**
+
+| Method | Median MAPE | Mean MAPE | Best on N series |
+|---|---|---|---|
+| Seasonal-naive baseline (Python, always on) | 32.1% | 625.2% | 291 |
+| BigQuery ML ARIMA_PLUS (Google) | 20.9% | 141.4% | 491 |
+| BigQuery AI.FORECAST, TimesFM (Google) | 17.0% | 148.0% | 950 |
+
+Real HMIS district series for Uttar Pradesh, 1730 district x item series with mean monthly value >= 20, trained to Dec 2019, held out Jan-Mar 2020. Produced by `uv run python scripts/bq_forecast.py backtest` on 2026-09-09.
+<!-- bq-eval:uttar-pradesh:end -->
