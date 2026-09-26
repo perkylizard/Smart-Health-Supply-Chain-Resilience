@@ -37,3 +37,8 @@ data/raw/datagovin/fetch*.log
 # cloud credentials, never committed
 secrets/
 *.json.key
+
+# firebase cli cache
+.firebase/
+firebase-debug.log
+frontend/dist/

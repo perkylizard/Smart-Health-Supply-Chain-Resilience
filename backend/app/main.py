@@ -23,6 +23,23 @@ PROVENANCE = {
 }
 
 
+class StripPrefix:
+    """Pure ASGI middleware: drop a leading path prefix so the same routes serve /units (dev proxy strips
+    /api) and /api/units (Firebase Hosting forwards to Cloud Run with the prefix intact)."""
+
+    def __init__(self, app, prefix: str = "/api"):
+        self.app, self.prefix = app, prefix
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] in ("http", "websocket"):
+            path = scope.get("path", "")
+            if path == self.prefix or path.startswith(self.prefix + "/"):
+                scope = dict(scope)
+                scope["path"] = path[len(self.prefix):] or "/"
+                scope["raw_path"] = scope["path"].encode()
+        await self.app(scope, receive, send)
+
+
 def _clean(df: pd.DataFrame) -> list[dict]:
     if df is None or len(df) == 0:
         return []
@@ -38,6 +55,7 @@ def _clean(df: pd.DataFrame) -> list[dict]:
 def create_app(store: Store | None = None, state: InMemoryState | None = None, gemini=None, warm: bool = True) -> FastAPI:
     app = FastAPI(title="Sanjeevani Grid API", version="0.1.0")
     app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+    app.add_middleware(StripPrefix, prefix="/api")
     store = store or Store()
     state = state or InMemoryState()
     app.state.store, app.state.state = store, state

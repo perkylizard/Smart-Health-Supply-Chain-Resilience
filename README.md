@@ -86,3 +86,26 @@ Real HMIS district series for Bihar, 738 district x item series with mean monthl
 
 Real HMIS district series for Uttar Pradesh, 1730 district x item series with mean monthly value >= 20, trained to Dec 2019, held out Jan-Mar 2020. Produced by `uv run python scripts/bq_forecast.py backtest` on 2026-09-09.
 <!-- bq-eval:uttar-pradesh:end -->
+
+## Deployment
+
+The API runs on Cloud Run and the web app on Firebase Hosting, both in the `sanjeevani-grid` Google Cloud project (region `asia-south1`). Hosting forwards `/api/**` to the Cloud Run service, so the app has one public URL and no cross-origin calls.
+
+One-time setup (from your own terminal, signed in with `gcloud auth login`):
+
+```
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com secretmanager.googleapis.com artifactregistry.googleapis.com --project sanjeevani-grid
+printf '%s' "$GEMINI_API_KEY" | gcloud secrets create gemini-api-key --data-file=- --project sanjeevani-grid
+npm install -g firebase-tools && firebase login
+```
+
+Then add Firebase to the existing `sanjeevani-grid` project once in the Firebase console (Add project, choose the existing Google Cloud project, enable Hosting).
+
+Deploy:
+
+```
+make deploy-api   # builds the image with Cloud Build from Dockerfile and deploys sanjeevani-api
+make deploy-web   # builds frontend/dist and deploys it to Firebase Hosting
+```
+
+`.gcloudignore` and `.dockerignore` are allow-lists: the upload is about 260 MB (code, the demo DuckDB, four processed data files) and never includes the raw HMIS export, secrets, or the virtual environments.

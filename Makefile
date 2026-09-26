@@ -10,3 +10,12 @@ data:
 	uv run python scripts/build_facilities.py
 	uv run python scripts/simulate.py
 	uv run python scripts/build_demo_db.py
+
+# --- deploy: API on Cloud Run, web on Firebase Hosting (project sanjeevani-grid, region asia-south1) ---
+deploy-api:
+	gcloud run deploy sanjeevani-api --source . --region asia-south1 --project sanjeevani-grid \
+	  --allow-unauthenticated --memory 2Gi --cpu 2 --timeout 300 --cpu-boost --min-instances 0 --max-instances 3 \
+	  --set-secrets GEMINI_API_KEY=gemini-api-key:latest --set-env-vars GEMINI_MODE=live,GCP_PROJECT_ID=sanjeevani-grid,BQ_DATASET=sanjeevani
+deploy-web:
+	cd frontend && npm ci && npm run build
+	npx firebase-tools deploy --only hosting --project sanjeevani-grid

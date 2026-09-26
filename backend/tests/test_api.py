@@ -66,3 +66,10 @@ def test_forecast_and_real_ledger(client):
 def test_entry(client):
     r = client.post("/entries", json={"facility_id": "x", "commodity_id": "ors", "quantity": 40, "channel": "voice"})
     assert r.status_code == 200 and r.json()["entry_id"].startswith("e")
+
+
+def test_api_prefix_is_stripped(client):
+    # Firebase Hosting forwards /api/** to Cloud Run without removing the prefix
+    assert client.get("/api/units").status_code == 200
+    assert client.get("/api/units").json() == client.get("/units").json()
+    assert client.get("/api").status_code == client.get("/").status_code

@@ -1,0 +1,17 @@
+# keep the Cloud Run image small: an allow-list of what the Dockerfile COPYs
+!pyproject.toml
+!uv.lock
+!backend/
+backend/**/__pycache__/
+backend/tests/cassettes/
+!data/
+data/*
+!data/reference/
+!data/scenarios/
+!data/demo.duckdb
+!data/processed/
+data/processed/*
+!data/processed/bq_district_forecast.parquet
+!data/processed/hmis_ledger.parquet
+!data/processed/hmis_c2.parquet
+!data/processed/federated_replay.json
