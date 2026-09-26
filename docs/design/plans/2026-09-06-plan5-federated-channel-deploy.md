@@ -1,6 +1,5 @@
 # Plan 5: Federated demo, PHC channel, deployment
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** The BRICS story (India + Brazil federated training, replay and live), the PHC staff channel transport, and a deployed link on Google Cloud with a stable production environment through 23 October.
 

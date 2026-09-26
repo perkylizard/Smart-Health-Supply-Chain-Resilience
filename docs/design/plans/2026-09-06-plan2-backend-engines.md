@@ -1,6 +1,5 @@
 # Plan 2: Backend Engines and API
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** The decision engines behind the three screens: forecast, days-of-stock and alerts with cause attribution, redistribution optimiser, resilience score, runtime scenario dial, exposed through a FastAPI service reading the demo DuckDB.
 
@@ -8,7 +7,7 @@
 
 **Tech Stack:** Python 3.12, pandas, numpy, duckdb, ortools (min-cost flow), fastapi, uvicorn, httpx (tests), pytest.
 
-**Spec:** `docs/superpowers/specs/2026-09-06-sanjeevani-grid-design.md` Sections 3.1, 3.2, 3.3, 3.7, 5.1
+**Spec:** `docs/design/specs/2026-09-06-sanjeevani-grid-design.md` Sections 3.1, 3.2, 3.3, 3.7, 5.1
 
 ## Global Constraints
 - No network calls in this plan. Gemini, Maps, BigQuery arrive in Plans 3 and 5 behind the interfaces defined here.

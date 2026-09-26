@@ -1,6 +1,5 @@
 # Plan 3: Gemini Services
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Every Gemini-powered capability in the spec, behind one client with structured output, recorded-response tests, and hard guardrails: briefing writer, explain-this, ask-the-district (guided and free SQL), register photo reader, Hindi voice entry, weekly brief.
 

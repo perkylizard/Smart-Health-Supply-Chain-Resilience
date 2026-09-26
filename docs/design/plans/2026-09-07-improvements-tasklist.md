@@ -3,7 +3,7 @@
 Brainstormed 7 Sep. Brazil and the federated demo are excluded until the user decides on the partner.
 Every task lists the data it needs and how that data is obtained. Rule: public data only, downloads or documented APIs, no scraping of interactive portals, no logins, no personal data. "On disk" means already verified and stored under `data/` with a SOURCES.txt.
 
-Legend: effort in build-days for Claude Code; rubric = the judging criterion it mainly serves.
+Legend: effort in build-days for the AI coding agent; rubric = the judging criterion it mainly serves.
 
 ## A. Score movers
 

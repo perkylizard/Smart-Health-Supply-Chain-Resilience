@@ -3,7 +3,7 @@
 
 Last updated: 4 September 2026
 Team: 2 people (both product and design managers)
-Builder: Claude Code writes the code. Gemini is the AI inside the product. Google Cloud hosts it.
+Builder: an AI coding agent writes the code under the team's direction. Gemini is the AI inside the product. Google Cloud hosts it.
 
 ---
 
@@ -79,9 +79,9 @@ Your strengths as product and design managers cover 75% of this rubric. The tech
 
 | Rule | Implication |
 |---|---|
-| 1. Must integrate Google AI | All runtime AI is Gemini or Vertex. No Claude API calls inside the product, ever. |
+| 1. Must integrate Google AI | All runtime AI is Gemini or Vertex. No non-Google AI calls inside the product, ever. |
 | 2. Build during the hackathon | Fresh repo, first commit after 10 Aug. Keep history public. |
-| 3. Original code, cite reuse | Claude Code output is original team work. Every library cited with licence in README. |
+| 3. Original code, cite reuse | All code is original team work. Every library cited with licence in README. |
 | 4. Cross-border applicability | The federated learning demo is our answer. Built for India, proven with a second state or nation. |
 | 5. Respectful conduct | Standard. |
 | 6. Judges' decisions final | Standard. |
@@ -90,13 +90,13 @@ Your strengths as product and design managers cover 75% of this rubric. The tech
 
 ## 6. Working model for a two-person product team
 
-**Build with Claude, think with Gemini, deploy on Google.**
+**Build with an AI agent, think with Gemini, deploy on Google.**
 
 | Who | Owns |
 |---|---|
 | You (both) | The story: field reality of a PHC, the district officer persona, pilot plan, impact numbers, deck, video script, judge Q&A prep |
 | You (both) | The UX: dashboard, alert flow, PHC staff entry flow. Designed in Figma or Pencil, then implemented exactly |
-| Claude Code | All code: data simulator, forecasting, alerts, redistribution optimiser, federated demo, Gemini integration, deployment |
+| AI coding agent | All code: data simulator, forecasting, alerts, redistribution optimiser, federated demo, Gemini integration, deployment |
 | Gemini | The intelligence inside the product at runtime |
 | Google Cloud | Hosting, database, model serving |
 
@@ -138,7 +138,7 @@ One Python backend, one dashboard, Gemini in the middle.
 
 - [x] Primary demo state: **Bihar** (decided 6 Sep)
 - [x] Demo set (13 units, decided 6 Sep): Bihar (hero), Uttar Pradesh, Rajasthan, Madhya Pradesh, Andhra Pradesh, Telangana, Karnataka, Arunachal Pradesh, Jammu & Kashmir, Ladakh (Leh + Kargil, carved out of J&K files for 2017-19), Lakshadweep, Andaman & Nicobar, Bastar division of Chhattisgarh (tribal region, 7 districts). National map still covers all 36 states/UTs.
-- [ ] Federated partner: OPEN. Options: Brazil (real open stock data, recommended by Claude, not yet confirmed), India-only two-state federation (e.g. Bihar + Assam), another BRICS nation (simulated node), or a combination.
+- [ ] Federated partner: OPEN. Options: Brazil (real open stock data, recommended by the build agent, not yet confirmed), India-only two-state federation (e.g. Bihar + Assam), another BRICS nation (simulated node), or a combination.
 - [ ] Which drugs to track (suggestion: 15 to 20 from NLEM covering outbreak, chronic, maternal)
 - [ ] Bed availability: include in simulator, or focus on medicines and staff
 
@@ -271,7 +271,7 @@ One Python backend, one dashboard, Gemini in the middle.
 
 ## 11. Week-by-week plan (26 days)
 
-| Week | Dates | Builder (Claude Code) | Team (you two) |
+| Week | Dates | Builder (AI coding agent) | Team (you two) |
 |---|---|---|---|
 | 1 | 4 to 10 Sep | Finish design spec. Facility registry loaded. Data simulator with scenarios. Local dashboard skeleton. | Accounts and credits set up. Domain research (Sections 10.1 and 10.2). Persona and hero scenario locked. Figma wireframes. |
 | 2 | 11 to 17 Sep | Forecasting, early warnings, redistribution optimiser. Gemini explanations and NL query. Deploy first version to Cloud Run and Firebase. | Impact numbers researched. Dashboard visual design finalised. Deck outline. |
@@ -290,4 +290,4 @@ Confirm Section 1 of the design (users, hero scenario, demo state), then the des
 - Section 4: dashboard and PHC staff flows
 - Section 5: deployment and testing plan
 
-After all sections are approved, the spec is written to `docs/superpowers/specs/` and turned into an implementation plan.
+After all sections are approved, the spec is written to `docs/design/specs/` and turned into an implementation plan.

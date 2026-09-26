@@ -110,7 +110,7 @@ Per district and state, 0 to 100: weighted mix of median days of stock (40), sha
 
 ## 4. UX flows and screens (approved)
 
-Design principle: the officer never analyses, the system does. Every screen opens on a decision, not a chart. No Figma: the visual design is produced directly in code by Claude Code (decided 6 Sep), following the direction in 4.9. The team reviews on the deployed staging link and gives feedback there.
+Design principle: the officer never analyses, the system does. Every screen opens on a decision, not a chart. No Figma: the visual design is produced directly in code by the AI coding agent (decided 6 Sep), following the direction in 4.9. The team reviews on the deployed staging link and gives feedback there.
 
 ### 4.1 Shell
 - Top bar: district and state switcher (typeahead across all 36 states, demo set pinned), language toggle EN / HI, scenario dial (visible in demo mode only), ask-the-district bar.
@@ -204,7 +204,7 @@ sanjeevani-grid/
 - **Verification rule:** nothing is reported as done without the command and its output.
 
 ### 5.5 Day-by-day plan (6 to 30 September)
-| Dates | Build (Claude Code) | Team |
+| Dates | Build (AI coding agent) | Team |
 |---|---|---|
 | 6 to 8 Sep | Finish HMIS parse to Parquet; facility roster (OSM + Karnataka + RHS counts); simulator v1 for the 13 units; DuckDB demo file; repo, CI, local `make dev`. | Set up Gemini key, Cloud free trial, Firebase project, GitHub org. Email organisers. Start IDSP browser download. |
 | 9 to 11 Sep | Days-of-stock engine, alerts, cause attribution, data-issue flags; scenario dial backend; Briefing screen v1 with tokens and map. Staging live. | First review of Briefing on staging. Draft persona and hero script. |

@@ -1,6 +1,6 @@
 # Session log: 7 to 9 September 2026
 
-What was built, decided, and left open in this working session. Written on 9 September 2026 for the two-person Sanjeevani Grid team. Earlier work (data foundation, engines, Gemini services, first frontend) is recorded in the plans under `docs/superpowers/plans/`.
+What was built, decided, and left open in this working session. Written on 9 September 2026 for the two-person Sanjeevani Grid team. Earlier work (data foundation, engines, Gemini services, first frontend) is recorded in the plans under `docs/design/plans/`.
 
 ## Where the project stands
 
@@ -75,7 +75,7 @@ The honest reading: federation helps the data-poor nodes a lot and the data-rich
 
 ## 5. Other things done in this session
 
-- Improvements task list written, `docs/superpowers/plans/2026-09-07-improvements-tasklist.md`, checked against the public-data rule. Status updated on 9 September.
+- Improvements task list written, `docs/design/plans/2026-09-07-improvements-tasklist.md`, checked against the public-data rule. Status updated on 9 September.
 - Resilience score card explained (weights 40/20/20/10/10).
 - Confirmed there is no personal data anywhere in the product: only facility-level and district-level aggregates.
 - Shared a ten-row sample of the data.gov.in data.

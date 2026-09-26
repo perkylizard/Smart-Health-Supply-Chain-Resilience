@@ -1,6 +1,5 @@
 # Plan 1: Data Foundation and Repo Scaffold
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Turn the verified raw data into versioned Parquet tables plus a simulator that produces facility-level stock ledgers for the 13-unit demo set, packaged in a DuckDB file the backend can ship.
 
@@ -8,7 +7,7 @@
 
 **Tech Stack:** Python 3.12 via uv, pandas, pyarrow, duckdb, pytest, requests (OSM only). No cloud services in this plan.
 
-**Spec:** `docs/superpowers/specs/2026-09-06-sanjeevani-grid-design.md` (Sections 1, 2, 5.3)
+**Spec:** `docs/design/specs/2026-09-06-sanjeevani-grid-design.md` (Sections 1, 2, 5.3)
 
 ## Global Constraints
 - Python 3.12 managed by uv; run everything with `uv run`. No system pip installs.

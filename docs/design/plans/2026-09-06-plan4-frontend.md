@@ -1,6 +1,5 @@
 # Plan 4: Frontend (the three screens)
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** The working prototype a judge can click: Morning briefing, Dispatch board, Ask the district, plus the facility card, scenario dial, system panel shell, and the PHC web-chat widget, all against the FastAPI service.
 
