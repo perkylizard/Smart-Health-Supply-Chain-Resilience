@@ -40,8 +40,16 @@ h3 { font-size: var(--t-md); font-weight: 500; letter-spacing: 0.15px; }
 .appbar .role .role-text { font-weight: 500; white-space: nowrap; }
 .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--paper); color: var(--teal-2); display: inline-grid; place-items: center; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; flex: 0 0 auto; }
 .avatar.small { width: 28px; height: 28px; font-size: 11px; background: var(--teal-soft); }
-.appbar .bar2 { display: flex; align-items: center; gap: var(--s2); padding: 0 var(--gutter) var(--s2); }
 .phone-only { display: none !important; }
+.appbar .iconbtn { position: relative; display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 0; background: transparent; color: var(--on-primary); cursor: pointer; }
+.appbar .iconbtn:hover { background: rgba(255,255,255,.12); }
+.appbar .iconbtn.on { background: var(--amber-soft); color: var(--amber); }
+.appbar .iconbtn .dot { position: absolute; top: 7px; right: 7px; width: 8px; height: 8px; border-radius: 50%; background: var(--amber); border: 2px solid var(--teal); }
+.appbar .iconbtn svg { width: 22px; height: 22px; }
+/* location as a bottom-navigation item (phones) */
+.navloc { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 56px; padding: 6px 4px; border: 0; background: transparent; color: var(--teal-2); font-size: 12px; font-weight: 500; cursor: pointer; width: 100%; }
+.navloc .navloc-text { max-width: 84px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.navloc svg { width: 22px; height: 22px; }
 
 /* menus (Material 2 elevation 8) */
 .menu { min-width: 260px; max-width: 360px; background: var(--paper); color: var(--ink); border-radius: var(--r1); box-shadow: var(--e8); padding: var(--s2) 0; z-index: 30; }
@@ -147,10 +155,11 @@ textarea.input { min-height: 120px; padding: var(--s3); font-family: ui-monospac
   :root { --appbar: 56px; --gutter: 16px; }
   .shell { grid-template-rows: auto 1fr auto; }
   .appbar .bar { gap: var(--s2); }
-  .appbar .brand span { display: none; } .appbar .brand { margin-right: 0; }
+  .appbar .brand { margin-right: 0; font-size: var(--t-md); }
   .appbar .role .role-text { display: none; } .appbar .role { padding: 0 2px; }
   .appbar .lang { min-height: 32px; padding: 0 8px; font-size: var(--t-xs); }
-  .desktop-only { display: none !important; } .phone-only { display: flex !important; }
+  .desktop-only { display: none !important; } .phone-only { display: inline-flex !important; }
+  .tabs .navloc-slot { flex: 1; } .tabs .navloc { border-top: 3px solid transparent; }
   .loclist { grid-template-columns: 1fr; } .loclist ul { max-height: 30vh; }
   .tabs { order: 3; position: sticky; bottom: 0; padding: 0; border-top: 1px solid var(--rule); box-shadow: var(--e8); }
   .tabs .inner { justify-content: space-around; }

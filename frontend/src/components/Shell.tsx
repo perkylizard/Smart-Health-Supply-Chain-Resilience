@@ -26,19 +26,20 @@ export default function Shell({ children, offline }: { children: React.ReactNode
       <header className="appbar">
         <div className="bar">
           <span className="brand"><i aria-hidden>S</i><span>Sanjeevani Grid</span></span>
-          <LocationPicker />
+          <span className="desktop-only"><LocationPicker /></span>
           <form className="grow desktop-only" onSubmit={onAsk} role="search">
             <input className="input" name="q" placeholder={t.askPlaceholder} aria-label={t.ask} defaultValue={loc.pathname.endsWith("/ask") ? new URLSearchParams(loc.search).get("q") ?? "" : ""} />
           </form>
           <span className="spacer" />
+          {persona !== "phc" && <WhatIf compact className="phone-only" />}
           <button className="lang" onClick={() => setLang(lang === "en" ? "hi" : "en")} aria-label={t.language}>{lang === "en" ? "हिंदी" : "English"}</button>
           <RoleMenu />
         </div>
-        {persona !== "phc" && <div className="bar2 phone-only"><WhatIf /></div>}
       </header>
       <nav className="tabs" aria-label="Main">
         <div className="inner">
           {p.tabs.map((tab) => <NavLink key={tab.key} to={`${base}${tab.path}`} end={tab.path === ""}><Icon d={icons[tab.icon]} />{(t as unknown as Record<string, string>)[tab.key]}</NavLink>)}
+          <span className="phone-only navloc-slot"><LocationPicker variant="nav" /></span>
           <span className="spacer" />
           <span className="basis desktop-only" title={t.basisHint}><i aria-hidden />{basisLabel}</span>
           {persona !== "phc" && <WhatIf className="desktop-only" />}

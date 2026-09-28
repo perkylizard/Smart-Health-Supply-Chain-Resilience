@@ -6,7 +6,7 @@ import { useApp } from "../App";
 const Flask = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d="M9 3h6M10 3v6l-5.5 9a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 9V3" /></svg>;
 
 /** The what-if dial as a chip: quiet when off, amber with the scenario name and intensity when on. */
-export default function WhatIf({ className = "" }: { className?: string }) {
+export default function WhatIf({ className = "", compact = false }: { className?: string; compact?: boolean }) {
   const { t } = useApp();
   const qc = useQueryClient();
   const sc = useQuery({ queryKey: ["scenario"], queryFn: api.scenario });
@@ -17,7 +17,9 @@ export default function WhatIf({ className = "" }: { className?: string }) {
   return (
     <Menu.Root modal={false}>
       <Menu.Trigger asChild>
-        <button className={`chip whatif${on ? " amber" : ""} ${className}`} aria-label={t.scenario}><Flask />{label}</button>
+        {compact
+          ? <button className={`iconbtn${on ? " on" : ""} ${className}`} aria-label={`${t.scenario}: ${label}`} title={label}><Flask />{on && <i className="dot" aria-hidden />}</button>
+          : <button className={`chip whatif${on ? " amber" : ""} ${className}`} aria-label={t.scenario}><Flask />{label}</button>}
       </Menu.Trigger>
       <Menu.Portal>
         <Menu.Content className="menu" align="end" sideOffset={8}>

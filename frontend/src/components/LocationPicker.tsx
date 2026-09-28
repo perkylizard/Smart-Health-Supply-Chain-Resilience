@@ -8,7 +8,7 @@ const Pin = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" st
 const Chevron = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden><path d="M6 9l6 6 6-6" /></svg>;
 
 /** One control for "where am I": opens a dialog with the states on the left and the chosen state's districts on the right. */
-export default function LocationPicker() {
+export default function LocationPicker({ variant = "bar" }: { variant?: "bar" | "nav" }) {
   const { t, unit, district, persona, setLocation } = useApp();
   const [open, setOpen] = useState(false);
   const [pick, setPick] = useState(unit);
@@ -21,7 +21,9 @@ export default function LocationPicker() {
   return (
     <Dialog.Root open={open} onOpenChange={(o) => { setOpen(o); if (o) { setPick(unit); setFilter(""); } }}>
       <Dialog.Trigger asChild>
-        <button className="loc" aria-label={t.changeLocation}><Pin /><span className="loc-text">{unitName}{needsDistrict && district ? <><span className="sep">›</span>{district}</> : null}</span><Chevron /></button>
+        {variant === "nav"
+          ? <button className="navloc" aria-label={t.changeLocation}><Pin /><span className="navloc-text">{needsDistrict && district ? district : unitName}</span></button>
+          : <button className="loc" aria-label={t.changeLocation}><Pin /><span className="loc-text">{unitName}{needsDistrict && district ? <><span className="sep">›</span>{district}</> : null}</span><Chevron /></button>}
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="dialog-overlay" />
