@@ -2,6 +2,7 @@
 
   uv run python scripts/bq_forecast.py backtest   # hold out Jan-Mar 2020, compare baseline vs ARIMA_PLUS vs TimesFM (hero state)
   uv run python scripts/bq_forecast.py cache      # 8-month TimesFM forecast for every district x driver item, all states -> parquet cache
+  uv run python scripts/bq_forecast.py cache-synthetic   # 12-month TimesFM forecast on the SIMULATED continuation (11 ledger commodities) -> parquet cache; a pipeline demonstration, not an accuracy claim
 
 The app reads the parquet cache (method 'bigquery_timesfm'); nothing calls BigQuery at request time."""
 import re
@@ -105,9 +106,28 @@ def cache(project, dataset):
     print(f"cached {len(df):,} forecast rows for {df.groupby(['state','district','item_code']).ngroups:,} series ({time.time()-t0:.0f}s)")
 
 
+LEDGER_ITEMS = ["19.12", "19.14", "19.6", "19.15", "19.16", "19.10", "17.2", "17.3", "17.6", "17.7", "20.2"]  # same 11 commodities as the India view
+
+
+def cache_synthetic(project, dataset):
+    """TimesFM over the synthetic table. Input and output are both simulated; the cache is labelled so and used only on the India view's simulated basis."""
+    c = client(project); T = f"`{project}.{dataset}.district_monthly_synthetic`"
+    items = ", ".join(f"'{i}'" for i in LEDGER_ITEMS)
+    t0 = time.time()
+    df = c.query(f"""
+        SELECT state, district, item_code, forecast_timestamp, forecast_value, prediction_interval_lower_bound AS lo, prediction_interval_upper_bound AS hi
+        FROM AI.FORECAST((SELECT state, district, item_code, month_start, distributed AS value FROM {T} WHERE item_code IN ({items})),
+                         data_col => 'value', timestamp_col => 'month_start', id_cols => ['state', 'district', 'item_code'], horizon => 12, confidence_level => 0.8)""").result().to_dataframe()
+    df["method"] = "bigquery_timesfm"; df["basis"] = "simulated"; df["generated"] = time.strftime("%Y-%m-%d")
+    df.to_parquet(paths.DATA_PROCESSED / "bq_district_forecast_synth.parquet", index=False)
+    print(f"cached {len(df):,} SIMULATED forecast rows for {df.groupby(['state','district','item_code']).ngroups:,} series ({time.time()-t0:.0f}s)")
+
+
 if __name__ == "__main__":
     project, dataset = env()
-    if sys.argv[1] == "backtest":
+    if sys.argv[1] == "cache-synthetic":
+        cache_synthetic(project, dataset)
+    elif sys.argv[1] == "backtest":
         backtest(project, dataset, sys.argv[2] if len(sys.argv) > 2 else "Bihar")
     else:
         cache(project, dataset)

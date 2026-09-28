@@ -143,6 +143,16 @@ def national_state_districts(state_name: str, request: Request, basis: str = "re
     led["months_of_stock"] = np.where(led["distributed"] > 0, led["closing"] / led["distributed"], np.nan)
     d = led.groupby("district").agg(months_of_stock=("months_of_stock", "median"), items_reported=("item_code", "count")).reset_index()
     d = d.merge(so, on="district", how="left")
+    fc_cache = paths.DATA_PROCESSED / "bq_district_forecast_synth.parquet"
+    if basis == "simulated" and fc_cache.exists():
+        # months of stock at forecast demand: closing at Mar 2026 / mean TimesFM forecast of the next 3 months (input and output both simulated)
+        fc = pd.read_parquet(fc_cache, columns=["state", "district", "item_code", "forecast_timestamp", "forecast_value"])
+        fc = fc[fc["state"] == state_name].sort_values("forecast_timestamp").groupby(["district", "item_code"]).head(3)
+        fc = fc.groupby(["district", "item_code"])["forecast_value"].mean().rename("fc").reset_index()
+        m = led.merge(fc, on=["district", "item_code"], how="inner")
+        m["fmos"] = np.where(m["fc"] > 0, m["closing"] / m["fc"], np.nan)
+        d = d.merge(m.groupby("district")["fmos"].median().rename("forecast_months_of_stock").reset_index(), on="district", how="left")
+        prov += "; forecast_months_of_stock = closing / mean of the next 3 months of a BigQuery TimesFM forecast run on the simulated series"
     units = store.units(); unit = units[units["state"] == state_name]["unit_id"].tolist()
     d["unit_id"] = unit[0] if unit else None
     return {"state": state_name, "districts": _clean(d.sort_values("months_of_stock")), "month": month_label, "basis": basis,

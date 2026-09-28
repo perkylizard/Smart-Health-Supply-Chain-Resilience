@@ -34,8 +34,8 @@ export default function NationalView() {
         {picked && (
           <section className="qsection">
             <h2>{picked} <span className="count">{dq.data ? `${dq.data.districts.length} districts` : ""}</span></h2>
-            {dq.data && <table className="table"><thead><tr><th>district</th><th className="num">{t.monthsOfStock}</th><th className="num">items reported</th><th className="num">HMIS stock-out reports</th><th></th></tr></thead>
-              <tbody>{dq.data.districts.map((d) => <tr key={d.district}><td>{d.district}</td><td className="num">{d.months_of_stock == null ? "…" : d.months_of_stock.toFixed(1)}</td><td className="num">{d.items_reported}</td><td className="num">{d.stockout_reports ?? "…"}</td><td>{d.unit_id ? <Link to={`/dho/${d.unit_id}/${encodeURIComponent(d.district)}`}>{t.phcLevel} →</Link> : <span className="faint">{t.districtLevel}</span>}</td></tr>)}</tbody></table>}
+            {dq.data && <table className="table"><thead><tr><th>district</th><th className="num">{t.monthsOfStock}</th>{basis === "simulated" && <th className="num" title="closing stock / mean of the next 3 forecast months (BigQuery TimesFM on the simulated series)">{t.forecastMonths}</th>}<th className="num">items reported</th>{basis === "real" && <th className="num">HMIS stock-out reports</th>}<th></th></tr></thead>
+              <tbody>{dq.data.districts.map((d) => <tr key={d.district}><td>{d.district}</td><td className="num">{d.months_of_stock == null ? "…" : d.months_of_stock.toFixed(1)}</td>{basis === "simulated" && <td className="num">{d.forecast_months_of_stock == null ? "…" : d.forecast_months_of_stock.toFixed(1)}</td>}<td className="num">{d.items_reported}</td>{basis === "real" && <td className="num">{d.stockout_reports ?? "…"}</td>}<td>{d.unit_id ? <Link to={`/dho/${d.unit_id}/${encodeURIComponent(d.district)}`}>{t.phcLevel} →</Link> : <span className="faint">{t.districtLevel}</span>}</td></tr>)}</tbody></table>}
             <p className="faint" style={{ fontSize: 12 }}>{dq.data?.provenance}</p>
           </section>
         )}

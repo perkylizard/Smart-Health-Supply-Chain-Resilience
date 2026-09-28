@@ -96,6 +96,20 @@ Real HMIS district series for Bihar, 738 district x item series with mean monthl
 Real HMIS district series for Uttar Pradesh, 1730 district x item series with mean monthly value >= 20, trained to Dec 2019, held out Jan-Mar 2020. Produced by `uv run python scripts/bq_forecast.py backtest` on 2026-09-09.
 <!-- bq-eval:uttar-pradesh:end -->
 
+### BigQuery tables
+
+All in dataset `sanjeevani` (asia-south1) of project `sanjeevani-grid`. The real and simulated tables are never mixed; each table's BigQuery description starts with REAL or SIMULATED.
+
+| Table | Contents | Loaded by |
+|---|---|---|
+| `district_monthly_real` | Real HMIS district monthly counts, all 36 states, to March 2020 | `scripts/bq_setup.py load` |
+| `facility_monthly_sim` | Simulated hero-unit facility ledger | `scripts/bq_setup.py load` |
+| `district_monthly_provisional` | Real FY 2020-21 district stock ledger, 16 states, provisional | `scripts/bq_setup.py load-synthetic` |
+| `district_monthly_synthetic` | Synthetic continuation to March 2026, `source = simulated` | `scripts/bq_setup.py load-synthetic` |
+| `brazil_synthetic` | Simulated Brazil node, 27 UFs, `source = simulated` | `scripts/bq_setup.py load-synthetic` |
+
+The accuracy tables above use only `district_monthly_real`. `scripts/bq_forecast.py cache-synthetic` runs TimesFM over the synthetic table for the 11 India-view commodities and caches it to `data/processed/bq_district_forecast_synth.parquet`; the India view's simulated basis shows it as "months of stock at forecast demand". Its input and output are both simulated, so it demonstrates the pipeline running to date and makes no accuracy claim.
+
 ## Deployment
 
 The API runs on Cloud Run and the web app on Firebase Hosting, both in the `sanjeevani-grid` Google Cloud project (region `asia-south1`). Hosting forwards `/api/**` to the Cloud Run service, so the app has one public URL and no cross-origin calls.

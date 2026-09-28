@@ -46,7 +46,7 @@ export const api = {
   unitTransfers: (u: string) => get<{ transfers: Transfer[]; districts_considered: string[]; provenance: string }>(`/units/${u}/transfers`),
   facilityTransfers: (id: string) => get<{ transfers: (Transfer & { direction: "incoming" | "outgoing" })[] }>(`/facilities/${id}/transfers`),
   nationalStates: (basis: "real" | "simulated" = "real") => get<{ states: NationalState[]; month: string; basis: string; provenance: string }>(`/national/states?basis=${basis}`),
-  nationalDistricts: (s: string, basis: "real" | "simulated" = "real") => get<{ districts: { district: string; months_of_stock: number | null; items_reported: number; stockout_reports: number | null; unit_id: string | null }[]; provenance: string }>(`/national/states/${encodeURIComponent(s)}/districts?basis=${basis}`),
+  nationalDistricts: (s: string, basis: "real" | "simulated" = "real") => get<{ districts: { district: string; months_of_stock: number | null; forecast_months_of_stock?: number | null; items_reported: number; stockout_reports: number | null; unit_id: string | null }[]; provenance: string }>(`/national/states/${encodeURIComponent(s)}/districts?basis=${basis}`),
   indents: (u: string, d: string) => get<{ indents: Indent[]; provenance: string }>(`/districts/${u}/${encodeURIComponent(d)}/indents`),
   indentStatus: (id: string, status: string) => post<{ status: string }>(`/indents/${id}/${status}`),
   warehouse: (u: string, d: string) => get<{ rows: WarehouseRow[]; fy: string; month: number; provisional?: boolean; provenance: string }>(`/districts/${u}/${encodeURIComponent(d)}/warehouse`),
