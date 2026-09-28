@@ -10,7 +10,7 @@ import Scale from "../components/Scale";
 import Sparkline from "../components/Sparkline";
 
 export default function Briefing() {
-  const { unit, district, lang, t } = useApp();
+  const { unit, district, lang, t, base } = useApp();
   const nav = useNavigate();
   const summary = useQuery({ queryKey: ["summary", unit, district], queryFn: () => api.summary(unit, district), enabled: !!district,
     refetchInterval: (q) => (q.state.data?.rank_pending ? 6000 : false) });
@@ -21,7 +21,6 @@ export default function Briefing() {
   const s = summary.data;
   const perFacility: Record<string, number> = {};
   const alerts = (s?.alerts ?? []).filter((a) => a.alert).filter((a) => { perFacility[a.facility_id] = (perFacility[a.facility_id] ?? 0) + 1; return perFacility[a.facility_id] <= 3; });
-  const base = `/${unit}/${encodeURIComponent(district)}`;
   const whatIf = s && s.scenario.name !== "normal";
   const ready = (transfers.data?.transfers ?? []).filter((x) => x.status === "proposed").length;
   return (
