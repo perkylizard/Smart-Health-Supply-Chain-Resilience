@@ -1,14 +1,21 @@
 import { render, screen } from "@testing-library/react";
 import Scale from "../components/Scale";
 import { parseLocal } from "../components/ChatWidget";
+import { AppCtx, type Ctx } from "../App";
+import { strings } from "../i18n";
 
-test("scale shows icon and number, never colour alone", () => {
-  render(<Scale days={5.4} severity="red" />);
-  expect(screen.getByText(/▲ 5 d/)).toBeInTheDocument();
+const withApp = (ui: React.ReactElement) => render(<AppCtx.Provider value={{ t: strings.en } as unknown as Ctx}>{ui}</AppCtx.Provider>);
+
+test("days of stock is a number with its meaning in words, never colour alone", () => {
+  withApp(<Scale days={5.4} severity="red" />);
+  expect(screen.getByText("5")).toBeInTheDocument();
+  expect(screen.getByText("under a week left")).toBeInTheDocument();
 });
 
-test("scale caps at 365+", () => {
-  render(<Scale days={365} severity="ok" />);
+test("zero days reads as stocked out, and 365 caps at 365+", () => {
+  withApp(<Scale days={0} severity="red" />);
+  expect(screen.getByText("stocked out")).toBeInTheDocument();
+  withApp(<Scale days={365} severity="ok" />);
   expect(screen.getByText(/365\+/)).toBeInTheDocument();
 });
 
