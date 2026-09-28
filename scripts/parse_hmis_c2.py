@@ -59,16 +59,25 @@ def to_num(s):
         f=float(s); return int(f) if f==int(f) else f
     except ValueError: return ""
 
+def _same_state(a, b):
+    """'Jammu And Kashmir' == 'Jammu & Kashmir': compare ignoring &/and, case and spacing."""
+    f = lambda x: re.sub(r"\s+", " ", x.lower().replace("&", "and")).strip()
+    return f(a) == f(b)
+
 def parse_rows(rows, state, fy, month):
     """Yield long records. Handles both the HTML layout (section cell only on first row of a section,
     data starts col 0) and the xlsx layout (section repeated in col 0, code in col 1)."""
     # locate district header row: first row with >=3 non-empty cells where a cell equals state or "_"+state
+    # the title row spells the state the way the header row does ("Chhattisgarh" in a "Chattisgarh" folder)
+    m=re.match(r"^Data ItemWise Report for (.+)$", (rows[0][0] if rows and rows[0] else "") or "")
+    label=m.group(1).strip() if m else state
     hdr_i=None
     for i,r in enumerate(rows[:12]):
-        if any(c.lstrip("_").strip().lower()==state.lower() for c in r if c): hdr_i=i; break
+        if any(_same_state(c.lstrip("_"), label) or _same_state(c.lstrip("_"), state) for c in r if c): hdr_i=i; break
     if hdr_i is None: raise ValueError("district header row not found")
     districts=[c.lstrip("_").strip() for c in rows[hdr_i] if c.strip()]
-    if districts and districts[0].lower()!=state.lower(): districts=[state]+districts  # xlsx variant lacks leading blank
+    if districts and (_same_state(districts[0], state) or _same_state(districts[0], label)): districts[0]=state   # state row keeps the folder spelling
+    else: districts=[state]+districts  # xlsx variant lacks leading blank
     n=len(districts)
     section=None; out=[]
     for r in rows[hdr_i+2:]:

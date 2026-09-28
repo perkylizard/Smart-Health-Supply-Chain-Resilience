@@ -8,6 +8,7 @@ from sanjeevani import paths
 STATE_ALIASES = {
     "andaman & nicobar islands": "A & N Islands", "andaman and nicobar islands": "A & N Islands",
     "a & n islands": "A & N Islands", "a and n islands": "A & N Islands",
+    "andaman & nicobar island": "A & N Islands", "andaman and nicobar island": "A & N Islands",
     "jammu and kashmir": "Jammu & Kashmir", "jammu & kashmir": "Jammu & Kashmir",
     "chattisgarh": "Chhattisgarh", "orissa": "Odisha", "pondicherry": "Puducherry",
     "dadra and nagar haveli": "Dadra & Nagar Haveli", "daman and diu": "Daman & Diu",

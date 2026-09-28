@@ -44,8 +44,14 @@ def test_indents_and_status(client):
 
 def test_warehouse_is_real_ledger(client):
     r = client.get("/districts/bihar/Araria/warehouse").json()
-    assert r["fy"] == "2019-20" and any(x["item_code"] == "19.12" for x in r["rows"])
-    assert "not simulated" in r["provenance"]
+    # Bihar has the provisional 2020-21 year; the stock book shows the latest reported month and says so
+    assert r["fy"] == "2020-21" and r["month"] == 3 and r["provisional"] is True
+    ors = next(x for x in r["rows"] if x["item_code"] == "19.12")  # Araria stopped reporting ORS after 2019-20: shown at its own month
+    assert ors["fy"] == "2019-20" and ors["stale"] is True  # last reported Feb 2020
+    assert all(x["stale"] is False for x in r["rows"] if x["fy"] == "2020-21" and x["month"] == 3)
+    assert "not simulated" in r["provenance"] and "provisional" in r["provenance"]
+    r = client.get("/districts/uttar_pradesh/Agra/warehouse").json()
+    assert r["fy"] == "2019-20" and r["provisional"] is False
 
 
 def test_brief_and_escalation(client):

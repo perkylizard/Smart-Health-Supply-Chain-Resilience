@@ -18,7 +18,7 @@ All data used by this project is public. Simulated values are labelled `source =
 
 | Source | Provider | Licence | Use |
 |---|---|---|---|
-| HMIS (Health Management Information System) item-wise district monthly reports, FY 2017-18 to 2019-20 | Ministry of Health & Family Welfare, Government of India, via hmis.mohfw.gov.in | Government Open Data License - India (GODL) | Real district-level outpatient, inpatient, disease, immunisation counts and commodity stock ledgers |
+| HMIS (Health Management Information System) item-wise district monthly reports, FY 2017-18 to 2019-20 (all 36 states and UTs) plus FY 2020-21 for 16 states and UTs (Andaman & Nicobar to Jharkhand alphabetically, the part of the export completed), which the ministry labels provisional; every 2020-21 row carries `provisional = true` | Ministry of Health & Family Welfare, Government of India, via hmis.mohfw.gov.in | Government Open Data License - India (GODL) | Real district-level outpatient, inpatient, disease, immunisation counts and commodity stock ledgers |
 | NFHS-5 district and state factsheets; RHS 2020-21 and 2021-22 facility counts; RHS 2021 staffing vacancies; Karnataka facility lists | data.gov.in (Open Government Data Platform India) | GODL | District indicators, PHC counts, staffing gaps |
 | Rural Health Statistics 2016-17 to 2021-22; Health Dynamics of India 2022-23 and 2023-24 | Ministry of Health & Family Welfare | Government of India publication | Facility and staffing reference |
 | Census of India 2011, Primary Census Abstract | Office of the Registrar General & Census Commissioner, India | Government of India publication | District population |

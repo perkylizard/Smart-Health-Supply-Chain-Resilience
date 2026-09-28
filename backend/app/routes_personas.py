@@ -166,16 +166,22 @@ def warehouse_stock(unit_id: str, district: str, request: Request):
     led = store.real_ledger(st, district)
     if led.empty:
         raise HTTPException(404, "no real ledger for this district")
-    last = led.sort_values(["fy", "month"]).groupby("item_code").tail(1)  # latest month per item within the FY ordering
-    latest_fy = led["fy"].max(); m = led[led["fy"] == latest_fy]
     order = {4: 0, 5: 1, 6: 2, 7: 3, 8: 4, 9: 5, 10: 6, 11: 7, 12: 8, 1: 9, 2: 10, 3: 11}
-    m = m.assign(o=m["month"].map(order)); last = m[m["o"] == m["o"].max()]
-    last = last.assign(months_of_stock=[_months_of_stock(c, d) for c, d in zip(last["closing"], last["distributed"])])
-    hist = m.sort_values("o").groupby("item_code")["distributed"].apply(lambda x: [None if pd.isna(v) else float(v) for v in x]).rename("distributed_by_month").reset_index()
+    led = led.assign(o=led["month"].map(order)).sort_values(["fy", "o"])
+    # every commodity the district has ever reported, each at its own latest reported month (districts drop items between years)
+    last = led.groupby("item_code").tail(1).copy()
+    latest_fy, latest_o = led["fy"].iloc[-1], int(led["o"].iloc[-1])
+    latest_month = int(led["month"].iloc[-1])
+    last["stale"] = (last["fy"] != latest_fy) | (last["o"] != latest_o)
+    last["months_of_stock"] = [_months_of_stock(c, d) for c, d in zip(last["closing"], last["distributed"])]
+    own_fy = led.merge(last[["item_code", "fy"]], on=["item_code", "fy"])  # each item's history within its own latest FY
+    hist = own_fy.groupby("item_code")["distributed"].apply(lambda x: [None if pd.isna(v) else float(v) for v in x]).rename("distributed_by_month").reset_index()
     out = last.merge(hist, on="item_code", how="left")
-    return {"district": district, "state": st, "fy": latest_fy, "month": int(last["month"].iloc[0]),
-            "rows": _clean(out[["item_code", "item_name", "opening", "received", "unusable", "distributed", "closing", "months_of_stock", "distributed_by_month"]].sort_values("months_of_stock")),
-            "provenance": "HMIS sections M17/M19/M20, real district monthly stock ledger (MoHFW, GODL), not simulated"}
+    provisional = bool(led["provisional"].iloc[-1]) if "provisional" in led.columns else False
+    return {"district": district, "state": st, "fy": latest_fy, "month": latest_month, "provisional": provisional,
+            "rows": _clean(out[["item_code", "item_name", "fy", "month", "stale", "opening", "received", "unusable", "distributed", "closing", "months_of_stock", "distributed_by_month"]].sort_values("months_of_stock")),
+            "provenance": "HMIS sections M17/M19/M20, real district monthly stock ledger (MoHFW, GODL), not simulated; each commodity at its latest reported month"
+                          + (" ; FY 2020-21 figures are labelled provisional by MoHFW" if provisional else "")}
 
 
 @router.get("/districts/{unit_id}/{district}/brief")

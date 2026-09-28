@@ -15,7 +15,7 @@ from sanjeevani.engines.store import Store
 
 PROVENANCE = {
     "facility_counts": "Rural Health Statistics 2021-22 (MoHFW) via data.gov.in, GODL",
-    "district_demand": "HMIS item-wise district monthly 2017-18 to 2019-20 (MoHFW), time-shifted to 2024-27; facility split is simulated",
+    "district_demand": "HMIS item-wise district monthly 2017-18 to 2019-20 (MoHFW), time-shifted to 2024-27; facility split is simulated. FY 2020-21 (provisional, 16 states) is held in the real ledgers but not used for the simulation",
     "stock_ledger": "Simulated at facility level; district totals calibrated to HMIS real ledgers (sections M17, M19, M20)",
     "facility_names": "OpenStreetMap contributors (ODbL) where source=osm; otherwise simulated",
     "forecast": "BigQuery AI.FORECAST (TimesFM) district forecast x facility share, cached daily; seasonal-naive baseline for series without a cached district forecast",

@@ -46,14 +46,15 @@ export function WarehouseStock() {
   const q = useQuery({ queryKey: ["warehouse", unit, district], queryFn: () => api.warehouse(unit, district) });
   if (q.isError) return <div className="quiet">No public HMIS ledger exists for this district.</div>;
   if (!q.data) return <p className="skeleton" style={{ height: 120 }}>Loading the store's ledger</p>;
-  const monthName = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][q.data.month];
+  const monthName_ = (m: number) => ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][m];
+  const monthName = monthName_(q.data.month);
   return (
     <div>
-      <h1 style={{ marginBottom: 4 }}>{t.storeStock} <span className="faint" style={{ fontSize: "var(--t-sm)", fontWeight: 400 }}>{district} · {monthName} {q.data.fy}</span></h1>
+      <h1 style={{ marginBottom: 4 }}>{t.storeStock} <span className="faint" style={{ fontSize: "var(--t-sm)", fontWeight: 400 }}>{district} · {monthName} {q.data.fy}{q.data.provisional && <span className="faint" title="MoHFW labels FY 2020-21 figures provisional"> · provisional</span>}</span></h1>
       <p className="muted" style={{ marginTop: 0 }}>{q.data.provenance} <Badge kind="real" /></p>
       <div style={{ overflowX: "auto" }}>
         <table className="table"><thead><tr><th>commodity</th><th className="num">opening</th><th className="num">received</th><th className="num">unusable</th><th className="num">distributed</th><th className="num">closing</th><th className="num">{t.monthsOfStock}</th><th>distributed by month</th></tr></thead>
-          <tbody>{q.data.rows.map((r) => <tr key={r.item_code}><td>{r.item_name}</td><td className="num">{fmt(r.opening)}</td><td className="num">{fmt(r.received)}</td><td className="num">{fmt(r.unusable)}</td><td className="num">{fmt(r.distributed)}</td><td className="num">{fmt(r.closing)}</td><td className="num" style={{ color: r.months_of_stock != null && r.months_of_stock < 1 ? "var(--red)" : undefined, fontWeight: 600 }}>{r.months_of_stock == null ? "…" : r.months_of_stock.toFixed(1)}</td><td><Bars v={r.distributed_by_month} /></td></tr>)}</tbody></table>
+          <tbody>{q.data.rows.map((r) => <tr key={r.item_code}><td>{r.item_name}{r.stale && <span className="faint" style={{ fontSize: 12 }}> · as of {monthName_(r.month)} {r.fy}</span>}</td><td className="num">{fmt(r.opening)}</td><td className="num">{fmt(r.received)}</td><td className="num">{fmt(r.unusable)}</td><td className="num">{fmt(r.distributed)}</td><td className="num">{fmt(r.closing)}</td><td className="num" style={{ color: r.months_of_stock != null && r.months_of_stock < 1 ? "var(--red)" : undefined, fontWeight: 600 }}>{r.months_of_stock == null ? "…" : r.months_of_stock.toFixed(1)}</td><td><Bars v={r.distributed_by_month} /></td></tr>)}</tbody></table>
       </div>
     </div>
   );

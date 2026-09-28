@@ -32,7 +32,7 @@ export interface AskResult { mode: string; question: string; answer: string; row
 
 export interface NationalState { state: string; districts: number; median_months_of_stock: number; share_districts_under_1_month: number; lat: number | null; lon: number | null; phc_level_available: boolean }
 export interface Indent { indent_id: string; facility_id: string; facility_name: string; type: string; commodity_id: string; commodity_name: string; category: string; days_of_stock: number; cause: string; quantity: number; lead_days: number; status: string }
-export interface WarehouseRow { item_code: string; item_name: string; opening: number; received: number; unusable: number; distributed: number; closing: number; months_of_stock: number | null; distributed_by_month: (number | null)[] }
+export interface WarehouseRow { item_code: string; item_name: string; fy: string; month: number; stale: boolean; opening: number; received: number; unusable: number; distributed: number; closing: number; months_of_stock: number | null; distributed_by_month: (number | null)[] }
 export interface Brief { facts: { district: string; score: Score | null; rank: number | null; of: number; counts: Partial<Record<Severity, number>>; facilities: number; transfers_approved: number; transfers_delivered: number; data_issues: number; staffing_gap: number | null; top_risks: string[]; scenario: Scenario; trends: Record<string, number | null> }; narrative: { title: string; sections: { heading: string; bullets: string[] }[]; next_week_risks: string[] } | null; status: string; generated: string; provenance: string }
 
 export interface FedMetrics { auc: number; logloss: number; precision: number; recall: number; n: number; positives: number }
@@ -49,7 +49,7 @@ export const api = {
   nationalDistricts: (s: string) => get<{ districts: { district: string; months_of_stock: number | null; items_reported: number; stockout_reports: number | null; unit_id: string | null }[]; provenance: string }>(`/national/states/${encodeURIComponent(s)}/districts`),
   indents: (u: string, d: string) => get<{ indents: Indent[]; provenance: string }>(`/districts/${u}/${encodeURIComponent(d)}/indents`),
   indentStatus: (id: string, status: string) => post<{ status: string }>(`/indents/${id}/${status}`),
-  warehouse: (u: string, d: string) => get<{ rows: WarehouseRow[]; fy: string; month: number; provenance: string }>(`/districts/${u}/${encodeURIComponent(d)}/warehouse`),
+  warehouse: (u: string, d: string) => get<{ rows: WarehouseRow[]; fy: string; month: number; provisional?: boolean; provenance: string }>(`/districts/${u}/${encodeURIComponent(d)}/warehouse`),
   brief: (u: string, d: string, lang: string) => get<Brief>(`/districts/${u}/${encodeURIComponent(d)}/brief?lang=${lang}`),
   escalate: (u: string, d: string, reason: string) => post<{ entry_id: string }>("/escalations", { unit_id: u, district: d, reason }),
   escalations: (u: string) => get<{ escalations: { district: string; reason: string; received: number }[] }>(`/escalations/${u}`),
