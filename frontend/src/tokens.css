@@ -9,9 +9,9 @@
   --ink-2: rgba(29, 43, 46, 0.72);   /* medium emphasis */
   --ink-3: rgba(29, 43, 46, 0.56);   /* low emphasis, captions */
   --rule: rgba(29, 43, 46, 0.14);    /* outlines and dividers */
-  --teal: #00695c;             /* primary */
-  --teal-2: #004c40;           /* primary variant, text on light surfaces */
-  --teal-soft: #dcefec;        /* primary container */
+  --teal: #1f3b73;             /* primary: navy */
+  --teal-2: #142a54;           /* primary variant, text on light surfaces */
+  --teal-soft: #dde5f5;        /* primary container */
   --on-primary: #ffffff;
   --red: #c62828; --red-soft: #fbe3e1; --amber: #b26a00; --amber-soft: #ffe8c2; --green: #2e7d32; --green-soft: #dcefdc; --blue: #1565c0; --blue-soft: #dde8f7;
   /* 8dp grid */
@@ -35,7 +35,7 @@
   --e8: 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12), 0 5px 5px -3px rgba(0,0,0,.20);
   --e24: 0 24px 38px 3px rgba(0,0,0,.14), 0 9px 46px 8px rgba(0,0,0,.12), 0 11px 15px -7px rgba(0,0,0,.20);
   --shadow: var(--e1);
-  --focus: 0 0 0 3px rgba(0, 105, 92, 0.35);
+  --focus: 0 0 0 3px rgba(31, 59, 115, 0.35);
 }
 :root[data-theme="dark"] {
     --paper: #1e2526; --paper-2: #121717; --bg: #121717;

@@ -12,7 +12,7 @@ const Icon = ({ d }: { d: string }) => <svg width="22" height="22" viewBox="0 0 
 
 /** Material 2 top app bar with three intents: where you are, what you want to ask, who you are. Tabs below on desktop, bottom navigation on phones. */
 export default function Shell({ children, offline }: { children: React.ReactNode; offline: boolean }) {
-  const { t, lang, setLang, unit, district, persona, base, basis, setLocation } = useApp();
+  const { t, lang, setLang, unit, district, persona, base, basis, setLocation, setPersona, setBasis } = useApp();
   const units = useQuery({ queryKey: ["units"], queryFn: api.units });
   const districts = useQuery({ queryKey: ["districts", unit], queryFn: () => api.districts(unit) });
   const nav = useNavigate();
@@ -24,13 +24,21 @@ export default function Shell({ children, offline }: { children: React.ReactNode
     const q = new FormData(e.currentTarget).get("q") as string;
     if (q?.trim()) nav(`${askBase}/ask?q=${encodeURIComponent(q.trim())}`);
   };
+  /** The brand is the way home: forget the remembered role, place, basis and scenario, and open the default district. */
+  const goHome = () => {
+    try { for (const k of ["unit", "district", "facility", "basis"]) localStorage.removeItem(k); } catch { /* ignore */ }
+    setBasis("real");
+    api.setScenario("normal", 1).catch(() => {});
+    if (persona !== "dho") setPersona("dho");
+    nav("/dho/bihar/Araria");
+  };
   const realScreen = loc.pathname.endsWith("/india") || loc.pathname.endsWith("/stock");
   const basisLabel = realScreen ? (basis === "real" ? t.basisReal : t.basisSimulated) : t.basisFacility;
   return (
     <div className="shell" lang={lang}>
       <header className="appbar">
         <div className="bar">
-          <span className="brand"><i aria-hidden>S</i><span>Sanjeevani Grid</span></span>
+          <button className="brand" onClick={goHome} title={t.homeHint}><i aria-hidden>S</i><span>Sanjeevani Grid</span></button>
           <span className="desktop-only"><LocationPicker /></span>
           <form className="grow desktop-only" onSubmit={onAsk} role="search">
             <input className="input" name="q" placeholder={t.askPlaceholder} aria-label={t.ask} defaultValue={loc.pathname.endsWith("/ask") ? new URLSearchParams(loc.search).get("q") ?? "" : ""} />

@@ -17,7 +17,8 @@ h3 { font-size: var(--t-md); font-weight: 500; letter-spacing: 0.15px; }
 .shell { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto 1fr; height: 100%; }
 .appbar { background: var(--teal); color: var(--on-primary); box-shadow: var(--e4); position: relative; z-index: 5; min-width: 0; }
 .appbar .bar { display: flex; align-items: center; gap: var(--s3); min-height: var(--appbar); padding: 0 var(--gutter); max-width: var(--content); margin: 0 auto; width: 100%; }
-.appbar .brand { display: inline-flex; align-items: center; gap: var(--s2); font-size: var(--t-lg); font-weight: 500; letter-spacing: 0.15px; margin-right: var(--s3); white-space: nowrap; }
+.appbar .brand { display: inline-flex; align-items: center; gap: var(--s2); font-size: var(--t-lg); font-weight: 500; letter-spacing: 0.15px; margin-right: var(--s3); white-space: nowrap; border: 0; background: transparent; color: var(--on-primary); cursor: pointer; padding: 4px 8px 4px 0; border-radius: var(--r1); }
+.appbar .brand:hover { background: rgba(255,255,255,.1); }
 .appbar .brand i { width: 32px; height: 32px; border-radius: var(--r1); background: rgba(255,255,255,.18); display: grid; place-items: center; font-style: normal; font-weight: 700; font-size: 15px; }
 .appbar .grow { flex: 1 1 200px; min-width: 140px; }
 .appbar .lang { color: var(--on-primary); border-color: rgba(255,255,255,.4); min-height: 36px; padding: 0 var(--s3); border-radius: var(--r1); background: transparent; border: 1px solid rgba(255,255,255,.4); cursor: pointer; }
@@ -91,11 +92,11 @@ h3 { font-size: var(--t-md); font-weight: 500; letter-spacing: 0.15px; }
 .input { min-height: 40px; padding: 0 var(--s3); border-radius: var(--r1); border: 1px solid var(--rule); background: var(--paper); width: 100%; }
 .input:hover, .select:hover { border-color: var(--ink-3); }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--s2); min-height: 36px; padding: 0 var(--s4); border-radius: var(--r1); border: 1px solid var(--rule); background: var(--paper); color: var(--teal-2); font-weight: 500; letter-spacing: 0.4px; cursor: pointer; transition: box-shadow .15s ease, background-color .15s ease; }
-.btn:hover { background: rgba(0,105,92,.06); border-color: var(--teal); }
+.btn:hover { background: rgba(31,59,115,.06); border-color: var(--teal); }
 .btn.primary { background: var(--teal); border-color: var(--teal); color: var(--on-primary); box-shadow: var(--e2); }
 .btn.primary:hover { background: var(--teal-2); box-shadow: var(--e4); }
 .btn.quiet { border-color: transparent; background: transparent; padding-left: var(--s2); padding-right: var(--s2); }
-.btn.quiet:hover { background: rgba(0,105,92,.08); }
+.btn.quiet:hover { background: rgba(31,59,115,.08); }
 .btn:disabled { opacity: .5; cursor: default; box-shadow: none; }
 .chip { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 12px; border-radius: var(--r-pill); font-size: var(--t-sm); border: 1px solid var(--rule); background: var(--paper); color: var(--ink-2); cursor: default; }
 button.chip { cursor: pointer; } button.chip:hover { background: rgba(29,43,46,.05); }
