@@ -60,3 +60,13 @@ def test_brief_and_escalation(client):
     e = client.post("/escalations", json={"unit_id": "bihar", "district": "Araria", "reason": "ORS wave"}).json()
     assert e["kind"] == "escalation"
     assert len(client.get("/escalations/bihar").json()["escalations"]) == 1
+
+
+def test_national_view_has_real_and_simulated_basis(client):
+    real = client.get("/national/states?basis=real").json()
+    assert real["basis"] == "real" and "March 2020" in real["month"] and len(real["states"]) >= 30
+    sim = client.get("/national/states?basis=simulated").json()
+    assert sim["basis"] == "simulated" and "March 2026" in sim["month"] and "imulated" in sim["provenance"] and len(sim["states"]) >= 30
+    d = client.get("/national/states/Bihar/districts?basis=simulated").json()
+    assert d["basis"] == "simulated" and len(d["districts"]) >= 20 and all(x["stockout_reports"] is None for x in d["districts"])
+    assert client.get("/national/states?basis=guess").status_code == 400

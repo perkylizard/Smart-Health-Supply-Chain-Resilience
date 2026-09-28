@@ -40,13 +40,13 @@ class RoundMetrics:
     rows_crossed: int = 0
 
 
-def run(nodes: list[Node], rounds: int = 5, local_epochs: int = 2, seed: int = 0) -> tuple[list[RoundMetrics], dict]:
+def run(nodes: list[Node], rounds: int = 5, local_epochs: int = 2, seed: int = 0, top_name: str | None = None) -> tuple[list[RoundMetrics], dict]:
     """Hierarchical FedAvg. Returns round metrics and the final comparison per node, including a 'personalised' variant:
     the final global model fine-tuned for one local epoch at each node (still no rows leave the node)."""
     if not nodes:
         raise ValueError("no nodes with enough data")
     groups = sorted({n.group for n in nodes})
-    top = Aggregator("national" if len(groups) > 1 else groups[0])
+    top = Aggregator(top_name or ("national" if len(groups) > 1 else groups[0]))
     group_aggs = {g: Aggregator(g) for g in groups}
     global_w = init_weights()
     # local-only baselines: each node trains alone for rounds x local_epochs and is scored on its own holdout
@@ -79,7 +79,7 @@ def run(nodes: list[Node], rounds: int = 5, local_epochs: int = 2, seed: int = 0
     def _mean(k): return float(np.nanmean([v[k]["auc"] for v in final.values()]))
     wins = sum(1 for v in final.values() if not np.isnan(v["federated"]["auc"]) and v["federated"]["auc"] >= v["local_only"]["auc"])
     wins_p = sum(1 for v in final.values() if not np.isnan(v["personalised"]["auc"]) and v["personalised"]["auc"] >= v["local_only"]["auc"])
-    summary = {"nodes": len(nodes), "groups": groups, "rounds": rounds, "federated_better_or_equal_nodes": wins, "personalised_better_or_equal_nodes": wins_p,
+    summary = {"nodes": len(nodes), "groups": groups, "top_aggregator": top.name, "rounds": rounds, "federated_better_or_equal_nodes": wins, "personalised_better_or_equal_nodes": wins_p,
                "mean_auc_federated": _mean("federated"), "mean_auc_local_only": _mean("local_only"), "mean_auc_personalised": _mean("personalised"),
                "rows_crossed_border": history[-1].rows_crossed, "global": history[-1].global_metrics}
     return history, summary

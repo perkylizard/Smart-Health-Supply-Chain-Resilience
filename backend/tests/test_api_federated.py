@@ -26,3 +26,13 @@ def test_live_run_small(client):
     j = r.json()
     assert j["summary"]["rows_crossed_border"] == 0 and len(j["rounds"]) == 2 and j["seconds"] < 30
     assert client.post("/federated/run", json={"tier": "nope"}).status_code == 422
+
+
+def test_brazil_tiers_present_and_live(client):
+    r = client.get("/federated/replay").json()
+    assert {"states_brazil", "countries_brics"} <= set(r["tiers"])
+    assert r["tiers"]["countries_brics"]["summary"]["groups"] == ["Brazil", "India"]
+    assert r["tiers"]["countries_brics"]["summary"]["rows_crossed_border"] == 0
+    assert "simulated" in r["tiers"]["states_brazil"]["tier"]
+    j = client.post("/federated/run", json={"tier": "states_brazil", "rounds": 2, "rows_per_node": 1500}).json()
+    assert j["summary"]["nodes"] >= 20 and j["summary"]["rows_crossed_border"] == 0 and "no facility data fetched" in j["provenance"]

@@ -84,16 +84,37 @@ def facility_transfers(facility_id: str, request: Request):
     return {"facility_id": facility_id, "transfers": recs, "provenance": "OR-Tools proposals filtered to this facility"}
 
 
-@router.get("/national/states")
-def national_states(request: Request):
-    """All 36 states from the real HMIS district ledgers: months of stock on hand for the latest reported month (Mar 2020)."""
-    store = request.app.state.store
+def _national_ledger(basis: str, state_name: str | None = None) -> tuple[pd.DataFrame, str, str]:
+    """The national district ledger at one month. basis='real': the last month every state reported publicly (March 2020).
+    basis='simulated': the synthetic continuation of each real series to March 2026 (scripts/synth_hmis_extend.py), labelled simulated."""
     from sanjeevani import paths
     import duckdb
+    if basis not in ("real", "simulated"):
+        raise HTTPException(400, "basis must be real or simulated")
     con = duckdb.connect()  # the full national ledger parquet (all 36 states); the demo DB only keeps demo-state ledgers
-    led = con.execute("SELECT state, district, item_code, closing, distributed FROM '%s' WHERE fy='2019-20' AND month=3 AND item_code IN (%s) AND lower(district) <> lower(state)"
-                      % (paths.DATA_PROCESSED / "hmis_ledger.parquet", ",".join(f"'{i}'" for i in LEDGER_ITEMS))).df()
+    items = ",".join(f"'{i}'" for i in LEDGER_ITEMS)
+    where_state = " AND state = ?" if state_name else ""
+    params = [state_name] if state_name else []
+    if basis == "real":
+        led = con.execute("SELECT state, district, item_code, closing, distributed FROM '%s' WHERE fy='2019-20' AND month=3 AND item_code IN (%s) AND lower(district) <> lower(state)%s"
+                          % (paths.DATA_PROCESSED / "hmis_ledger.parquet", items, where_state), params).df()
+        month, prov = "March 2020 (latest public HMIS ledger month)", "HMIS sections M17/M19/M20 district stock ledgers (MoHFW, GODL): closing stock / monthly distribution, median over 11 commodities"
+    else:
+        src = paths.DATA_PROCESSED / "hmis_ledger_synth.parquet"
+        if not src.exists():
+            raise HTTPException(404, "synthetic continuation not built; run scripts/synth_hmis_extend.py")
+        led = con.execute("SELECT state, district, item_code, closing, distributed FROM '%s' WHERE fy='2025-26' AND month=3 AND item_code IN (%s)%s"
+                          % (src, items, where_state), params).df()
+        month, prov = "March 2026 (simulated continuation of each district's real series; see README)", "Simulated: every real district x commodity series continued from its last public month with its own seasonality, trend and delivery pattern; not a report of actual stock"
     con.close()
+    return led, month, prov
+
+
+@router.get("/national/states")
+def national_states(request: Request, basis: str = "real"):
+    """All states from the HMIS district ledgers: months of stock on hand. basis=real (Mar 2020) or basis=simulated (continuation to Mar 2026)."""
+    store = request.app.state.store
+    led, month_label, prov = _national_ledger(basis)
     led["months_of_stock"] = np.where(led["distributed"] > 0, led["closing"] / led["distributed"], np.nan)
     d = led.groupby(["state", "district"]).agg(months_of_stock=("months_of_stock", "median"), items=("item_code", "count")).reset_index()
     d["share_under_1_month"] = led.assign(u=led["months_of_stock"] < 1).groupby(["state", "district"])["u"].mean().values
@@ -102,20 +123,20 @@ def national_states(request: Request):
     s["lat"] = s["state"].map(lambda x: STATE_CENTROIDS.get(x, (None, None))[0]); s["lon"] = s["state"].map(lambda x: STATE_CENTROIDS.get(x, (None, None))[1])
     demo = set(store.units()["state"])
     s["phc_level_available"] = s["state"].isin(demo)
-    return {"states": _clean(s.sort_values("median_months_of_stock")), "month": "March 2020 (latest public HMIS ledger month)",
-            "provenance": "HMIS sections M17/M19/M20 district stock ledgers (MoHFW, GODL): closing stock / monthly distribution, median over 11 commodities"}
+    return {"states": _clean(s.sort_values("median_months_of_stock")), "month": month_label, "basis": basis, "provenance": prov}
 
 
 @router.get("/national/states/{state_name}/districts")
-def national_state_districts(state_name: str, request: Request):
+def national_state_districts(state_name: str, request: Request, basis: str = "real"):
     store = request.app.state.store
     from sanjeevani import paths
     import duckdb
+    led, month_label, prov = _national_ledger(basis, state_name)
+    led = led.drop(columns=["state"])
     con = duckdb.connect()
-    led = con.execute("SELECT district, item_code, closing, distributed FROM '%s' WHERE state = ? AND fy='2019-20' AND month=3 AND item_code IN (%s) AND lower(district) <> lower(state)"
-                      % (paths.DATA_PROCESSED / "hmis_ledger.parquet", ",".join(f"'{i}'" for i in LEDGER_ITEMS)), [state_name]).df()
+    # the HMIS stock-out report count (item 14.17) is real only; the simulated continuation has no such report
     so = con.execute("SELECT district, value AS stockout_reports FROM '%s' WHERE state = ? AND fy='2019-20' AND month=3 AND item_code='14.17' AND measure='Total' AND lower(district) <> lower(state)"
-                     % (paths.DATA_PROCESSED / "hmis_c2.parquet"), [state_name]).df()
+                     % (paths.DATA_PROCESSED / "hmis_c2.parquet"), [state_name]).df() if basis == "real" else pd.DataFrame({"district": [], "stockout_reports": []})
     con.close()
     if led.empty:
         raise HTTPException(404, "no ledger for this state")
@@ -124,7 +145,8 @@ def national_state_districts(state_name: str, request: Request):
     d = d.merge(so, on="district", how="left")
     units = store.units(); unit = units[units["state"] == state_name]["unit_id"].tolist()
     d["unit_id"] = unit[0] if unit else None
-    return {"state": state_name, "districts": _clean(d.sort_values("months_of_stock")), "provenance": "HMIS real district ledger, March 2020; stockout_reports = HMIS item 14.17 (stock-out rate of essential drugs, as reported)"}
+    return {"state": state_name, "districts": _clean(d.sort_values("months_of_stock")), "month": month_label, "basis": basis,
+            "provenance": prov + ("; stockout_reports = HMIS item 14.17 (stock-out rate of essential drugs, as reported)" if basis == "real" else "; no HMIS stock-out report exists for simulated months")}
 
 
 # ---------- District Magistrate and district warehouse ----------

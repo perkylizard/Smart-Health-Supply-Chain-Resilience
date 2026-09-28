@@ -10,20 +10,26 @@ function sev(m: number): FacilityDot["worst_severity"] { return m < 1 ? "red" : 
 
 export default function NationalView() {
   const { t } = useApp();
-  const q = useQuery({ queryKey: ["national"], queryFn: api.nationalStates });
+  const [basis, setBasis] = useState<"real" | "simulated">("real");
+  const q = useQuery({ queryKey: ["national", basis], queryFn: () => api.nationalStates(basis) });
   const [picked, setPicked] = useState<string | null>(null);
-  const dq = useQuery({ queryKey: ["nationalDistricts", picked], queryFn: () => api.nationalDistricts(picked!), enabled: !!picked });
+  const dq = useQuery({ queryKey: ["nationalDistricts", picked, basis], queryFn: () => api.nationalDistricts(picked!, basis), enabled: !!picked });
+  const badge = basis === "real" ? "real" : "simulated";
   const dots = useMemo<FacilityDot[]>(() => (q.data?.states ?? []).filter((s: NationalState) => s.lat != null).map((s) => ({
     facility_id: s.state, facility_name: s.state, type: s.phc_level_available ? "DH" : "CHC", lat: s.lat!, lon: s.lon!, worst_severity: sev(s.median_months_of_stock), worst_days: s.median_months_of_stock * 30,
-    worst_commodity: "", red: 0, amber: 0, data_issues: 0, source: "real", dist_to_warehouse_km: 0, beds: 0 })), [q.data]);
+    worst_commodity: "", red: 0, amber: 0, data_issues: 0, source: basis, dist_to_warehouse_km: 0, beds: 0 })), [q.data, basis]);
   return (
     <div className="two-col">
       <div>
         <section className="qsection">
           <h2>{t.indiaTitle} <span className="count">{q.data ? `${q.data.states.length} states, ${t.indiaMonth.toLowerCase()}: ${q.data.month}` : ""}</span></h2>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
+            <button className="chip" style={basis === "real" ? { background: "var(--teal-soft)", color: "var(--teal-2)" } : {}} onClick={() => setBasis("real")}>{t.basisReal}</button>
+            <button className="chip" style={basis === "simulated" ? { background: "var(--teal-soft)", color: "var(--teal-2)" } : {}} onClick={() => setBasis("simulated")} title={t.basisSimulatedHint}>{t.basisSimulated}</button>
+          </div>
           {dots.length > 0 && <MapView dots={dots} center={[80, 22]} onSelect={(f) => setPicked(f.facility_id)} />}
           <div className="legend"><span><i className="dot" style={{ background: "var(--red)" }} />under 1 {t.monthsOfStock}</span><span><i className="dot" style={{ background: "var(--amber)" }} />1 to 2</span><span><i className="dot" style={{ background: "var(--green)" }} />over 2</span><span className="faint">larger dot = {t.phcLevel}</span></div>
-          <p className="faint" style={{ fontSize: 12 }}>{q.data?.provenance} <Badge kind="real" /></p>
+          <p className="faint" style={{ fontSize: 12 }}>{q.data?.provenance} <Badge kind={badge} /></p>
         </section>
         {picked && (
           <section className="qsection">

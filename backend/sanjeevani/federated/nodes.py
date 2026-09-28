@@ -1,4 +1,6 @@
 """Build federated nodes from the demo DuckDB ledger. Features are computed inside each node from its own rows."""
+from pathlib import Path
+
 import duckdb
 import numpy as np
 import pandas as pd
@@ -59,4 +61,34 @@ def state_nodes(sample_per_state: int = 30000, seed: int = 7, db=None) -> list[N
         n = _node(name, "India", df)
         if n: nodes.append(n)
     con.close()
+    return nodes
+
+
+BRAZIL_LEDGER = paths.DATA_PROCESSED / "brazil_synth_ledger.parquet"
+
+
+def _frame_pandas(df: pd.DataFrame, sample: int, seed: int) -> pd.DataFrame:
+    """Same derived columns as _frame, for a ledger held in pandas rather than DuckDB."""
+    df = df.sort_values(["facility_id", "commodity_id", "month_index"]).copy()
+    g = df.groupby(["facility_id", "commodity_id"], sort=False)
+    df["demand_prev3"] = g["demand"].transform(lambda s: s.shift(1).rolling(3, min_periods=1).mean())
+    df["stockout_next"] = g["stockout"].shift(-1)
+    df = df.dropna(subset=["demand_prev3", "stockout_next"])
+    df["stockout_next"] = df["stockout_next"].astype(bool)
+    if len(df) > sample:
+        df = df.sample(n=sample, random_state=seed)
+    d = df.groupby(["district", "month_index"])["demand"].sum().rename("d_tot").reset_index()
+    d["d_prev"] = d.groupby("district")["d_tot"].transform(lambda s: s.shift(1).rolling(3, min_periods=1).mean())
+    d["driver_delta"] = ((d["d_tot"] + 1) / (d["d_prev"].fillna(d["d_tot"]) + 1) - 1).clip(-1, 3)
+    return df.merge(d[["district", "month_index", "driver_delta"]], on=["district", "month_index"], how="left").fillna({"driver_delta": 0.0})
+
+
+def brazil_uf_nodes(sample_per_uf: int = 20000, seed: int = 7, ledger: Path | None = None) -> list[Node]:
+    """One node per Brazilian UF from the simulated ledger (group "Brazil").
+    Simulated Brazil node, shaped on the public BNAFAR/Hórus sample structure; no facility data fetched."""
+    df = pd.read_parquet(ledger or BRAZIL_LEDGER)
+    nodes = []
+    for i, uf in enumerate(sorted(df["state"].unique())):
+        n = _node(uf, "Brazil", _frame_pandas(df[df["state"] == uf], sample_per_uf, seed + i))
+        if n: nodes.append(n)
     return nodes

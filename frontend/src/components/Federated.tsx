@@ -4,7 +4,7 @@ import { api, type FedTier } from "../api";
 import { useApp } from "../App";
 import Badge from "./Badge";
 
-const TIERS = ["districts_bihar_coldstart", "districts_bihar", "states_india"] as const;
+const TIERS = ["districts_bihar_coldstart", "districts_bihar", "states_india", "states_brazil", "countries_brics"] as const;
 
 export default function Federated() {
   const { t } = useApp();
@@ -12,7 +12,9 @@ export default function Federated() {
   const [tier, setTier] = useState<(typeof TIERS)[number]>("districts_bihar_coldstart");
   const [mode, setMode] = useState<"replay" | "live">("replay");
   const live = useMutation({ mutationFn: () => api.fedRun(tier, 5) });
-  const label = { districts_bihar_coldstart: t.tierColdstart, districts_bihar: t.tierDistricts, states_india: t.tierStates }[tier];
+  const labels = { districts_bihar_coldstart: t.tierColdstart, districts_bihar: t.tierDistricts, states_india: t.tierStates, states_brazil: t.tierBrazil, countries_brics: t.tierBrics };
+  const label = labels[tier];
+  const brazil = tier === "states_brazil" || tier === "countries_brics";
   const data: FedTier | undefined = mode === "live" && live.data ? live.data : replay.data?.tiers[tier];
   if (replay.isError) return <div className="quiet">{t.comingSoon}</div>;
   if (!data) return <p className="skeleton" style={{ height: 80 }}>Loading the federated replay</p>;
@@ -28,8 +30,9 @@ export default function Federated() {
     <div>
       <p className="muted" style={{ marginTop: 0 }}>{t.fedIntro}</p>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
-        {TIERS.map((k) => <button key={k} className="chip" style={tier === k ? { background: "var(--teal-soft)", color: "var(--teal-2)" } : {}} onClick={() => { setTier(k); setMode("replay"); }}>{{ districts_bihar_coldstart: t.tierColdstart, districts_bihar: t.tierDistricts, states_india: t.tierStates }[k]}</button>)}
+        {TIERS.map((k) => <button key={k} className="chip" style={tier === k ? { background: "var(--teal-soft)", color: "var(--teal-2)" } : {}} onClick={() => { setTier(k); setMode("replay"); }}>{labels[k]}</button>)}
       </div>
+      {brazil && <p className="faint" style={{ fontSize: 12, marginTop: -4 }}><Badge kind="simulated" /> {t.brazilNote}</p>}
       <div className="two-col">
         <div>
           <div style={{ display: "flex", gap: 16, alignItems: "baseline", flexWrap: "wrap" }}>

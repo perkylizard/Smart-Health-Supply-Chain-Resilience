@@ -1,5 +1,6 @@
 """Run hierarchical federated averaging on the demo ledger and store the replay for the System panel.
 Tier 1: districts of the hero state as nodes (state aggregator). Tier 2: demo states as nodes (national aggregator).
+Tier 3: simulated Brazilian UFs (Brazil aggregator). Tier 4: India states + Brazilian UFs -> country aggregators -> BRICS.
 Only weights and sample counts move between nodes; rows_crossed_border is recorded from the aggregators."""
 import json
 import sys
@@ -19,12 +20,16 @@ if __name__ == "__main__":
     t0 = time.time()
     out = {"generated": time.strftime("%Y-%m-%d %H:%M"), "method": "FedAvg (McMahan et al. 2017), hierarchical, logistic stock-out-risk model, numpy",
            "features": ["days_of_stock", "log_demand", "demand_trend", "lead_days", "month_sin", "month_cos", "driver_delta"], "tiers": {}}
-    def report(key, label, nodes):
-        h, s = F.run(nodes, rounds=6, local_epochs=2)
+    def report(key, label, nodes, top_name=None):
+        h, s = F.run(nodes, rounds=6, local_epochs=2, top_name=top_name)
         out["tiers"][key] = serialise(h, s, label, nodes)
         print(f"  {key}: {s['nodes']} nodes | local-only {s['mean_auc_local_only']:.3f} | federated {s['mean_auc_federated']:.3f} | personalised {s['mean_auc_personalised']:.3f} | fed>=local on {s['federated_better_or_equal_nodes']}, personalised>=local on {s['personalised_better_or_equal_nodes']} | rows crossed {s['rows_crossed_border']} ({time.time()-t0:.0f}s)", flush=True)
     report("districts_bihar_coldstart", "Districts of Bihar, first months of reporting (600 rows each) -> Bihar state aggregator", N.district_nodes("bihar", sample_per_district=600))
     report("districts_bihar", "Districts of Bihar, three years of data -> Bihar state aggregator", N.district_nodes("bihar"))
     report("states_india", "Demo states and UTs -> national aggregator", N.state_nodes())
+    # Simulated Brazil node, shaped on the public BNAFAR/Hórus sample structure; no facility data fetched.
+    report("states_brazil", "Brazilian federative units (simulated) -> Brazil aggregator", N.brazil_uf_nodes())
+    report("countries_brics", "India demo states + simulated Brazilian UFs -> country aggregators -> BRICS aggregator",
+           N.state_nodes() + N.brazil_uf_nodes(), top_name="BRICS")
     (paths.DATA_PROCESSED / "federated_replay.json").write_text(json.dumps(out, indent=1, default=float))
     print("written data/processed/federated_replay.json")

@@ -19,6 +19,8 @@ COPY data/scenarios ./data/scenarios
 COPY data/demo.duckdb ./data/demo.duckdb
 COPY data/processed/bq_district_forecast.parquet \
      data/processed/hmis_ledger.parquet \
+     data/processed/hmis_ledger_synth.parquet \
+     data/processed/brazil_synth_ledger.parquet \
      data/processed/hmis_c2.parquet \
      data/processed/federated_replay.json \
      ./data/processed/
