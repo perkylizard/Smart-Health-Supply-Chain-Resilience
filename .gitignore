@@ -42,3 +42,4 @@ secrets/
 .firebase/
 firebase-debug.log
 frontend/dist/
+frontend/tsconfig.tsbuildinfo
