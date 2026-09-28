@@ -8,24 +8,26 @@ export default function System() {
   const { t, unit } = useApp();
   const health = useQuery({ queryKey: ["health"], queryFn: api.health });
   const prov = useQuery({ queryKey: ["provenance"], queryFn: api.provenance });
+  const units = useQuery({ queryKey: ["units"], queryFn: api.units });
   const districts = useQuery({ queryKey: ["districtNames", unit], queryFn: () => api.districtNames(unit), staleTime: Infinity });
   const fac = districts.data?.districts.reduce((a, d) => a + d.facilities, 0) ?? 0;
+  const unitName = units.data?.units.find((u) => u.unit_id === unit)?.unit_name ?? unit;
   return (
-    <div className="two-col">
+    <div className="two-col settings">
       <div>
-        <section className="section"><h2>{t.scenario}</h2><ScenarioDial large /></section>
-        <section className="section"><h2>{t.federated}</h2><Federated /></section>
+        <section className="card settings-card"><h2>{t.scenario}</h2><p className="faint" style={{ margin: "4px 0 12px" }}>{t.scenarioHint}</p><ScenarioDial large /></section>
+        <section className="card settings-card"><h2>{t.federated}</h2><Federated /></section>
       </div>
       <aside>
-        <section className="section"><h2>{t.dataHealth}</h2>
-          <table className="table"><tbody>
-            <tr><td>{t.latestMonth}</td><td className="num">{health.data?.latest_month ?? "…"}</td></tr>
-            <tr><td>{t.facilities} ({unit})</td><td className="num">{fac.toLocaleString("en-IN")}</td></tr>
-            <tr><td>districts</td><td className="num">{districts.data?.districts.length ?? "…"}</td></tr>
-          </tbody></table>
+        <section className="card settings-card"><h2>{t.dataHealth}</h2>
+          <dl className="kv">
+            <dt>{t.facilitiesIn} {unitName}</dt><dd>{fac.toLocaleString("en-IN")}</dd>
+            <dt>{t.districtsLbl}</dt><dd>{districts.data?.districts.length ?? "…"}</dd>
+            <dt>{t.latestMonth}</dt><dd>{health.data ? t.monthIndex(health.data.latest_month) : "…"}</dd>
+          </dl>
         </section>
-        <section className="section"><h2>Provenance</h2>
-          {prov.data && Object.entries(prov.data).map(([k, v]) => <p key={k} style={{ fontSize: 13 }}><strong>{k.replace(/_/g, " ")}</strong><br /><span className="muted">{v}</span></p>)}
+        <section className="card settings-card"><h2>{t.provenanceTitle}</h2>
+          <dl className="prov">{prov.data && Object.entries(prov.data).map(([k, v]) => <div key={k}><dt>{k.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase())}</dt><dd>{v}</dd></div>)}</dl>
         </section>
       </aside>
     </div>

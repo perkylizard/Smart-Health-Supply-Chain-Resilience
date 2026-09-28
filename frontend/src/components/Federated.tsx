@@ -30,7 +30,10 @@ export default function Federated() {
     <div>
       <p className="muted" style={{ marginTop: 0 }}>{t.fedIntro}</p>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
-        {TIERS.map((k) => <button key={k} className="chip" style={tier === k ? { background: "var(--teal-soft)", color: "var(--teal-2)" } : {}} onClick={() => { setTier(k); setMode("replay"); }}>{labels[k]}</button>)}
+        {([[t.tierGroupIndia, TIERS.slice(0, 3)], [t.tierGroupBrazil, TIERS.slice(3)]] as const).map(([g, ks]) => (
+          <div key={g} className="tier-group"><span className="tier-label">{g}</span>
+            {ks.map((k) => <button key={k} className="chip" aria-pressed={tier === k} onClick={() => { setTier(k); setMode("replay"); }}>{labels[k]}</button>)}
+          </div>))}
       </div>
       {brazil && <p className="faint" style={{ fontSize: 12, marginTop: -4 }}><Badge kind="simulated" /> {t.brazilNote}</p>}
       <div className="two-col">

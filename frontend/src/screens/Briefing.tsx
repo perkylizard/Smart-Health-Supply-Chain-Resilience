@@ -44,6 +44,7 @@ export default function Briefing() {
             </>)}
             {s && alerts.length === 0 && <div className="quiet" style={{ marginTop: 16 }}>{t.noAlerts}</div>}
             <div className="list" style={{ marginTop: 16 }}>
+              {alerts.length > 0 && <div className="list-head" aria-hidden><span>{t.stockHead}</span><span>{t.medHead}</span><span>{t.daysHead}</span><span>{t.actionHead}</span></div>}
               {alerts.slice(0, showAll ? 60 : 8).map((a) => <AlertRow key={a.facility_id + a.commodity_id} a={a} base={base} />)}
             </div>
             {alerts.length > 8 && <button className="btn quiet" style={{ color: "var(--teal)", paddingLeft: 0 }} onClick={() => setShowAll((v) => !v)}>{showAll ? t.showFewer : `${t.showAll} (${alerts.length})`}</button>}

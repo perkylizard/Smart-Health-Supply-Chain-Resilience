@@ -28,18 +28,39 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
   const { facilityId, t } = useApp();
   const qc = useQueryClient();
   const f = useQuery({ queryKey: ["facility", facilityId], queryFn: () => api.facility(facilityId!), enabled: !!facilityId });
-  const tr = useQuery({ queryKey: ["facilityTransfers", facilityId], queryFn: () => api.facilityTransfers(facilityId!), enabled: !!facilityId && tab === "deliveries" });
+  const tr = useQuery({ queryKey: ["facilityTransfers", facilityId], queryFn: () => api.facilityTransfers(facilityId!), enabled: !!facilityId && tab !== "report" });
   const [done, setDone] = useState<Record<string, boolean>>({});
   const delivered = useMutation({ mutationFn: (id: string) => api.delivered(id), onMutate: (id) => setDone((d) => ({ ...d, [id]: true })), onSettled: () => qc.invalidateQueries({ queryKey: ["facilityTransfers"] }) });
   if (!facilityId) return <PhcPick />;
   if (!f.data) return <p className="skeleton" style={{ height: 120 }}>Loading your facility</p>;
   const fac = f.data.facility as Record<string, string | number>;
   const low = f.data.stock.filter((s) => s.alert);
+
+  const tx = tr.data?.transfers ?? [];
+  const nMoving = tx.filter((x) => ["approved", "picked_up", "dispatched"].includes(x.status) && !done[x.transfer_id]).length;
+  const nDone = tx.filter((x) => x.status === "delivered" || done[x.transfer_id]).length;
+  const beds = f.data.beds; const staff = f.data.staff as { cadre: string; in_position: number; days_present: number }[];
+  const mo = staff.find((r) => r.cadre === "medical officer");
+  const Side = (
+    <aside className="phc-side">
+      <div className="card"><h3>{t.phcThisMonth}</h3>
+        {beds && <div style={{ marginBottom: 12 }}><span className="big">{beds.occupied}</span><span className="faint"> / {beds.beds}</span><div className="faint" style={{ fontSize: 13 }}>{t.phcBeds}</div></div>}
+        {mo && <div><span className="big" style={{ color: mo.in_position === 0 ? "var(--red)" : undefined }}>{mo.in_position}</span><div className="faint" style={{ fontSize: 13 }}>{t.phcDoctors}{mo.in_position > 0 ? `, ${mo.days_present} ${t.days}` : ""}</div></div>}
+      </div>
+      {tab !== "deliveries" && <div className="card"><h3>{t.phcDeliveriesCard}</h3>
+        {tr.data ? <p className="muted" style={{ margin: "0 0 12px" }}>{nMoving} {t.phcMoving} · {tx.length - nMoving - nDone} {t.phcWaiting}</p> : <p className="faint" style={{ margin: "0 0 12px" }}>…</p>}
+        <Link className="btn" to={`/phc/${facilityId}/deliveries`}>{t.phcDeliveriesCard} →</Link></div>}
+      {tab === "deliveries" && tr.data && <div className="card"><h3>{t.phcDeliveriesCard}</h3>
+        <dl className="kv"><dt>{t.phcMoving}</dt><dd>{nMoving}</dd><dt>{t.phcWaiting}</dt><dd>{tx.length - nMoving - nDone}</dd><dt>{t.phcDone}</dt><dd>{nDone}</dd></dl></div>}
+      {tab !== "report" && <div className="card"><h3>{t.phcOpenReport}</h3><p className="muted" style={{ margin: "0 0 12px" }}>{t.chatHint}</p><Link className="btn primary" to={`/phc/${facilityId}/report`}>{t.phcOpenReport}</Link></div>}
+    </aside>
+  );
   return (
-    <div style={{ maxWidth: 880 }}>
+    <div>
       <p className="faint" style={{ fontSize: 13 }}><Link to={`/phc-pick/${fac.unit_id}/${encodeURIComponent(String(fac.district))}`}>{t.facility}</Link> · {String(fac.district)}</p>
       <h1 style={{ marginBottom: 4 }}>{String(fac.name)}</h1>
       <p className="muted" style={{ marginTop: 0 }}>{String(fac.type)} · <Badge kind={fac.source === "osm" ? "osm" : "simulated"} /></p>
+      {tab !== "report" && <div className="phc-layout"><div>
       {tab === "stock" && (
         <section className="qsection">
           <h2>{t.myStock} <span className="count">{low.length} {low.length === 1 ? "item" : "items"} {t.severity.amber.replace("under", "under")}</span></h2>
@@ -48,9 +69,6 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
             {low.length > 3 && <p className="faint" style={{ margin: 0, fontSize: 13 }}>+{low.length - 3}</p>}</div>}
           <div className="list">{f.data.stock.map((s) => <div className="row" key={s.commodity_id} style={{ gridTemplateColumns: "1fr 200px" }}><div><span className="name">{s.commodity_name}</span><div className="sub">{Math.round(s.closing).toLocaleString("en-IN")} on hand</div></div><Scale days={s.days_of_stock} severity={s.severity} label={t.days} /></div>)}</div>
         </section>
-      )}
-      {tab === "report" && (
-        <section className="qsection report-section"><ChatWidget facilityId={facilityId} names={Object.fromEntries(f.data.stock.map((s) => [s.commodity_id, s.commodity_name]))} withHeader /></section>
       )}
       {tab === "deliveries" && (
         <section className="qsection">
@@ -72,6 +90,10 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
             </div>;
           })}
         </section>
+      )}
+      </div>{Side}</div>}
+      {tab === "report" && (
+        <section className="qsection report-section" style={{ maxWidth: 720 }}><ChatWidget facilityId={facilityId} names={Object.fromEntries(f.data.stock.map((s) => [s.commodity_id, s.commodity_name]))} withHeader /></section>
       )}
     </div>
   );
