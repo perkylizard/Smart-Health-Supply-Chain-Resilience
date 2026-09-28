@@ -99,7 +99,7 @@ def propose(alerts: pd.DataFrame, commodity_id: str, max_km: float = 80.0, donor
             "transfer_id": f"{commodity_id}:{d.facility_id}->{r.facility_id}",
             "from_id": d.facility_id, "from_name": d.facility_name, "from_district": d.district,
             "to_id": r.facility_id, "to_name": r.facility_name, "to_district": r.district,
-            "commodity_id": commodity_id, "quantity": int(q), "km": round(km, 1), "eta_days": eta,
+            "commodity_id": commodity_id, "commodity_name": r.get("commodity_name") or commodity_id.replace("_", " "), "quantity": int(q), "km": round(km, 1), "eta_days": eta,
             "donor_days_after": round((d.closing - q) / d.daily, 1), "recipient_days_after": round((r.closing + q) / r.daily, 1),
             "cross_district": not same,
             "reason": f"{r.facility_name} has {r.days_of_stock:.0f} days of {commodity_id} ({r.cause.replace('_', ' ')}); "
@@ -118,5 +118,5 @@ class _Row(dict):
 
 
 def _empty() -> pd.DataFrame:
-    return pd.DataFrame(columns=["transfer_id", "from_id", "from_name", "from_district", "to_id", "to_name", "to_district", "commodity_id",
+    return pd.DataFrame(columns=["transfer_id", "from_id", "from_name", "from_district", "to_id", "to_name", "to_district", "commodity_id", "commodity_name",
                                  "quantity", "km", "eta_days", "donor_days_after", "recipient_days_after", "cross_district", "reason", "status", "source"])

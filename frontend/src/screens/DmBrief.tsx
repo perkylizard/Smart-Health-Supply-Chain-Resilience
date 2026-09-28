@@ -21,7 +21,8 @@ export default function DmBrief() {
       <p className="muted">{b.data.generated} · {f.facilities} {t.facilities} · {t.resilience} {f.score ? Math.round(f.score.score) : "…"}/100{f.rank ? `, ${t.rankOf(f.rank, f.of)}` : ""}{f.scenario.name !== "normal" && <span className="chip amber" style={{ marginLeft: 8 }}>{t.whatIf}</span>}</p>
       <div className="two-col" style={{ marginTop: 16 }}>
         <div>
-          {n ? n.sections.map((s) => <section key={s.heading} className="section"><h2>{s.heading}</h2><ul style={{ paddingLeft: 18 }}>{s.bullets.map((x, i) => <li key={i} style={{ marginBottom: 6 }}>{x}</li>)}</ul></section>) : (<>
+          {n ? (<>{n.sections.map((s) => <section key={s.heading} className="section"><h2>{s.heading}</h2><ul style={{ paddingLeft: 18 }}>{s.bullets.map((x, i) => <li key={i} style={{ marginBottom: 6 }}>{x}</li>)}</ul></section>)}
+            {n.next_week_risks?.length > 0 && !n.sections.some((s) => s.heading === t.riskNext) && <section className="section"><h2>{t.riskNext}</h2><ul style={{ paddingLeft: 18 }}>{n.next_week_risks.slice(0, 5).map((r, i) => <li key={i} style={{ marginBottom: 6 }}>{r}</li>)}</ul></section>}</>) : (<>
             <section className="section"><h2>{t.stockPosition}</h2><ul style={{ paddingLeft: 18 }}><li>{f.counts.red ?? 0} items under 7 days, {f.counts.amber ?? 0} under 14, across {f.facilities} facilities.</li><li>Median stock {f.score ? Math.round(f.score.median_days_of_stock) : "…"} days; staffing gap {f.staffing_gap != null ? Math.round(f.staffing_gap * 100) : "…"}%.</li></ul></section>
             <section className="section"><h2>{t.actionsTaken}</h2><ul style={{ paddingLeft: 18 }}><li>{f.transfers_approved} transfers approved, {f.transfers_delivered} delivered this week.</li></ul></section>
             <section className="section"><h2>{t.riskNext}</h2><ul style={{ paddingLeft: 18 }}>{f.top_risks.map((r, i) => <li key={i}>{r}</li>)}</ul></section>
@@ -35,7 +36,6 @@ export default function DmBrief() {
             <button className="btn primary" style={{ marginTop: 8 }} disabled={!reason.trim() || esc.isSuccess} onClick={() => esc.mutate()}>{esc.isSuccess ? t.escalated : t.escalate}</button>
             <p className="faint" style={{ fontSize: 12 }}>The state officer sees escalations on the State screen.</p>
           </section>
-          <section className="section"><h2>{t.riskNext}</h2><ul style={{ paddingLeft: 18 }}>{(n?.next_week_risks ?? f.top_risks).slice(0, 5).map((r, i) => <li key={i} style={{ marginBottom: 6 }}>{r}</li>)}</ul></section>
           <p><Link to={`/dm/${unit}/${encodeURIComponent(district)}/compare`}>{t.neighbours} →</Link></p>
         </aside>
       </div>

@@ -22,15 +22,21 @@ export default function Warehouse() {
           <div key={lane} className={`lane ${lane === "pending" ? "needs" : lane === "dispatched" ? "proposed" : "transit"}`}>
             <h3>{lane === "pending" ? t.pending : lane === "dispatched" ? t.dispatched : t.deliveredStatus} <span className="faint">{lanes[lane].length}</span></h3>
             {lanes[lane].slice(0, 30).map((x) => (
-              <div key={x.indent_id} className="tcard">
-                <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}><span className="qty">{x.quantity.toLocaleString("en-IN")} <span className="faint" style={{ fontSize: 13, fontWeight: 400 }}>{x.commodity_name}</span></span><span className="faint" style={{ fontSize: 13 }}>{t.qtyToSend}</span></div>
-                <div style={{ margin: "6px 0" }}><strong>{x.facility_name}</strong> <span className="faint">{x.type} · {t.causes[x.cause] ?? ""}</span></div>
-                <Scale days={x.days_of_stock} severity={x.days_of_stock < 7 ? "red" : x.days_of_stock < 14 ? "amber" : "ok"} label={t.days} />
-                <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+              <div key={x.indent_id} className="tcard" style={{ cursor: "default" }}>
+                <div className="tc-head">
+                  <div>
+                    <div className="tc-title">{x.commodity_name}</div>
+                    <div className="tc-sub">{(x.units_per_case ?? 1) >= 10 && x.cases ? `${x.cases.toLocaleString("en-IN")} ${t.cases} ${t.ofN} ${x.units_per_case}, ${x.quantity.toLocaleString("en-IN")} ${t.units}` : `${x.quantity.toLocaleString("en-IN")} ${t.units}`}</div>
+                  </div>
+                  {t.causes[x.cause] && <div className="tc-meta"><span className={`chip ${x.cause === "cases_up" ? "red" : "amber"}`}>{t.causes[x.cause]}</span></div>}
+                </div>
+                <div className="tc-route"><span className="faint">{t.forFacility}</span><strong>{x.facility_name}</strong><span className="faint">{x.type}</span></div>
+                <div className="tc-stats" style={{ gridTemplateColumns: "1fr" }}><Scale days={x.days_of_stock} severity={x.days_of_stock < 7 ? "red" : x.days_of_stock < 14 ? "amber" : "ok"} label={t.days} /></div>
+                {lane !== "delivered" && <div className="tc-actions">
                   {lane === "pending" && <button className="btn primary" onClick={() => set.mutate({ id: x.indent_id, status: "dispatched" })}>{t.markDispatched}</button>}
                   {lane === "dispatched" && <button className="btn primary" onClick={() => set.mutate({ id: x.indent_id, status: "delivered" })}>{t.markDelivered}</button>}
                   {lane === "pending" && <button className="btn" onClick={() => set.mutate({ id: x.indent_id, status: "cancelled" })}>{t.cancel}</button>}
-                </div>
+                </div>}
               </div>
             ))}
           </div>

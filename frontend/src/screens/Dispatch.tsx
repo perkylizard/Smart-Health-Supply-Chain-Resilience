@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { api, type Transfer } from "../api";
 import { useApp } from "../App";
 import Badge from "../components/Badge";
@@ -12,7 +12,7 @@ import Scale from "../components/Scale";
 const STEPS = ["proposed", "approved", "picked_up", "delivered"];
 
 export default function Dispatch() {
-  const { unit, district, t } = useApp();
+  const { unit, district, t, base } = useApp();
   const [sp] = useSearchParams();
   const commodity = sp.get("commodity") ?? undefined;
   const qc = useQueryClient();
@@ -35,13 +35,13 @@ export default function Dispatch() {
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 16, flexWrap: "wrap", gap: 12 }}>
-        <h1>{t.dispatch} <span className="faint" style={{ fontSize: "var(--t-sm)", fontWeight: 400 }}>{commodity ? commodity.replace(/_/g, " ") : ""}</span></h1>
+        <h1>{t.dispatch}{commodity && <span className="faint" style={{ fontSize: "var(--t-sm)", fontWeight: 400 }}> · {transfers.find((x) => x.commodity_id === commodity)?.commodity_name ?? needs[0]?.commodity_name ?? commodity.replace(/_/g, " ")} · <Link to={`${base}/dispatch`}>{t.showAllMeds}</Link></span>}</h1>
         {proposed.length > 1 && (
           <Dialog.Root>
             <Dialog.Trigger asChild><button className="btn primary">{t.approveAll} ({proposed.length})</button></Dialog.Trigger>
             <Dialog.Portal><Dialog.Overlay className="dialog-overlay" /><Dialog.Content className="dialog">
               <Dialog.Title>{t.confirmAll(proposed.length)}</Dialog.Title>
-              <ul style={{ paddingLeft: 18 }}>{proposed.map((x) => <li key={x.transfer_id}>{x.quantity} {x.commodity_id.replace(/_/g, " ")}: {x.from_name} → {x.to_name}</li>)}</ul>
+              <ul style={{ paddingLeft: 18 }}>{proposed.map((x) => <li key={x.transfer_id}>{x.quantity} {x.commodity_name ?? x.commodity_id.replace(/_/g, " ")}: {x.from_name} → {x.to_name}</li>)}</ul>
               <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
                 <Dialog.Close asChild><button className="btn primary" onClick={() => proposed.forEach((x) => approve.mutate(x.transfer_id))}>{t.approveAll}</button></Dialog.Close>
                 <Dialog.Close asChild><button className="btn">{t.cancel}</button></Dialog.Close>
@@ -83,7 +83,7 @@ function Card({ x, actions, onSelect, leaving }: { x: Transfer; actions: React.R
     <div className={`tcard${leaving ? " leaving" : ""}`} onClick={onSelect} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") onSelect(); }}>
       <div className="tc-head">
         <div>
-          <div className="tc-title">{x.commodity_id.replace(/_/g, " ")}</div>
+          <div className="tc-title">{x.commodity_name ?? x.commodity_id.replace(/_/g, " ")}</div>
           <div className="tc-sub">{x.quantity.toLocaleString("en-IN")} {t.qtyToSend}</div>
         </div>
         <div className="tc-meta">

@@ -66,9 +66,9 @@ export default function Briefing() {
                 <strong style={{ fontSize: "var(--t-md)" }}>{(!transfers.data) ? <span className="skeleton">Counting transfers ready to approve</span> : ready > 0 ? t.readyToApprove(ready) : t.noneReady}</strong>
                 <Link className="btn primary" to={`${base}/dispatch`}>{t.openDispatch}</Link>
               </div>
-              {brief.data && brief.data.top_actions.length > 0 && (<>
+              {brief.data && brief.data.top_actions.filter((a) => !/dispatch board|move stock/i.test(a)).length > 0 && (<>
                 <p className="faint" style={{ marginTop: 12, marginBottom: 0, fontSize: 13 }}>{t.suggested} <Badge kind="ai" /></p>
-                <ul>{brief.data.top_actions.map((a, i) => <li key={i}>{a}</li>)}</ul>
+                <ul>{brief.data.top_actions.filter((a) => !/dispatch board|move stock/i.test(a)).map((a, i) => <li key={i}>{a}</li>)}</ul>
               </>)}
             </div>
           </section>

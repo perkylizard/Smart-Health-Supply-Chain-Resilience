@@ -79,3 +79,15 @@ def test_warehouse_simulated_basis(client):
     assert r["basis"] == "simulated" and r["fy"] == "2025-26" and r["month"] == 3 and r["provisional"] is False
     assert len(r["rows"]) >= 10 and "imulated" in r["provenance"] and all(x["stale"] is False for x in r["rows"])
     assert client.get("/districts/bihar/Araria/warehouse?basis=nope").status_code == 400
+
+
+def test_indents_are_counted_in_whole_cases(client):
+    rows = client.get("/districts/bihar/Araria/indents").json()["indents"]
+    assert rows and all(r["cases"] >= 1 and r["cases"] * r["units_per_case"] >= r["quantity"] for r in rows)
+    big = [r for r in rows if r["units_per_case"] >= 10]
+    assert big and max(r["cases"] for r in big) < 5_000
+
+
+def test_transfers_carry_readable_medicine_names(client):
+    tr = client.get("/transfers/bihar/Araria").json()["transfers"]
+    assert tr and all(x["commodity_name"] and "_" not in x["commodity_name"] for x in tr)

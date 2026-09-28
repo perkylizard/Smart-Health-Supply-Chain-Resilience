@@ -172,15 +172,22 @@ def indents(unit_id: str, district: str, request: Request):
     app = request.app; state = app.state.state
     al = app.state.alerts_for(unit_id, district)
     need = al[(al["alert"]) & (al["cause"].isin(["supply_missed", "cases_up", "none"]))].copy()
-    need["quantity"] = np.ceil((60.0 - need["days_of_stock"]).clip(lower=0) * need["weekly_demand_p90"] / 7.0).astype(int)
-    need = need[need["quantity"] > 0].sort_values(["days_of_stock"])
+    # a single facility's forecast can spike (reporting error or surge); cap its weekly demand at 3x the district's typical level
+    # for the same medicine so one outlier cannot ask the store for hundreds of thousands of tablets
+    typical = al.groupby("commodity_id")["weekly_demand_p90"].transform("median")
+    weekly = np.minimum(al["weekly_demand_p90"], 3 * typical.clip(lower=1))
+    need["quantity"] = np.ceil((60.0 - need["days_of_stock"]).clip(lower=0) * weekly.loc[need.index] / 7.0).astype(int)
+    need = need[need["quantity"] > 0].sort_values(["days_of_stock", "facility_name"])
     need["indent_id"] = "indent:" + need["facility_id"] + ":" + need["commodity_id"]
-    recs = _clean(need[["indent_id", "facility_id", "facility_name", "type", "commodity_id", "commodity_name", "category", "days_of_stock", "cause", "quantity", "lead_days"]])
+    upc = app.state.store.commodities().set_index("commodity_id")["units_per_case"]
+    need["units_per_case"] = need["commodity_id"].map(upc).fillna(1).clip(lower=1)
+    need["cases"] = np.ceil(need["quantity"] / need["units_per_case"]).astype(int)  # stores dispatch whole cases
+    recs = _clean(need[["indent_id", "facility_id", "facility_name", "type", "commodity_id", "commodity_name", "category", "days_of_stock", "cause", "quantity", "units_per_case", "cases", "lead_days"]])
     for r in recs:
         st = state.transfer_status(r["indent_id"])
         r["status"] = st["status"] if st else "pending"
     return {"district": district, "indents": recs, "scenario": state.get_scenario(),
-            "provenance": "Quantity = stock to reach 60 days of P90 forecast demand; facilities and stock are simulated, forecast from BigQuery TimesFM where cached"}
+            "provenance": "Quantity = stock to reach 60 days of P90 forecast demand, each facility's demand capped at 3x the district median for that medicine; facilities and stock are simulated, forecast from BigQuery TimesFM where cached"}
 
 
 @router.post("/indents/{indent_id:path}/{status}")

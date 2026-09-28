@@ -36,14 +36,16 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
   const fac = f.data.facility as Record<string, string | number>;
   const low = f.data.stock.filter((s) => s.alert);
   return (
-    <div style={{ maxWidth: tab === "report" ? 720 : 640 }}>
+    <div style={{ maxWidth: 880 }}>
       <p className="faint" style={{ fontSize: 13 }}><Link to={`/phc-pick/${fac.unit_id}/${encodeURIComponent(String(fac.district))}`}>{t.facility}</Link> · {String(fac.district)}</p>
       <h1 style={{ marginBottom: 4 }}>{String(fac.name)}</h1>
       <p className="muted" style={{ marginTop: 0 }}>{String(fac.type)} · <Badge kind={fac.source === "osm" ? "osm" : "simulated"} /></p>
       {tab === "stock" && (
         <section className="qsection">
           <h2>{t.myStock} <span className="count">{low.length} {low.length === 1 ? "item" : "items"} {t.severity.amber.replace("under", "under")}</span></h2>
-          {low.length > 0 && <div className="action-card" style={{ marginBottom: 12 }}><strong>{low.slice(0, 3).map((s) => s.commodity_name).join(", ")}{low.length > 3 ? ` +${low.length - 3}` : ""}</strong><p className="muted" style={{ margin: "4px 0 0" }}>{t.q1}</p></div>}
+          {low.length > 0 && <div className="action-card" style={{ marginBottom: 12 }}><strong>{t.q1}</strong>
+            <ul>{low.slice(0, 3).map((s) => <li key={s.commodity_id}>{s.commodity_name}: <span style={{ color: s.days_of_stock < 7 ? "var(--red)" : "var(--amber)", fontWeight: 500 }}>{Math.round(s.days_of_stock)} {t.days}</span></li>)}</ul>
+            {low.length > 3 && <p className="faint" style={{ margin: 0, fontSize: 13 }}>+{low.length - 3}</p>}</div>}
           <div className="list">{f.data.stock.map((s) => <div className="row" key={s.commodity_id} style={{ gridTemplateColumns: "1fr 200px" }}><div><span className="name">{s.commodity_name}</span><div className="sub">{Math.round(s.closing).toLocaleString("en-IN")} on hand</div></div><Scale days={s.days_of_stock} severity={s.severity} label={t.days} /></div>)}</div>
         </section>
       )}
@@ -55,11 +57,20 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
           <h2>{t.deliveries} <span className="count">{tr.data?.transfers.length ?? ""}</span></h2>
           {tr.isLoading && <p className="skeleton" style={{ height: 60 }}>Checking transfers for this facility</p>}
           {tr.data && tr.data.transfers.length === 0 && <div className="quiet">{t.nothingArriving}</div>}
-          {tr.data?.transfers.map((x) => <div key={x.transfer_id} className="tcard">
-            <div style={{ display: "flex", justifyContent: "space-between" }}><span className="qty">{x.quantity} <span className="faint" style={{ fontSize: 13, fontWeight: 400 }}>{x.commodity_id.replace(/_/g, " ")}</span></span><span className={`chip ${x.direction === "incoming" ? "teal" : "amber"}`}>{x.direction === "incoming" ? t.incoming : t.outgoing}</span></div>
-            <div style={{ margin: "6px 0" }}>{x.direction === "incoming" ? `from ${x.from_name}` : `to ${x.to_name}`} · {x.km} km · {x.eta_days} d · <span className="faint">{done[x.transfer_id] ? t.deliveredStatus : x.status}</span></div>
-            {x.direction === "incoming" && !done[x.transfer_id] && x.status !== "delivered" && <button className="btn primary" onClick={() => delivered.mutate(x.transfer_id)}>{t.confirmArrived}</button>}
-          </div>)}
+          {tr.data?.transfers.map((x) => {
+            const moving = ["approved", "picked_up", "dispatched"].includes(x.status) && !done[x.transfer_id];
+            const status = done[x.transfer_id] || x.status === "delivered" ? t.deliveredStatus : moving ? t.onTheWay : t.awaitingApproval;
+            return <div key={x.transfer_id} className="tcard" style={{ cursor: "default" }}>
+              <div className="tc-head">
+                <div><div className="tc-title">{x.commodity_name ?? x.commodity_id.replace(/_/g, " ")}</div><div className="tc-sub">{x.quantity.toLocaleString("en-IN")} {t.units}</div></div>
+                <div className="tc-meta"><span className={`chip ${x.direction === "incoming" ? "teal" : "amber"}`}>{x.direction === "incoming" ? t.incoming : t.outgoing}</span><span>{x.km} km · {x.eta_days} d</span></div>
+              </div>
+              <div className="tc-route"><span>{x.from_name}</span><span className="arrow" aria-hidden>→</span><strong>{x.to_name}</strong></div>
+              <div className="tc-actions"><span className={moving ? "" : "faint"} style={{ fontSize: 13 }}>{status}</span>
+                {x.direction === "incoming" && moving && <button className="btn primary" style={{ marginLeft: "auto" }} onClick={() => delivered.mutate(x.transfer_id)}>{t.confirmArrived}</button>}
+              </div>
+            </div>;
+          })}
         </section>
       )}
     </div>
