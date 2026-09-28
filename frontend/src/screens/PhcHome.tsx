@@ -62,7 +62,7 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
             const status = done[x.transfer_id] || x.status === "delivered" ? t.deliveredStatus : moving ? t.onTheWay : t.awaitingApproval;
             return <div key={x.transfer_id} className="tcard" style={{ cursor: "default" }}>
               <div className="tc-head">
-                <div><div className="tc-title">{x.commodity_name ?? x.commodity_id.replace(/_/g, " ")}</div><div className="tc-sub">{x.quantity.toLocaleString("en-IN")} {t.units}</div></div>
+                <div><div className="tc-title">{x.commodity_name ?? x.commodity_id.replace(/_/g, " ")}</div><div className="tc-sub">{x.quantity.toLocaleString("en-IN")} {x.quantity === 1 ? t.unit1 : t.units}</div></div>
                 <div className="tc-meta"><span className={`chip ${x.direction === "incoming" ? "teal" : "amber"}`}>{x.direction === "incoming" ? t.incoming : t.outgoing}</span><span>{x.km} km · {x.eta_days} d</span></div>
               </div>
               <div className="tc-route"><span>{x.from_name}</span><span className="arrow" aria-hidden>→</span><strong>{x.to_name}</strong></div>

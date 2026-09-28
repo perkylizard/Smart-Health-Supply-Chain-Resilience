@@ -8,6 +8,7 @@ import Explain from "../components/Explain";
 import MapView from "../components/MapView";
 import Scale from "../components/Scale";
 import Sparkline from "../components/Sparkline";
+import CarePanel from "../components/CarePanel";
 
 export default function Briefing() {
   const { unit, district, lang, t, base } = useApp();
@@ -74,6 +75,7 @@ export default function Briefing() {
           </section>
         </div>
         <aside>
+          <div style={{ marginBottom: "var(--s6)" }}><CarePanel unit={unit} district={district} /></div>
           <section className="section">
             <h2>{t.howAreWe}</h2>
             {s?.score ? (<>

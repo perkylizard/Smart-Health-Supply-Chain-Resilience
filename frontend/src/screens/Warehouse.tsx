@@ -26,7 +26,7 @@ export default function Warehouse() {
                 <div className="tc-head">
                   <div>
                     <div className="tc-title">{x.commodity_name}</div>
-                    <div className="tc-sub">{(x.units_per_case ?? 1) >= 10 && x.cases ? `${x.cases.toLocaleString("en-IN")} ${t.cases} ${t.ofN} ${x.units_per_case}, ${x.quantity.toLocaleString("en-IN")} ${t.units}` : `${x.quantity.toLocaleString("en-IN")} ${t.units}`}</div>
+                    <div className="tc-sub">{(x.units_per_case ?? 1) >= 10 && x.cases ? `${x.cases.toLocaleString("en-IN")} ${t.cases} ${t.ofN} ${x.units_per_case}, ${x.quantity.toLocaleString("en-IN")} ${t.units}` : `${x.quantity.toLocaleString("en-IN")} ${x.quantity === 1 ? t.unit1 : t.units}`}</div>
                   </div>
                   {t.causes[x.cause] && <div className="tc-meta"><span className={`chip ${x.cause === "cases_up" ? "red" : "amber"}`}>{t.causes[x.cause]}</span></div>}
                 </div>

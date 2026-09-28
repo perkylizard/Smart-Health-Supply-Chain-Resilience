@@ -7,6 +7,7 @@ import Badge from "../components/Badge";
 import Explain from "../components/Explain";
 import MapView from "../components/MapView";
 import Scale from "../components/Scale";
+import CarePanel from "../components/CarePanel";
 
 function scoreSeverity(s: number | null): FacilityDot["worst_severity"] { return s == null ? "data_issue" : s < 45 ? "red" : s < 60 ? "amber" : "ok"; }
 
@@ -41,12 +42,18 @@ export default function StateView() {
           {tr.data && transfers.length === 0 && <div className="quiet">No cross-district transfer is needed in the worst districts right now.</div>}
           {transfers.slice(0, 20).map((x) => (
             <div key={x.transfer_id} className="tcard">
-              <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}><span className="qty">{x.quantity} <span className="faint" style={{ fontSize: 13, fontWeight: 400 }}>{x.commodity_id.replace(/_/g, " ")}</span></span><span className="faint" style={{ fontSize: 13 }}>{x.km} km · {x.eta_days} d</span></div>
-              <div style={{ margin: "6px 0" }}>{x.from_name} <span className="faint">({x.from_district})</span> <span className="faint">→</span> <strong>{x.to_name}</strong> <span className="faint">({x.to_district})</span></div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, fontSize: 13 }}><div><span className="faint">donor after</span><Scale days={x.donor_days_after} severity="ok" label={t.days} /></div><div><span className="faint">recipient after</span><Scale days={x.recipient_days_after} severity="ok" label={t.days} /></div></div>
-              <div style={{ display: "flex", gap: 8, marginTop: 10, alignItems: "center" }}>
+              <div className="tc-head">
+                <div><div className="tc-title">{(x.commodity_name ?? x.commodity_id.replace(/_/g, " "))}</div><div className="tc-sub">{x.quantity.toLocaleString("en-IN")} {t.qtyToSend}</div></div>
+                <div className="tc-meta"><span>{x.km} km · {x.eta_days} d</span></div>
+              </div>
+              <div className="tc-route"><span>{x.from_name} <span className="faint">({x.from_district})</span></span><span className="arrow" aria-hidden>→</span><strong>{x.to_name}</strong> <span className="faint">({x.to_district})</span></div>
+              <div className="tc-stats">
+                <div><span className="lbl">donor after</span><Scale days={x.donor_days_after} severity="ok" label={t.days} /></div>
+                <div><span className="lbl">recipient after</span><Scale days={x.recipient_days_after} severity="ok" label={t.days} /></div>
+              </div>
+              <div className="tc-actions">
                 {x.status === "proposed" ? <button className="btn primary" onClick={() => approve.mutate(x.transfer_id)}>{t.approve}</button> : <span className="chip green">{x.status}</span>}
-                <Explain kind="transfer" item={x}><button className="btn quiet" style={{ color: "var(--teal)" }}>{t.whyLink}</button></Explain>
+                <Explain kind="transfer" item={x}><button className="btn quiet">{t.whyLink}</button></Explain>
                 <Badge kind="computed" />
               </div>
             </div>
@@ -64,6 +71,7 @@ export default function StateView() {
           <LeagueTable rows={[...(d.data?.districts ?? [])].sort((a, b) => (b.score ?? 0) - (a.score ?? 0)).slice(0, 12)} />
           <p><Link to={`/state/${unit}/districts`}>All districts →</Link></p>
         </section>
+        <div style={{ marginBottom: "var(--s6)" }}><CarePanel unit={unit} /></div>
       </aside>
     </div>
   );

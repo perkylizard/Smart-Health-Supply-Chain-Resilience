@@ -1,0 +1,27 @@
+/* Beds and staff panel. Uses the app tokens; figures, never bars. */
+.care { background: var(--paper); border-radius: var(--r2); box-shadow: var(--e1); overflow: hidden; }
+.care-head { padding: var(--s4) var(--s4) var(--s2); }
+.care-head h3 { font-size: var(--t-lg); font-weight: 500; margin: 0; }
+.care-head p { margin: 2px 0 0; font-size: var(--t-xs); color: var(--ink-3); }
+.care-kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s3); padding: var(--s3) var(--s4); background: var(--paper-2); }
+.care-kpi .n { display: block; font-size: var(--t-xl); font-weight: 500; line-height: 1.15; }
+.care-kpi .n small { font-size: var(--t-xs); font-weight: 400; color: var(--ink-2); }
+.care-kpi .l { display: block; font-size: var(--t-xs); color: var(--ink-3); margin-top: 2px; }
+.care-kpi.red .n { color: var(--red); } .care-kpi.amber .n { color: var(--amber); } .care-kpi.green .n { color: var(--green); }
+.care-list { list-style: none; margin: 0; padding: 0 var(--s4); }
+.care-list li { padding: var(--s3) 0; border-bottom: 1px solid var(--rule); }
+.care-list li:last-child { border-bottom: 0; }
+.care-list .who { font-weight: 500; }
+.care-list .what { font-size: var(--t-sm); margin-top: 2px; }
+.care-list .what.red { color: var(--red); } .care-list .what.amber { color: var(--amber); }
+.care-list .refer { font-size: var(--t-xs); color: var(--ink-2); margin-top: 2px; }
+.care-foot { display: flex; align-items: center; gap: var(--s2); justify-content: space-between; padding: var(--s2) var(--s4) var(--s3); border-top: 1px solid var(--rule); font-size: var(--t-xs); color: var(--ink-3); }
+.care-table { width: 100%; border-collapse: collapse; font-size: var(--t-sm); }
+.care-table th, .care-table td { text-align: left; padding: 8px var(--s4); border-bottom: 1px solid var(--rule); }
+.care-table th { font-size: var(--t-xs); font-weight: 500; color: var(--ink-3); }
+.care-table td.num, .care-table th.num { text-align: right; }
+.care-table tr:last-child td { border-bottom: 0; }
+.care-occ { font-weight: 500; } .care-occ.red { color: var(--red); } .care-occ.amber { color: var(--amber); } .care-occ.green { color: var(--green); }
+.care-table .zero { color: var(--ink-3); } .care-table .hot { color: var(--red); font-weight: 500; }
+.care-empty { padding: var(--s3) var(--s4); color: var(--ink-2); font-size: var(--t-sm); }
+@media (max-width: 599px) { .care-kpis { gap: var(--s2); } .care-kpi .n { font-size: var(--t-lg); } .care-table th, .care-table td { padding: 8px var(--s2); } }
