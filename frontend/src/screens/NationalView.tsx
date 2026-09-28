@@ -9,8 +9,7 @@ import MapView from "../components/MapView";
 function sev(m: number): FacilityDot["worst_severity"] { return m < 1 ? "red" : m < 2 ? "amber" : "ok"; }
 
 export default function NationalView() {
-  const { t } = useApp();
-  const [basis, setBasis] = useState<"real" | "simulated">("real");
+  const { t, basis, setBasis } = useApp();
   const q = useQuery({ queryKey: ["national", basis], queryFn: () => api.nationalStates(basis) });
   const [picked, setPicked] = useState<string | null>(null);
   const dq = useQuery({ queryKey: ["nationalDistricts", picked, basis], queryFn: () => api.nationalDistricts(picked!, basis), enabled: !!picked });
@@ -24,8 +23,8 @@ export default function NationalView() {
         <section className="qsection">
           <h2>{t.indiaTitle} <span className="count">{q.data ? `${q.data.states.length} states, ${t.indiaMonth.toLowerCase()}: ${q.data.month}` : ""}</span></h2>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
-            <button className="chip" style={basis === "real" ? { background: "var(--teal-soft)", color: "var(--teal-2)" } : {}} onClick={() => setBasis("real")}>{t.basisReal}</button>
-            <button className="chip" style={basis === "simulated" ? { background: "var(--teal-soft)", color: "var(--teal-2)" } : {}} onClick={() => setBasis("simulated")} title={t.basisSimulatedHint}>{t.basisSimulated}</button>
+            <button className="chip" aria-pressed={basis === "real"} onClick={() => setBasis("real")}>{t.basisReal}</button>
+            <button className="chip" aria-pressed={basis === "simulated"} onClick={() => setBasis("simulated")} title={t.basisSimulatedHint}>{t.basisSimulated}</button>
           </div>
           {dots.length > 0 && <MapView dots={dots} center={[80, 22]} onSelect={(f) => setPicked(f.facility_id)} />}
           <div className="legend"><span><i className="dot" style={{ background: "var(--red)" }} />under 1 {t.monthsOfStock}</span><span><i className="dot" style={{ background: "var(--amber)" }} />1 to 2</span><span><i className="dot" style={{ background: "var(--green)" }} />over 2</span><span className="faint">larger dot = {t.phcLevel}</span></div>

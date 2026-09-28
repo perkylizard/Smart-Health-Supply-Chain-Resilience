@@ -72,3 +72,10 @@ def test_national_view_has_real_and_simulated_basis(client):
     if (paths.DATA_PROCESSED / "bq_district_forecast_synth.parquet").exists():  # TimesFM run on the simulated series
         assert sum(x.get("forecast_months_of_stock") is not None for x in d["districts"]) >= 20 and "TimesFM" in d["provenance"]
     assert client.get("/national/states?basis=guess").status_code == 400
+
+
+def test_warehouse_simulated_basis(client):
+    r = client.get("/districts/bihar/Araria/warehouse?basis=simulated").json()
+    assert r["basis"] == "simulated" and r["fy"] == "2025-26" and r["month"] == 3 and r["provisional"] is False
+    assert len(r["rows"]) >= 10 and "imulated" in r["provenance"] and all(x["stale"] is False for x in r["rows"])
+    assert client.get("/districts/bihar/Araria/warehouse?basis=nope").status_code == 400

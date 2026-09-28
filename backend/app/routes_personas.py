@@ -191,13 +191,24 @@ def indent_status(indent_id: str, status: str, request: Request):
 
 
 @router.get("/districts/{unit_id}/{district}/warehouse")
-def warehouse_stock(unit_id: str, district: str, request: Request):
-    """The district store's own stock book: the real HMIS district ledger, latest reported month, per commodity."""
+def warehouse_stock(unit_id: str, district: str, request: Request, basis: str = "real"):
+    """The district store's own stock book, per commodity at its latest reported month.
+    basis=real: the HMIS district ledger. basis=simulated: the synthetic continuation to March 2026 (labelled simulated)."""
     store = request.app.state.store
     units = store.units(); st = units[units["unit_id"] == unit_id]["state"].iloc[0]
-    led = store.real_ledger(st, district)
+    if basis not in ("real", "simulated"):
+        raise HTTPException(400, "basis must be real or simulated")
+    if basis == "simulated":
+        from sanjeevani import paths
+        src = paths.DATA_PROCESSED / "hmis_ledger_synth.parquet"
+        if not src.exists():
+            raise HTTPException(404, "synthetic continuation not built")
+        led = pd.read_parquet(src, filters=[("state", "==", st), ("district", "==", district)])
+        led = led.drop(columns=["t", "demand", "stockout", "source", "basis_fy", "basis_month"], errors="ignore").assign(provisional=False)
+    else:
+        led = store.real_ledger(st, district)
     if led.empty:
-        raise HTTPException(404, "no real ledger for this district")
+        raise HTTPException(404, "no ledger for this district")
     order = {4: 0, 5: 1, 6: 2, 7: 3, 8: 4, 9: 5, 10: 6, 11: 7, 12: 8, 1: 9, 2: 10, 3: 11}
     led = led.assign(o=led["month"].map(order)).sort_values(["fy", "o"])
     # every commodity the district has ever reported, each at its own latest reported month (districts drop items between years)
@@ -210,10 +221,12 @@ def warehouse_stock(unit_id: str, district: str, request: Request):
     hist = own_fy.groupby("item_code")["distributed"].apply(lambda x: [None if pd.isna(v) else float(v) for v in x]).rename("distributed_by_month").reset_index()
     out = last.merge(hist, on="item_code", how="left")
     provisional = bool(led["provisional"].iloc[-1]) if "provisional" in led.columns else False
-    return {"district": district, "state": st, "fy": latest_fy, "month": latest_month, "provisional": provisional,
+    prov = ("Simulated continuation of this district's real HMIS series to March 2026 (scripts/synth_hmis_extend.py); not actual stock" if basis == "simulated"
+            else "HMIS sections M17/M19/M20, real district monthly stock ledger (MoHFW, GODL), not simulated; each commodity at its latest reported month"
+                 + (" ; FY 2020-21 figures are labelled provisional by MoHFW" if provisional else ""))
+    return {"district": district, "state": st, "fy": latest_fy, "month": latest_month, "provisional": provisional, "basis": basis,
             "rows": _clean(out[["item_code", "item_name", "fy", "month", "stale", "opening", "received", "unusable", "distributed", "closing", "months_of_stock", "distributed_by_month"]].sort_values("months_of_stock")),
-            "provenance": "HMIS sections M17/M19/M20, real district monthly stock ledger (MoHFW, GODL), not simulated; each commodity at its latest reported month"
-                          + (" ; FY 2020-21 figures are labelled provisional by MoHFW" if provisional else "")}
+            "provenance": prov}
 
 
 @router.get("/districts/{unit_id}/{district}/brief")

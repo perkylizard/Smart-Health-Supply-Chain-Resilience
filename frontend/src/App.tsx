@@ -16,8 +16,10 @@ import PhcHome, { PhcPick } from "./screens/PhcHome";
 import DmBrief, { DmCompare } from "./screens/DmBrief";
 import Warehouse, { WarehouseStock } from "./screens/Warehouse";
 
+export type Basis = "real" | "simulated";
 export interface Ctx {
   lang: Lang; setLang: (l: Lang) => void; t: typeof strings.en; persona: PersonaId; setPersona: (p: PersonaId) => void;
+  basis: Basis; setBasis: (b: Basis) => void;
   unit: string; district: string; facilityId?: string; setLocation: (u: string, d: string) => void; base: string;
 }
 export const AppCtx = createContext<Ctx>(null as unknown as Ctx);
@@ -31,8 +33,10 @@ export default function App() {
   const [persona, setPersonaState] = useState<PersonaId>(() => readLS("persona", "dho") as PersonaId);
   const setLang = (l: Lang) => { setLangState(l); writeLS("lang", l); };
   const setPersona = (p: PersonaId) => { setPersonaState(p); writeLS("persona", p); };
+  const [basis, setBasisState] = useState<Basis>(() => (readLS("basis", "real") === "simulated" ? "simulated" : "real"));
+  const setBasis = (b: Basis) => { setBasisState(b); writeLS("basis", b); };
   useEffect(() => { document.body.dataset.lang = lang; document.documentElement.lang = lang; }, [lang]);
-  const common = { lang, setLang, persona, setPersona };
+  const common = { lang, setLang, persona, setPersona, basis, setBasis };
   return (
     <Routes>
       <Route path="/" element={<Navigate to={homePath(persona, readLS("unit", "bihar"), readLS("district", "Araria"), readLS("facility", "") || undefined)} replace />} />
@@ -69,7 +73,7 @@ function UnitRedirect({ persona }: { persona: PersonaId }) {
   return <p className="skeleton" style={{ margin: 24, height: 40 }}>Loading the district with the most alerts</p>;
 }
 
-function Located({ lang, setLang, persona, setPersona, which }: { lang: Lang; setLang: (l: Lang) => void; persona: PersonaId; setPersona: (p: PersonaId) => void; which: string }) {
+function Located({ lang, setLang, persona, setPersona, basis, setBasis, which }: { lang: Lang; setLang: (l: Lang) => void; persona: PersonaId; setPersona: (p: PersonaId) => void; basis: Basis; setBasis: (b: Basis) => void; which: string }) {
   const params = useParams();
   const nav = useNavigate();
   const facility = useQuery({ queryKey: ["facility", params.id], queryFn: () => api.facility(params.id!), enabled: which === "phc" || which === "facility" });
@@ -80,10 +84,10 @@ function Located({ lang, setLang, persona, setPersona, which }: { lang: Lang; se
   const effectivePersona: PersonaId = which === "phc" || which === "phc-pick" ? "phc" : which === "facility" ? persona : (which as PersonaId);
   const base = which === "phc" ? `/phc/${params.id}` : homePath(effectivePersona, unit, district);
   const ctx = useMemo<Ctx>(() => ({
-    lang, setLang, t: strings[lang], persona: effectivePersona, unit, district, facilityId: which === "phc" ? params.id : undefined, base,
+    lang, setLang, t: strings[lang], persona: effectivePersona, unit, district, facilityId: which === "phc" ? params.id : undefined, base, basis, setBasis,
     setPersona: (p) => { setPersona(p); nav(homePath(p, unit, district, readLS("facility", "") || undefined)); },
     setLocation: (u, d) => { if (!d) { nav(`/${u}`); return; } nav(homePath(effectivePersona === "phc" ? "dho" : effectivePersona, u, d)); },
-  }), [lang, effectivePersona, unit, district, base, which, params.id, nav, setPersona]);
+  }), [lang, effectivePersona, unit, district, base, which, params.id, nav, setPersona, basis, setBasis]);
   const health = useQuery({ queryKey: ["health"], queryFn: api.health, refetchInterval: 30_000 });
   let body: React.ReactNode;
   switch (which) {

@@ -1,20 +1,48 @@
+/* Sanjeevani Grid design tokens: Material Design 2 system, tuned for a public-health decision console.
+   Names kept from the first version (--paper, --ink, --teal, ...) so every screen keeps working; values are the new system. */
 :root {
-  --paper: #fbf8f2; --paper-2: #f3eee4; --ink: #1b2226; --ink-2: #4a5359; --ink-3: #7d858b; --rule: #e4ddd1;
-  --teal: #0f6e6e; --teal-2: #0b5757; --teal-soft: #dcecea;
-  --red: #c8372d; --red-soft: #f6dcd9; --amber: #c77c11; --amber-soft: #f7e6c9; --green: #2e7d5b; --green-soft: #d9ece2; --blue: #3b6fb6; --blue-soft: #dbe6f5;
-  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px;
-  --r1: 6px; --r2: 10px;
-  --t-xs: 13px; --t-sm: 15px; --t-md: 17px; --t-lg: 22px; --t-xl: 30px;
-  --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-hi: "Noto Sans Devanagari", "Inter", system-ui, sans-serif;
-  --rail: 64px; --strip: 56px; --content: 1280px;
-  --shadow: 0 1px 0 rgba(27, 34, 38, 0.06), 0 6px 18px -12px rgba(27, 34, 38, 0.25);
+  /* colour: cool grey background, white surfaces, deep teal primary; red/amber/green/blue stay semantic (severity) */
+  --paper: #ffffff;            /* surface */
+  --paper-2: #f3f6f6;          /* background and low-emphasis surfaces */
+  --bg: #f3f6f6;
+  --ink: #1d2b2e;              /* on-surface, high emphasis */
+  --ink-2: rgba(29, 43, 46, 0.72);   /* medium emphasis */
+  --ink-3: rgba(29, 43, 46, 0.56);   /* low emphasis, captions */
+  --rule: rgba(29, 43, 46, 0.14);    /* outlines and dividers */
+  --teal: #00695c;             /* primary */
+  --teal-2: #004c40;           /* primary variant, text on light surfaces */
+  --teal-soft: #dcefec;        /* primary container */
+  --on-primary: #ffffff;
+  --red: #c62828; --red-soft: #fbe3e1; --amber: #b26a00; --amber-soft: #ffe8c2; --green: #2e7d32; --green-soft: #dcefdc; --blue: #1565c0; --blue-soft: #dde8f7;
+  /* 8dp grid */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
+  --r1: 4px; --r2: 8px; --r-pill: 999px;
+  /* Material type scale (subset), sentence case throughout */
+  --t-xs: 12px;   /* caption */
+  --t-sm: 14px;   /* body 2, tables, dense lists */
+  --t-md: 16px;   /* body 1, subtitle 1 */
+  --t-lg: 20px;   /* headline 6 */
+  --t-xl: 24px;   /* headline 5 */
+  --t-2xl: 34px;  /* headline 4 */
+  --font: "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-hi: "Noto Sans Devanagari", "Roboto", system-ui, sans-serif;
+  /* layout */
+  --appbar: 64px; --tabs-h: 48px; --content: 1440px; --gutter: 24px;
+  /* elevation (Material 2 umbra/penumbra/ambient) */
+  --e1: 0 1px 1px rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12), 0 1px 3px rgba(0,0,0,.20);
+  --e2: 0 2px 2px rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.12), 0 1px 5px rgba(0,0,0,.20);
+  --e4: 0 4px 5px rgba(0,0,0,.14), 0 1px 10px rgba(0,0,0,.12), 0 2px 4px -1px rgba(0,0,0,.20);
+  --e8: 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12), 0 5px 5px -3px rgba(0,0,0,.20);
+  --e24: 0 24px 38px 3px rgba(0,0,0,.14), 0 9px 46px 8px rgba(0,0,0,.12), 0 11px 15px -7px rgba(0,0,0,.20);
+  --shadow: var(--e1);
+  --focus: 0 0 0 3px rgba(0, 105, 92, 0.35);
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #14181b; --paper-2: #1c2226; --ink: #eef0ee; --ink-2: #b7bdc0; --ink-3: #848c91; --rule: #2c3439;
-    --teal: #5fb8b4; --teal-2: #7ccbc7; --teal-soft: #1b3736;
-    --red: #e46a60; --red-soft: #3d2320; --amber: #e0a24a; --amber-soft: #3c2e17; --green: #6cbf9a; --green-soft: #1d3a2d; --blue: #7ea6e0; --blue-soft: #1f2d42;
-    --shadow: 0 1px 0 rgba(0,0,0,0.3), 0 6px 18px -12px rgba(0,0,0,0.6);
+    --paper: #1e2526; --paper-2: #121717; --bg: #121717;
+    --ink: #e8eeee; --ink-2: rgba(232, 238, 238, 0.74); --ink-3: rgba(232, 238, 238, 0.58); --rule: rgba(232, 238, 238, 0.16);
+    --teal: #80cbc4; --teal-2: #a7dcd6; --teal-soft: #1f3b38; --on-primary: #08302b;
+    --red: #ef7b73; --red-soft: #3d2320; --amber: #ffb74d; --amber-soft: #3c2e17; --green: #81c784; --green-soft: #1d3a2d; --blue: #90b4e8; --blue-soft: #1f2d42;
+    --focus: 0 0 0 3px rgba(128, 203, 196, 0.45);
   }
 }

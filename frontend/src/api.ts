@@ -49,7 +49,7 @@ export const api = {
   nationalDistricts: (s: string, basis: "real" | "simulated" = "real") => get<{ districts: { district: string; months_of_stock: number | null; forecast_months_of_stock?: number | null; items_reported: number; stockout_reports: number | null; unit_id: string | null }[]; provenance: string }>(`/national/states/${encodeURIComponent(s)}/districts?basis=${basis}`),
   indents: (u: string, d: string) => get<{ indents: Indent[]; provenance: string }>(`/districts/${u}/${encodeURIComponent(d)}/indents`),
   indentStatus: (id: string, status: string) => post<{ status: string }>(`/indents/${id}/${status}`),
-  warehouse: (u: string, d: string) => get<{ rows: WarehouseRow[]; fy: string; month: number; provisional?: boolean; provenance: string }>(`/districts/${u}/${encodeURIComponent(d)}/warehouse`),
+  warehouse: (u: string, d: string, basis: "real" | "simulated" = "real") => get<{ rows: WarehouseRow[]; fy: string; month: number; provisional?: boolean; basis?: string; provenance: string }>(`/districts/${u}/${encodeURIComponent(d)}/warehouse?basis=${basis}`),
   brief: (u: string, d: string, lang: string) => get<Brief>(`/districts/${u}/${encodeURIComponent(d)}/brief?lang=${lang}`),
   escalate: (u: string, d: string, reason: string) => post<{ entry_id: string }>("/escalations", { unit_id: u, district: d, reason }),
   escalations: (u: string) => get<{ escalations: { district: string; reason: string; received: number }[] }>(`/escalations/${u}`),
