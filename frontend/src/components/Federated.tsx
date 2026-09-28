@@ -4,6 +4,8 @@ import { api, type FedTier } from "../api";
 import { useApp } from "../App";
 import Badge from "./Badge";
 
+/** Brazilian federative units: the node table shows full names, not two-letter codes. */
+const UF: Record<string, string> = {"AC": "Acre", "AL": "Alagoas", "AP": "Amapá", "AM": "Amazonas", "BA": "Bahia", "CE": "Ceará", "DF": "Distrito Federal", "ES": "Espírito Santo", "GO": "Goiás", "MA": "Maranhão", "MT": "Mato Grosso", "MS": "Mato Grosso do Sul", "MG": "Minas Gerais", "PA": "Pará", "PB": "Paraíba", "PR": "Paraná", "PE": "Pernambuco", "PI": "Piauí", "RJ": "Rio de Janeiro", "RN": "Rio Grande do Norte", "RS": "Rio Grande do Sul", "RO": "Rondônia", "RR": "Roraima", "SC": "Santa Catarina", "SP": "São Paulo", "SE": "Sergipe", "TO": "Tocantins"};
 const TIERS = ["districts_bihar_coldstart", "districts_bihar", "states_india", "states_brazil", "countries_brics"] as const;
 
 export default function Federated() {
@@ -64,7 +66,7 @@ export default function Federated() {
         </div>
         <aside>
           <table className="table"><thead><tr><th>node</th><th className="num">rows</th><th className="num">{t.localOnly}</th><th className="num">{t.federatedLbl}</th></tr></thead>
-            <tbody>{nodes.slice(0, 40).map(([name, v]) => <tr key={name}><td>{name}</td><td className="num">{v.rows.toLocaleString("en-IN")}</td><td className="num">{v.local_only.auc.toFixed(2)}</td><td className="num" style={{ color: v.federated.auc > v.local_only.auc + 0.01 ? "var(--green)" : v.federated.auc < v.local_only.auc - 0.01 ? "var(--red)" : undefined }}>{v.federated.auc.toFixed(2)}</td></tr>)}</tbody></table>
+            <tbody>{nodes.slice(0, 40).map(([name, v]) => <tr key={name}><td>{UF[name] ? `${UF[name]} (Brazil)` : name}</td><td className="num">{v.rows.toLocaleString("en-IN")}</td><td className="num">{v.local_only.auc.toFixed(2)}</td><td className="num" style={{ color: v.federated.auc > v.local_only.auc + 0.01 ? "var(--green)" : v.federated.auc < v.local_only.auc - 0.01 ? "var(--red)" : undefined }}>{v.federated.auc.toFixed(2)}</td></tr>)}</tbody></table>
         </aside>
       </div>
     </div>
