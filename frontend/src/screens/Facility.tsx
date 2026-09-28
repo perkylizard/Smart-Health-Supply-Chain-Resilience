@@ -37,7 +37,7 @@ export default function Facility({ id }: { id: string }) {
             <p className="faint" style={{ fontSize: 12 }}><Badge kind="simulated" /></p>
           </section>
           {q.data.beds && <section className="section"><h2>{t.beds}</h2>
-            <div className="scale"><div className="track" style={{ background: "var(--paper-2)" }}><div className="fill green" style={{ width: `${Math.round(100 * q.data.beds.occupied / Math.max(1, q.data.beds.beds))}%` }} /></div><span className="days">{q.data.beds.occupied}/{q.data.beds.beds} {t.occupied}</span></div>
+            <div className={`stock ${q.data.beds.occupied / Math.max(1, q.data.beds.beds) > 0.9 ? "red" : "green"}`}><span className="stock-n">{q.data.beds.occupied}<span className="stock-unit"> / {q.data.beds.beds} {t.occupied}</span></span><span className="stock-note">{Math.round(100 * q.data.beds.occupied / Math.max(1, q.data.beds.beds))}%</span></div>
           </section>}
           <section className="section"><h2>{t.chatTitle}</h2><ChatWidget facilityId={id} /></section>
         </aside>

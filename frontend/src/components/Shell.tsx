@@ -39,7 +39,8 @@ export default function Shell({ children, offline }: { children: React.ReactNode
           <button className="lang" onClick={() => setLang(lang === "en" ? "hi" : "en")} aria-label={t.language}>{lang === "en" ? "हिंदी" : "English"}</button>
           <RoleMenu />
         </div>
-        <div className="bar2 phone-only">
+      </header>
+        <div className="phone-controls phone-only">
           <select className="select" aria-label="State" value={unit} onChange={(e) => setLocation(e.target.value, "")}>
             {(units.data?.units ?? [{ unit_id: unit, unit_name: unit }]).map((u) => <option key={u.unit_id} value={u.unit_id}>{u.unit_name}</option>)}
           </select>
@@ -51,7 +52,6 @@ export default function Shell({ children, offline }: { children: React.ReactNode
           )}
           {persona !== "phc" && <ScenarioDial />}
         </div>
-      </header>
       <nav className="tabs" aria-label="Main">
         <div className="inner">
           {p.tabs.map((tab) => <NavLink key={tab.key} to={`${base}${tab.path}`} end={tab.path === ""}><Icon d={icons[tab.icon]} />{(t as unknown as Record<string, string>)[tab.key]}</NavLink>)}

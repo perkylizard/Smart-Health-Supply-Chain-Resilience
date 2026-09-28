@@ -1,18 +1,16 @@
 import type { Severity } from "../api";
+import { useApp } from "../App";
 
-/** Days-of-stock as a physical scale: ticks at 7, 14, 30; 60 days fills the track. */
+/** Days of stock as a plain statement: a coloured figure and what it means. No bar, no scale. */
 export default function Scale({ days, severity, label }: { days: number; severity: Severity; label?: string }) {
-  const max = 60;
-  const pct = Math.max(0, Math.min(100, (days / max) * 100));
+  const { t } = useApp();
   const sev = severity === "data_issue" ? "data_issue" : days < 7 ? "red" : days < 14 ? "amber" : "green";
-  const glyph = sev === "red" ? "▲" : sev === "amber" ? "◆" : sev === "data_issue" ? "?" : "●";
+  const n = days >= 365 ? "365+" : String(Math.round(days));
+  const note = sev === "data_issue" ? t.stockCheck : days < 1 ? t.stockOut : sev === "red" ? t.stockUnder7 : sev === "amber" ? t.stockUnder14 : t.stockOk;
   return (
-    <div className="scale" role="img" aria-label={`${Math.round(days)} ${label ?? "days"}`}>
-      <div className="track">
-        <div className={`fill ${sev}`} style={{ width: `${pct}%` }} />
-        {[7, 14, 30].map((tk) => <span key={tk} className="tick" style={{ left: `${(tk / max) * 100}%` }} />)}
-      </div>
-      <span className={`days ${sev}`}>{glyph} {days >= 365 ? "365+" : Math.round(days)} {label ?? "d"}</span>
+    <div className={`stock ${sev}`} role="img" aria-label={`${n} ${label ?? t.days}, ${note}`}>
+      <span className="stock-n">{n}<span className="stock-unit"> {label ?? t.days}</span></span>
+      <span className="stock-note">{note}</span>
     </div>
   );
 }
