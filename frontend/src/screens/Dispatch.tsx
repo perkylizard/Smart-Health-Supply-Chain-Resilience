@@ -81,19 +81,25 @@ function Card({ x, actions, onSelect, leaving }: { x: Transfer; actions: React.R
   const doneIdx = STEPS.indexOf(x.status);
   return (
     <div className={`tcard${leaving ? " leaving" : ""}`} onClick={onSelect} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") onSelect(); }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>
-        <span className="qty">{x.quantity} <span className="faint" style={{ fontSize: 13, fontWeight: 400 }}>{x.commodity_id.replace(/_/g, " ")}</span></span>
-        <span className="faint" style={{ fontSize: 13 }}>{x.km} km · {x.eta_days} d{x.cross_district && <span className="chip teal" style={{ marginLeft: 6 }}>cross-district</span>}</span>
+      <div className="tc-head">
+        <div>
+          <div className="tc-title">{x.commodity_id.replace(/_/g, " ")}</div>
+          <div className="tc-sub">{x.quantity.toLocaleString("en-IN")} {t.qtyToSend}</div>
+        </div>
+        <div className="tc-meta">
+          <span>{x.km} km · {x.eta_days} d</span>
+          {x.cross_district && <span className="chip teal">cross-district</span>}
+        </div>
       </div>
-      <div style={{ margin: "6px 0" }}>{x.from_name} <span className="faint">→</span> <strong>{x.to_name}</strong></div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, fontSize: 13 }}>
-        <div><span className="faint">donor after</span><Scale days={x.donor_days_after} severity="ok" label={t.days} /></div>
-        <div><span className="faint">recipient after</span><Scale days={x.recipient_days_after} severity="ok" label={t.days} /></div>
+      <div className="tc-route"><span>{x.from_name}</span><span className="arrow" aria-hidden>→</span><strong>{x.to_name}</strong></div>
+      <div className="tc-stats">
+        <div><span className="lbl">donor after</span><Scale days={x.donor_days_after} severity="ok" label={t.days} /></div>
+        <div><span className="lbl">recipient after</span><Scale days={x.recipient_days_after} severity="ok" label={t.days} /></div>
       </div>
-      {doneIdx >= 1 && <div className="stepper" style={{ marginTop: 8 }}>{STEPS.map((s, i) => <span key={s} className={`step${i <= doneIdx ? " done" : ""}`}>{s.replace("_", " ")}</span>)}</div>}
-      <div style={{ display: "flex", gap: 8, marginTop: 10, alignItems: "center", flexWrap: "wrap" }} onClick={(e) => e.stopPropagation()}>
+      {doneIdx >= 1 && <div className="tc-steps"><div className="stepper">{STEPS.map((s, i) => <span key={s} className={`step${i <= doneIdx ? " done" : ""}`}>{s.replace("_", " ")}</span>)}</div></div>}
+      <div className="tc-actions" onClick={(e) => e.stopPropagation()}>
         {actions}
-        <Explain kind="transfer" item={x}><button className="btn quiet" style={{ color: "var(--teal)" }}>{t.whyLink}</button></Explain>
+        <Explain kind="transfer" item={x}><button className="btn quiet">{t.whyLink}</button></Explain>
         <Badge kind="computed" title={x.note ? `optimiser · ${x.note}` : "optimiser"} />
       </div>
     </div>

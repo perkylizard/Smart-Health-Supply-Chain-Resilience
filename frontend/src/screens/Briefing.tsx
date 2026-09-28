@@ -102,10 +102,10 @@ function AlertRow({ a, base }: { a: Alert; base: string }) {
   const cause = t.causes[a.cause] ?? a.cause;
   return (
     <div className="row">
-      <div><Link to={`/facility/${a.facility_id}`} className="name" style={{ color: "inherit" }}>{a.facility_name}</Link><div className="sub">{a.type} · {a.district} · <Badge kind={a.source === "osm" ? "osm" : "simulated"} /></div></div>
-      <div>{a.commodity_name}<div className="sub">{cause && <span className={`chip ${a.cause === "data_issue" ? "blue" : a.cause === "cases_up" ? "red" : "amber"}`}>{cause}</span>}</div></div>
+      <div><Link to={`/facility/${a.facility_id}`} className="name" style={{ color: "inherit" }}>{a.facility_name}</Link><div className="sub"><span>{a.type}, {a.district}</span><Badge kind={a.source === "osm" ? "osm" : "simulated"} /></div></div>
+      <div><div>{a.commodity_name}</div>{cause && <div className="sub"><span className={`chip ${a.cause === "data_issue" ? "blue" : a.cause === "cases_up" ? "red" : "amber"}`}>{cause}</span></div>}</div>
       <Scale days={a.days_of_stock} severity={a.severity} label={t.days} />
-      <Link className="btn" to={`${base}/dispatch?commodity=${a.commodity_id}`}>{t.dispatch}</Link>
+      <Link className="btn quiet" to={`${base}/dispatch?commodity=${a.commodity_id}`}>{t.dispatch} →</Link>
     </div>
   );
 }
