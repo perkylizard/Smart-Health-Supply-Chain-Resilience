@@ -41,6 +41,9 @@ h3 { font-size: var(--t-md); font-weight: 500; letter-spacing: 0.15px; }
 .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--paper); color: var(--teal-2); display: inline-grid; place-items: center; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; flex: 0 0 auto; }
 .avatar.small { width: 28px; height: 28px; font-size: 11px; background: var(--teal-soft); }
 .phone-only { display: none !important; }
+.appbar .bar2 { display: flex; align-items: center; gap: var(--s2); padding: 0 var(--gutter) var(--s2); }
+.appbar .bar2 .chip.whatif { background: rgba(255,255,255,.14); color: var(--on-primary); border-color: transparent; }
+.appbar .bar2 .chip.whatif.amber { background: var(--amber-soft); color: var(--amber); }
 .appbar .iconbtn { position: relative; display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 0; background: transparent; color: var(--on-primary); cursor: pointer; }
 .appbar .iconbtn:hover { background: rgba(255,255,255,.12); }
 .appbar .iconbtn.on { background: var(--amber-soft); color: var(--amber); }
@@ -158,7 +161,7 @@ textarea.input { min-height: 120px; padding: var(--s3); font-family: ui-monospac
   .appbar .brand { margin-right: 0; font-size: var(--t-md); }
   .appbar .role .role-text { display: none; } .appbar .role { padding: 0 2px; }
   .appbar .lang { min-height: 32px; padding: 0 8px; font-size: var(--t-xs); }
-  .desktop-only { display: none !important; } .phone-only { display: inline-flex !important; }
+  .desktop-only { display: none !important; } .phone-only { display: inline-flex !important; } .appbar .bar2.phone-only { display: flex !important; }
   .tabs .navloc-slot { flex: 1; } .tabs .navloc { border-top: 3px solid transparent; }
   .loclist { grid-template-columns: 1fr; } .loclist ul { max-height: 30vh; }
   .tabs { order: 3; position: sticky; bottom: 0; padding: 0; border-top: 1px solid var(--rule); box-shadow: var(--e8); }

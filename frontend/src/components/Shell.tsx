@@ -31,10 +31,10 @@ export default function Shell({ children, offline }: { children: React.ReactNode
             <input className="input" name="q" placeholder={t.askPlaceholder} aria-label={t.ask} defaultValue={loc.pathname.endsWith("/ask") ? new URLSearchParams(loc.search).get("q") ?? "" : ""} />
           </form>
           <span className="spacer" />
-          {persona !== "phc" && <WhatIf compact className="phone-only" />}
           <button className="lang" onClick={() => setLang(lang === "en" ? "hi" : "en")} aria-label={t.language}>{lang === "en" ? "हिंदी" : "English"}</button>
           <RoleMenu />
         </div>
+        {persona !== "phc" && <div className="bar2 phone-only"><WhatIf /></div>}
       </header>
       <nav className="tabs" aria-label="Main">
         <div className="inner">
