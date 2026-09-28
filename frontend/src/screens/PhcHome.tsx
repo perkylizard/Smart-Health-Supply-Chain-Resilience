@@ -36,7 +36,7 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
   const fac = f.data.facility as Record<string, string | number>;
   const low = f.data.stock.filter((s) => s.alert);
   return (
-    <div style={{ maxWidth: 640 }}>
+    <div style={{ maxWidth: tab === "report" ? 720 : 640 }}>
       <p className="faint" style={{ fontSize: 13 }}><Link to={`/phc-pick/${fac.unit_id}/${encodeURIComponent(String(fac.district))}`}>{t.facility}</Link> · {String(fac.district)}</p>
       <h1 style={{ marginBottom: 4 }}>{String(fac.name)}</h1>
       <p className="muted" style={{ marginTop: 0 }}>{String(fac.type)} · <Badge kind={fac.source === "osm" ? "osm" : "simulated"} /></p>
@@ -48,7 +48,7 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
         </section>
       )}
       {tab === "report" && (
-        <section className="qsection"><h2>{t.report}</h2><p className="muted">{t.chatHint}</p><ChatWidget facilityId={facilityId} /></section>
+        <section className="qsection report-section"><ChatWidget facilityId={facilityId} names={Object.fromEntries(f.data.stock.map((s) => [s.commodity_id, s.commodity_name]))} withHeader /></section>
       )}
       {tab === "deliveries" && (
         <section className="qsection">
