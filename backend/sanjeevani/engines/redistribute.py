@@ -49,27 +49,34 @@ def propose(alerts: pd.DataFrame, commodity_id: str, max_km: float = 80.0, donor
     donors = donors[donors["surplus"] > 0]
     if recipients.empty or donors.empty:
         return _empty()
-    # candidate arcs
-    arcs = []
-    for i, r in enumerate(recipients.itertuples(index=False)):
-        for j, d in enumerate(donors.itertuples(index=False)):
-            same = d.district == r.district
-            if not same and not allow_cross_district:
-                continue
-            km = dist.km((d.lat, d.lon), (r.lat, r.lon))
-            limit = max_km if same else max_km * 2
-            if km <= limit:
-                arcs.append((j, i, km, same))
+    # candidate arcs: one vectorised distance matrix (recipients x donors) instead of a row-by-row double loop
+    r_lat, r_lon = recipients["lat"].to_numpy(float), recipients["lon"].to_numpy(float)
+    d_lat, d_lon = donors["lat"].to_numpy(float), donors["lon"].to_numpy(float)
+    r_dist, d_dist = recipients["district"].to_numpy(object), donors["district"].to_numpy(object)
+    if isinstance(dist, HaversineDistance):
+        p1, p2 = np.radians(d_lat)[None, :], np.radians(r_lat)[:, None]
+        dp = p2 - p1
+        dl = np.radians(r_lon)[:, None] - np.radians(d_lon)[None, :]
+        h = np.sin(dp / 2) ** 2 + np.cos(p1) * np.cos(p2) * np.sin(dl / 2) ** 2
+        kmm = 2 * 6371.0 * np.arcsin(np.sqrt(h)) * dist.road_factor
+    else:  # any other provider (for example a road-distance service) keeps the pairwise call
+        kmm = np.array([[dist.km((d_lat[j], d_lon[j]), (r_lat[i], r_lon[i])) for j in range(len(d_lat))] for i in range(len(r_lat))])
+    same_m = r_dist[:, None] == d_dist[None, :]
+    ok = kmm <= np.where(same_m, max_km, max_km * 2)
+    if not allow_cross_district:
+        ok &= same_m
+    ii, jj = np.nonzero(ok)
+    arcs = [(int(j), int(i), float(kmm[i, j]), bool(same_m[i, j])) for i, j in zip(ii, jj)]
     if not arcs:
         return _empty()
     smcf = min_cost_flow.SimpleMinCostFlow()
     S, T = 0, 1
     dn = {j: 2 + j for j in range(len(donors))}
     rn = {i: 2 + len(donors) + i for i in range(len(recipients))}
-    for j, d in enumerate(donors.itertuples(index=False)):
-        smcf.add_arc_with_capacity_and_unit_cost(S, dn[j], int(d.surplus), 0)
-    for i, r in enumerate(recipients.itertuples(index=False)):
-        smcf.add_arc_with_capacity_and_unit_cost(rn[i], T, int(r.need), 0)
+    for j, sur in enumerate(donors["surplus"].to_numpy()):
+        smcf.add_arc_with_capacity_and_unit_cost(S, dn[j], int(sur), 0)
+    for i, need in enumerate(recipients["need"].to_numpy()):
+        smcf.add_arc_with_capacity_and_unit_cost(rn[i], T, int(need), 0)
     arc_ids = []
     for (j, i, km, same) in arcs:
         cost = int(km * KM_COST + FIXED_COST + (0 if same else 2000))
@@ -81,11 +88,12 @@ def propose(alerts: pd.DataFrame, commodity_id: str, max_km: float = 80.0, donor
     if status != smcf.OPTIMAL:
         return _empty()
     rows = []
+    D = donors.reset_index(drop=True).to_dict("records"); Rr = recipients.reset_index(drop=True).to_dict("records")
     for arc, j, i, km, same in arc_ids:
         q = smcf.flow(arc)
         if q <= 0:
             continue
-        d = donors.iloc[j]; r = recipients.iloc[i]
+        d = _Row(D[j]); r = _Row(Rr[i])
         eta = round(km / KM_PER_DAY + 1 + lead_add_days, 1)
         rows.append({
             "transfer_id": f"{commodity_id}:{d.facility_id}->{r.facility_id}",
@@ -102,6 +110,11 @@ def propose(alerts: pd.DataFrame, commodity_id: str, max_km: float = 80.0, donor
     if total_surplus < total_need and not out.empty:
         out["note"] = "insufficient_surplus"
     return out.sort_values(["to_id", "km"]).reset_index(drop=True) if not out.empty else _empty()
+
+
+class _Row(dict):
+    """Attribute access over a plain dict row, so the proposal builder reads d.closing as before."""
+    __getattr__ = dict.__getitem__
 
 
 def _empty() -> pd.DataFrame:

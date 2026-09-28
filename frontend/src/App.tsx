@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "./api";
 import { strings, type Lang } from "./i18n";
 import { homePath, type PersonaId } from "./personas";
@@ -63,12 +63,15 @@ function LegacyRedirect() {
 function UnitRedirect({ persona }: { persona: PersonaId }) {
   const { unit } = useParams();
   const nav = useNavigate();
-  const q = useQuery({ queryKey: ["districts", unit], queryFn: () => api.districts(unit!), enabled: !!unit });
+  // names are instant; the worst-district choice is used only when the state's scores are already cached, so switching state never waits
+  const qc = useQueryClient();
+  const q = useQuery({ queryKey: ["districtNames", unit], queryFn: () => api.districtNames(unit!), enabled: !!unit, staleTime: Infinity });
   useEffect(() => {
     if (!q.data) return;
-    const worst = [...q.data.districts].sort((a, b) => (b.red_alerts ?? 0) - (a.red_alerts ?? 0))[0];
+    const scored = qc.getQueryData<{ districts: { district: string; red_alerts: number }[] }>(["districts", unit]);
+    const worst = scored ? [...scored.districts].sort((a, b) => (b.red_alerts ?? 0) - (a.red_alerts ?? 0))[0] : q.data.districts[0];
     nav(worst ? homePath(persona === "phc" ? "dho" : persona, unit!, worst.district) : "/", { replace: true });
-  }, [q.data, unit, nav, persona]);
+  }, [q.data, unit, nav, persona, qc]);
   if (q.isError) return <p style={{ padding: 24 }}>Unknown state. <a href="/">Back</a></p>;
   return <p className="skeleton" style={{ margin: 24, height: 40 }}>Loading the district with the most alerts</p>;
 }

@@ -14,9 +14,13 @@ export default function LocationPicker({ variant = "bar" }: { variant?: "bar" | 
   const [pick, setPick] = useState(unit);
   const [filter, setFilter] = useState("");
   const units = useQuery({ queryKey: ["units"], queryFn: api.units });
-  const districts = useQuery({ queryKey: ["districts", pick], queryFn: () => api.districts(pick), enabled: open });
+  // names arrive instantly; alert counts and scores fill in when the state's figures are ready, without blocking the list
+  const names = useQuery({ queryKey: ["districtNames", pick], queryFn: () => api.districtNames(pick), enabled: open, staleTime: Infinity });
+  const scored = useQuery({ queryKey: ["districts", pick], queryFn: () => api.districts(pick), enabled: open });
   const needsDistrict = persona !== "state";
   const unitName = units.data?.units.find((u) => u.unit_id === unit)?.unit_name ?? unit;
+  const byName = new Map((scored.data?.districts ?? []).map((d) => [d.district, d]));
+  const districts = { data: names.data && { districts: names.data.districts.map((n) => ({ red_alerts: 0, score: null as number | null, ...byName.get(n.district), district: n.district })) } };
   const rows = (districts.data?.districts ?? []).filter((d) => d.district.toLowerCase().includes(filter.toLowerCase()));
   return (
     <Dialog.Root open={open} onOpenChange={(o) => { setOpen(o); if (o) { setPick(unit); setFilter(""); } }}>

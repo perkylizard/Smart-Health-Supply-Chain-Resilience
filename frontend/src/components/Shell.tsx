@@ -14,7 +14,7 @@ const Icon = ({ d }: { d: string }) => <svg width="22" height="22" viewBox="0 0 
 export default function Shell({ children, offline }: { children: React.ReactNode; offline: boolean }) {
   const { t, lang, setLang, unit, district, persona, base, basis, setLocation, setPersona, setBasis } = useApp();
   const units = useQuery({ queryKey: ["units"], queryFn: api.units });
-  const districts = useQuery({ queryKey: ["districts", unit], queryFn: () => api.districts(unit) });
+  const districts = useQuery({ queryKey: ["districtNames", unit], queryFn: () => api.districtNames(unit), staleTime: Infinity });
   const nav = useNavigate();
   const loc = useLocation();
   const p = PERSONAS[persona];

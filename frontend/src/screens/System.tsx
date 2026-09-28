@@ -8,7 +8,7 @@ export default function System() {
   const { t, unit } = useApp();
   const health = useQuery({ queryKey: ["health"], queryFn: api.health });
   const prov = useQuery({ queryKey: ["provenance"], queryFn: api.provenance });
-  const districts = useQuery({ queryKey: ["districts", unit], queryFn: () => api.districts(unit) });
+  const districts = useQuery({ queryKey: ["districtNames", unit], queryFn: () => api.districtNames(unit), staleTime: Infinity });
   const fac = districts.data?.districts.reduce((a, d) => a + d.facilities, 0) ?? 0;
   return (
     <div className="two-col">

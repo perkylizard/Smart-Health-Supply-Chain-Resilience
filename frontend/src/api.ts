@@ -56,6 +56,8 @@ export const api = {
   health: () => get<{ ok: boolean; latest_month: number; scenario: Scenario }>("/health"),
   units: () => get<{ units: Unit[] }>("/units"),
   districts: (u: string) => get<{ districts: DistrictRow[]; scenario: Scenario }>(`/units/${u}/districts`),
+  /** Names only: instant, for dropdowns and pickers. Use `districts` only where scores are shown. */
+  districtNames: (u: string) => get<{ districts: { district: string; facilities: number }[] }>(`/units/${u}/district-names`),
   summary: (u: string, d: string) => get<Summary>(`/districts/${u}/${encodeURIComponent(d)}/summary`),
   facilities: (u: string, d: string) => get<{ facilities: FacilityDot[]; provenance: string }>(`/districts/${u}/${encodeURIComponent(d)}/facilities`),
   facility: (id: string) => get<{ facility: Record<string, unknown>; stock: Alert[]; forecast: { commodity_id: string; week: number; point: number; p90: number; method: string }[]; staff: { cadre: string; sanctioned: number; in_position: number; days_present: number }[]; beds: { beds: number; occupied: number } | null; entries: Record<string, unknown>[]; provenance: Record<string, string> }>(`/facilities/${id}`),

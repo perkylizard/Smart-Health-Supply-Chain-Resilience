@@ -115,6 +115,13 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
     def units():
         return {"units": _clean(store.units()), "provenance": PROVENANCE["facility_counts"]}
 
+    @app.get("/units/{unit_id}/district-names")
+    def unit_district_names(unit_id: str):
+        """Names only, for dropdowns. Never triggers the whole-state alert computation."""
+        _unit_or_404(unit_id)
+        fac = store.facilities(unit_id).groupby("district").size()
+        return {"unit_id": unit_id, "districts": [{"district": d, "facilities": int(fac.get(d, 0))} for d in store.districts(unit_id)]}
+
     @app.get("/units/{unit_id}/districts")
     def unit_districts(unit_id: str):
         _unit_or_404(unit_id)
@@ -194,29 +201,34 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
                 "beds": _clean(beds)[0] if len(beds) else None, "entries": state.entries(facility_id), "scenario": sc,
                 "provenance": {"stock": PROVENANCE["stock_ledger"], "forecast": PROVENANCE["forecast"], "name": PROVENANCE["facility_names"]}}
 
-    @app.get("/transfers/{unit_id}/{district}")
-    def transfers(unit_id: str, district: str, commodity_id: str | None = None):
-        _unit_or_404(unit_id)
+    @lru_cache(maxsize=512)
+    def _proposals_cached(unit_id: str, district: str, commodity_id: str | None, scenario: str, intensity: float, stamp: int) -> pd.DataFrame:
         al_d = alerts_for(unit_id, district)
         # donors may come from the whole unit (cross-district), recipients from this district
         al_u = alerts_for(unit_id)
-        sc = state.get_scenario()
         cids = [commodity_id] if commodity_id else al_d[al_d["alert"]]["commodity_id"].value_counts().head(8).index.tolist()
+        lead_add = float(al_d["lead_days"].mean() - store.ledger_latest(unit_id, district)["lead_days"].mean()) if len(al_d) else 0.0
         parts = []
         for cid in cids:
             pool = al_u[(al_u["commodity_id"] == cid) & ((al_u["district"] == district) | (~al_u["alert"]))]
             pool = pool[(pool["district"] == district) | (pool["days_of_stock"] > 24)]
-            lead_add = float(al_d["lead_days"].mean() - store.ledger_latest(unit_id, district)["lead_days"].mean()) if len(al_d) else 0.0
             p = R.propose(pool, cid, lead_add_days=max(0.0, lead_add))
             if not p.empty:
-                p = p[p["to_district"] == district]
-                parts.append(p)
-        out = pd.concat(parts, ignore_index=True) if parts else R._empty()
-        recs = _clean(out)
-        for r in recs:
+                parts.append(p[p["to_district"] == district])
+        return pd.concat(parts, ignore_index=True) if parts else R._empty()
+
+    def proposals_for(unit_id: str, district: str, commodity_id: str | None = None) -> pd.DataFrame:
+        sc = state.get_scenario()
+        return _proposals_cached(unit_id, district, commodity_id, sc["name"], sc["intensity"], int(sc["updated"]))
+
+    @app.get("/transfers/{unit_id}/{district}")
+    def transfers(unit_id: str, district: str, commodity_id: str | None = None):
+        _unit_or_404(unit_id)
+        recs = _clean(proposals_for(unit_id, district, commodity_id))
+        for r in recs:  # decisions live in state, not in the cache, so they always show current status
             st = state.transfer_status(r["transfer_id"])
             if st: r["status"], r["decision_reason"] = st["status"], st.get("reason")
-        return {"district": district, "transfers": recs, "scenario": sc, "provenance": PROVENANCE["transfers"]}
+        return {"district": district, "transfers": recs, "scenario": state.get_scenario(), "provenance": PROVENANCE["transfers"]}
 
     @app.post("/transfers/{transfer_id:path}/approve")
     def approve(transfer_id: str):
@@ -287,6 +299,9 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
         try:
             hero = store.units().iloc[0]["unit_id"]
             alerts_for(hero)
+            for d in ("Araria",):  # the demo district: summary and Move stock open instantly for the first visitor
+                alerts_for(hero, d)
+                proposals_for(hero, d)
         except Exception:
             pass
     if warm:

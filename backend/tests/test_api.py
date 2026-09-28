@@ -73,3 +73,20 @@ def test_api_prefix_is_stripped(client):
     assert client.get("/api/units").status_code == 200
     assert client.get("/api/units").json() == client.get("/units").json()
     assert client.get("/api").status_code == client.get("/").status_code
+
+
+def test_district_names_is_light_and_matches_the_full_list(client):
+    names = client.get("/units/bihar/district-names").json()["districts"]
+    full = client.get("/units/bihar/districts").json()["districts"]
+    assert sorted(x["district"] for x in names) == sorted(x["district"] for x in full) and "score" not in names[0]
+
+
+def test_transfers_are_cached_but_decisions_stay_current(client):
+    import time
+    a = client.get("/transfers/bihar/Araria").json()["transfers"]
+    t = time.time(); b = client.get("/transfers/bihar/Araria").json()["transfers"]
+    assert time.time() - t < 0.5 and [x["transfer_id"] for x in a] == [x["transfer_id"] for x in b]
+    tid = b[0]["transfer_id"]
+    client.post(f"/transfers/{tid}/approve")
+    c = client.get("/transfers/bihar/Araria").json()["transfers"]
+    assert next(x for x in c if x["transfer_id"] == tid)["status"] == "approved"
