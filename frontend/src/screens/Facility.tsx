@@ -22,7 +22,7 @@ export default function Facility({ id }: { id: string }) {
             <div className="list">{q.data.stock.map((s) => <div className="row" key={s.commodity_id} style={{ gridTemplateColumns: "1fr 220px auto" }}>
               <div><span className="name">{s.commodity_name}</span><div className="sub">{s.category} · {t.causes[s.cause] ?? ""}</div></div>
               <Scale days={s.days_of_stock} severity={s.severity} label={t.days} />
-              <span className="faint" style={{ fontSize: 12 }}>{Math.round(s.closing).toLocaleString("en-IN")} on hand</span>
+              <span className="faint" style={{ fontSize: "var(--t-xs)" }}>{Math.round(s.closing).toLocaleString("en-IN")} on hand</span>
             </div>)}</div>
           </section>
           <section className="section"><h2>{t.forecast} <Badge kind="forecast" /></h2>
@@ -34,7 +34,7 @@ export default function Facility({ id }: { id: string }) {
           <section className="section"><h2>{t.staff}</h2>
             <table className="table"><thead><tr><th>cadre</th><th className="num">{t.sanctioned}</th><th className="num">{t.inPosition}</th><th className="num">{t.present}</th></tr></thead>
               <tbody>{q.data.staff.map((s) => <tr key={s.cadre}><td>{s.cadre.replace("_", " ")}</td><td className="num">{s.sanctioned}</td><td className="num">{s.in_position}</td><td className="num">{s.days_present}</td></tr>)}</tbody></table>
-            <p className="faint" style={{ fontSize: 12 }}><Badge kind="simulated" /></p>
+            <p className="faint" style={{ fontSize: "var(--t-xs)" }}><Badge kind="simulated" /></p>
           </section>
           {q.data.beds && <section className="section"><h2>{t.beds}</h2>
             <div className={`stock ${q.data.beds.occupied / Math.max(1, q.data.beds.beds) > 0.9 ? "red" : "green"}`}><span className="stock-n">{q.data.beds.occupied}<span className="stock-unit"> / {q.data.beds.beds} {t.occupied}</span></span><span className="stock-note">{Math.round(100 * q.data.beds.occupied / Math.max(1, q.data.beds.beds))}%</span></div>

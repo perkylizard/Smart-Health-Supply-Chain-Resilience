@@ -62,14 +62,28 @@ def fallback(summary: dict, lang: str = "en") -> BriefingOut:
     c = summary.get("counts", {}) or {}
     d = summary.get("district", "")
     red, amber = int(c.get("red", 0) or 0), int(c.get("amber", 0) or 0)
-    top = [a for a in summary.get("alerts", []) if a.get("alert")][:3]
+    # one sentence per facility (up to three facilities), listing what that facility is short of, worst first
+    groups: dict = {}
+    for a in [a for a in summary.get("alerts", []) if a.get("alert")]:
+        g = groups.setdefault(a.get("facility_name"), [])
+        if len(groups) <= 3 and len(g) < 3:
+            g.append(a)
+    top = [g[0] for g in list(groups.values())[:3]]
     ready = int(summary.get("transfers_ready", 0) or 0)
+
+    def meds(g, sep):
+        names = [x.get("commodity_name") for x in g]
+        return names[0] if len(names) == 1 else ", ".join(names[:-1]) + sep + names[-1]
     if lang == "hi":
-        body = [f"{a.get('facility_name')} में {a.get('commodity_name')} {round(float(a.get('days_of_stock') or 0))} दिन का बचा है ({CAUSE_HI.get(a.get('cause'), 'कारण अज्ञात')})।" for a in top]
+        body = [f"{f} में {meds(g, ' और ')} {round(float(g[0].get('days_of_stock') or 0))} दिन का बचा है ({CAUSE_HI.get(g[0].get('cause'), 'कारण अज्ञात')})।" for f, g in list(groups.items())[:3]]
         if ready: body.append(f"{ready} स्थानांतरण स्वीकृति के लिए तैयार हैं।")
         return BriefingOut(headline=f"{d}: {red} सुविधा-दवाएँ 7 दिन से कम, {amber} 14 दिन से कम", body=body or ["आज कोई तत्काल कमी नहीं है।"],
                            top_actions=[f"{top[0].get('facility_name')} के लिए स्टॉक भेजें"] if top else [], lang="hi")
-    body = [f"{a.get('facility_name')} has {round(float(a.get('days_of_stock') or 0))} days of {a.get('commodity_name')} left, because of {CAUSE_EN.get(a.get('cause'), 'an unknown cause')}." for a in top]
+    body = []
+    for f, g in list(groups.items())[:3]:
+        days = round(float(g[0].get("days_of_stock") or 0))
+        what = f"has run out of {meds(g, ' and ')}" if days == 0 else f"has {days} days of {meds(g, ' and ')} left"
+        body.append(f"{f} {what}, because of {CAUSE_EN.get(g[0].get('cause'), 'an unknown cause')}.")
     if ready: body.append(f"{ready} transfers are ready to approve.")
     return BriefingOut(headline=f"{d}: {red} medicines under a week of stock, {amber} under two weeks", body=body or ["Nothing is running short today."],
                        top_actions=[f"Send stock to {top[0].get('facility_name')}"] if top else [], lang="en")

@@ -7,7 +7,7 @@ export default function Sparkline({ values, label, delta, badge }: { values: num
     <div className="spark">
       <div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-          <span>{label}</span><span className={delta != null && delta > 0.15 ? "chip amber" : "faint"} style={{ fontSize: 13 }}>{d}</span>
+          <span>{label}</span><span className={delta != null && delta > 0.15 ? "chip amber" : "faint"} style={{ fontSize: "var(--t-xs)" }}>{d}</span>
         </div>
         <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden><polyline fill="none" stroke="var(--teal)" strokeWidth="2" points={pts} /></svg>
       </div>

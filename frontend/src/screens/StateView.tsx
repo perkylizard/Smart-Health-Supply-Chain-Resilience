@@ -27,6 +27,7 @@ export default function StateView() {
   const transfers = (tr.data?.transfers ?? []).map((x: Transfer) => ({ ...x, status: local[x.transfer_id] ?? x.status }));
   return (
     <div className="two-col">
+      <h1 className="sr-only">{t.stateTab}</h1>
       <div>
         <section className="qsection">
           <h2>{t.stateTab} <span className="count">{d.data ? `${d.data.districts.length} ${t.districtsTab.toLowerCase()}` : ""}</span></h2>
@@ -34,7 +35,7 @@ export default function StateView() {
           <div className="legend">
             <span><i className="dot" style={{ background: "var(--red)" }} />score under 45</span><span><i className="dot" style={{ background: "var(--amber)" }} />45 to 60</span><span><i className="dot" style={{ background: "var(--green)" }} />over 60</span>
           </div>
-          <p className="faint" style={{ fontSize: 13 }}>{worst.length > 0 && <>Lowest: {worst.map((w) => <Link key={w.district} to={`/dho/${unit}/${encodeURIComponent(w.district)}`} style={{ marginRight: 10 }}>{w.district} {Math.round(w.score ?? 0)}</Link>)}</>}</p>
+          <p className="faint" style={{ fontSize: "var(--t-xs)" }}>{worst.length > 0 && <>Lowest: {worst.map((w) => <Link key={w.district} to={`/dho/${unit}/${encodeURIComponent(w.district)}`} style={{ marginRight: 12 }}>{w.district} {Math.round(w.score ?? 0)}</Link>)}</>}</p>
         </section>
         <section className="qsection">
           <h2>{t.crossDistrict} <span className="count">{transfers.filter((x) => x.status === "proposed").length}</span></h2>
@@ -64,7 +65,7 @@ export default function StateView() {
         <section className="section">
           <h2>{t.escalationsTitle} <span className="faint">{esc.data?.escalations.length ?? 0}</span></h2>
           {esc.data && esc.data.escalations.length === 0 && <p className="muted">None yet. District Magistrates escalate from their weekly brief.</p>}
-          {esc.data?.escalations.map((e, i) => <div key={i} className="card" style={{ marginBottom: 8 }}><strong>{e.district}</strong><p style={{ margin: "4px 0 0" }}>{e.reason}</p><p className="faint" style={{ fontSize: 12, margin: "4px 0 0" }}>{new Date(e.received * 1000).toLocaleString("en-IN")}</p></div>)}
+          {esc.data?.escalations.map((e, i) => <div key={i} className="card" style={{ marginBottom: 8 }}><strong>{e.district}</strong><p style={{ margin: "4px 0 0" }}>{e.reason}</p><p className="faint" style={{ fontSize: "var(--t-xs)", margin: "4px 0 0" }}>{new Date(e.received * 1000).toLocaleString("en-IN")}</p></div>)}
         </section>
         <section className="section">
           <h2>{t.leagueTitle}</h2>
@@ -95,7 +96,7 @@ export function DistrictsTable() {
       <h1 style={{ marginBottom: 12 }}>{t.leagueTitle}</h1>
       <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>{(["score", "red_alerts", "median_days_of_stock"] as const).map((k) => <button key={k} className="chip" style={sort === k ? { background: "var(--teal-soft)" } : {}} onClick={() => setSort(k)}>{k.replace(/_/g, " ")}</button>)}</div>
       <LeagueTable rows={rows} />
-      <p className="faint" style={{ fontSize: 12 }}>Score: median days of stock 40, share under 14 days 20, staffing gap 20, transfer latency 10, reporting 10. <Badge kind="computed" /></p>
+      <p className="faint" style={{ fontSize: "var(--t-xs)" }}>Score: median days of stock 40, share under 14 days 20, staffing gap 20, transfer latency 10, reporting 10. <Badge kind="computed" /></p>
     </div>
   );
 }

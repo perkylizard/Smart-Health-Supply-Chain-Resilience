@@ -58,7 +58,7 @@ function Result({ r }: { r: AskResult }) {
   const csv = () => { const lines = [cols.join(","), ...r.rows.map((row) => cols.map((c) => JSON.stringify(row[c] ?? "")).join(","))]; const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/csv" })); a.download = "answer.csv"; a.click(); };
   return (
     <section className="section card">
-      <p className="faint" style={{ fontSize: 13 }}>{r.question}{r.shape ? ` · ${r.shape}` : ""}{r.status !== "ok" ? ` · ${r.status}` : ""}</p>
+      <p className="faint" style={{ fontSize: "var(--t-xs)" }}>{r.question}{r.shape ? ` · ${r.shape}` : ""}{r.status !== "ok" ? ` · ${r.status}` : ""}</p>
       <p style={{ fontSize: "var(--t-md)", fontWeight: 500 }}>{r.answer || r.error || "No answer."}</p>
       {r.chart && r.chart.type !== "table" && r.rows?.length > 0 && <Chart rows={r.rows} x={r.chart.x!} y={r.chart.y!} kind={r.chart.type} />}
       {r.rows?.length > 0 && (
@@ -67,8 +67,8 @@ function Result({ r }: { r: AskResult }) {
             <tbody>{r.rows.slice(0, 25).map((row, i) => <tr key={i}>{cols.map((c) => <td key={c} className={typeof row[c] === "number" ? "num" : ""}>{fmt(row[c])}</td>)}</tr>)}</tbody></table>
         </div>
       )}
-      <div style={{ display: "flex", gap: 8, marginTop: 10, alignItems: "center", flexWrap: "wrap" }}>
-        {r.rows?.length > 0 && <span className="faint" style={{ fontSize: 13 }}>{r.row_count ?? r.rows.length} {t.rows}</span>}
+      <div style={{ display: "flex", gap: 8, marginTop: 12, alignItems: "center", flexWrap: "wrap" }}>
+        {r.rows?.length > 0 && <span className="faint" style={{ fontSize: "var(--t-xs)" }}>{r.row_count ?? r.rows.length} {t.rows}</span>}
         {r.rows?.length > 0 && <button className="btn quiet" onClick={csv}>{t.exportCsv}</button>}
         {r.sql && <button className="btn quiet" onClick={() => setShowSql((s) => !s)}>{t.showSql}</button>}
         <Badge kind="ai" /> {r.check && !r.check.ok && <span className="chip red">{r.check.reason}</span>}

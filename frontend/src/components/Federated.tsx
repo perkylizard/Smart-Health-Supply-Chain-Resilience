@@ -37,7 +37,7 @@ export default function Federated() {
             {ks.map((k) => <button key={k} className="chip" aria-pressed={tier === k} onClick={() => { setTier(k); setMode("replay"); }}>{labels[k]}</button>)}
           </div>))}
       </div>
-      {brazil && <p className="faint" style={{ fontSize: 12, marginTop: -4 }}><Badge kind="simulated" /> {t.brazilNote}</p>}
+      {brazil && <p className="faint" style={{ fontSize: "var(--t-xs)", marginTop: -4 }}><Badge kind="simulated" /> {t.brazilNote}</p>}
       <div className="two-col">
         <div>
           <div style={{ display: "flex", gap: 16, alignItems: "baseline", flexWrap: "wrap" }}>
@@ -62,7 +62,7 @@ export default function Federated() {
             <button className={`btn${mode === "live" ? " primary" : ""}`} disabled={live.isPending} onClick={() => { setMode("live"); live.mutate(); }}>{live.isPending ? t.running : t.runLive}</button>
             <Badge kind="computed" title={data.provenance ?? replay.data?.method} />
           </div>
-          <p className="faint" style={{ fontSize: 12 }}>{label}. {replay.data?.method}</p>
+          <p className="faint" style={{ fontSize: "var(--t-xs)" }}>{label}. {replay.data?.method}</p>
         </div>
         <aside>
           <table className="table"><thead><tr><th>node</th><th className="num">rows</th><th className="num">{t.localOnly}</th><th className="num">{t.federatedLbl}</th></tr></thead>

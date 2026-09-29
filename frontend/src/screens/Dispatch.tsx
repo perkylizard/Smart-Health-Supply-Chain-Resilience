@@ -45,7 +45,7 @@ export default function Dispatch() {
             <Dialog.Trigger asChild><button className="btn primary">{t.approveAll} ({proposed.length})</button></Dialog.Trigger>
             <Dialog.Portal><Dialog.Overlay className="dialog-overlay" /><Dialog.Content className="dialog">
               <Dialog.Title>{t.confirmAll(proposed.length)}</Dialog.Title>
-              <ul style={{ paddingLeft: 18, maxHeight: "40vh", overflow: "auto" }}>{proposed.slice(0, 30).map((x) => <li key={x.transfer_id}>{x.quantity} {x.commodity_name ?? x.commodity_id.replace(/_/g, " ")}: {x.from_name} → {x.to_name}</li>)}</ul>
+              <ul style={{ paddingLeft: 16, maxHeight: "40vh", overflow: "auto" }}>{proposed.slice(0, 30).map((x) => <li key={x.transfer_id}>{x.quantity} {x.commodity_name ?? x.commodity_id.replace(/_/g, " ")}: {x.from_name} → {x.to_name}</li>)}</ul>
               {proposed.length > 30 && <p className="faint" style={{ margin: 0 }}>{t.andMore(proposed.length - 30)}</p>}
               <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
                 <Dialog.Close asChild><button className="btn primary" onClick={() => proposed.forEach((x) => approve.mutate(x.transfer_id))}>{t.approveAll}</button></Dialog.Close>
@@ -58,7 +58,7 @@ export default function Dispatch() {
       {q.isLoading && <p className="skeleton" style={{ height: 80 }}>Loading proposals, the optimiser runs once per district</p>}
       <div className="lane-switch" role="tablist" aria-label={t.dispatch}>
         {(["proposed", "needs", "transit"] as const).map((k) => <button key={k} role="tab" aria-selected={lane === k} className="chip" aria-pressed={lane === k} onClick={() => setLane(k)}>
-          {k === "proposed" ? t.proposed : k === "needs" ? t.needs : t.transit} <span className="faint">{k === "proposed" ? proposed.length : k === "needs" ? needs.length : transit.length}</span></button>)}
+          {k === "proposed" ? t.proposalsShort : k === "needs" ? t.needs : t.transit} <span className="faint">{k === "proposed" ? proposed.length : k === "needs" ? needs.length : transit.length}</span></button>)}
       </div>
       <div className="lanes" data-lane={lane}>
         <div className="lane needs"><h3>{t.needs} <span className="faint">{needs.length}</span></h3>
@@ -79,7 +79,7 @@ export default function Dispatch() {
       {dots.data && (
         <section className="section" style={{ marginTop: 24 }}>
           <MapView dots={dots.data.facilities.filter((f) => selected ? [selected.from_id, selected.to_id].includes(f.facility_id) : f.worst_severity === "red")} line={line} />
-          <p className="faint" style={{ fontSize: 12, marginTop: 6 }}>{q.data?.provenance}</p>
+          <p className="faint" style={{ fontSize: "var(--t-xs)", marginTop: 8 }}>{q.data?.provenance}</p>
         </section>
       )}
     </div>
@@ -120,7 +120,7 @@ function RejectMenu({ onPick }: { onPick: (r: string) => void }) {
   const { t } = useApp();
   const [open, setOpen] = useState(false);
   return open ? (
-    <span style={{ display: "inline-flex", gap: 6 }}>
+    <span style={{ display: "inline-flex", gap: 8 }}>
       <button className="btn" onClick={() => { onPick("donor_cannot_spare"); setOpen(false); }}>{t.cannotSpare}</button>
       <button className="btn" onClick={() => { onPick("road_closed"); setOpen(false); }}>{t.roadClosed}</button>
     </span>

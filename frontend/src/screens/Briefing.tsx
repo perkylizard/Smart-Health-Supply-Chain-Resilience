@@ -69,7 +69,7 @@ export default function Briefing() {
                 <Link className="btn primary" to={`${base}/dispatch`}>{t.openDispatch}</Link>
               </div>
               {brief.data && brief.data.top_actions.filter((a) => !/dispatch board|move stock/i.test(a)).length > 0 && (<>
-                <p className="faint" style={{ marginTop: 12, marginBottom: 0, fontSize: 13 }}>{t.suggested} <Badge kind="ai" /></p>
+                <p className="faint" style={{ marginTop: 12, marginBottom: 0, fontSize: "var(--t-xs)" }}>{t.suggested} <Badge kind="ai" /></p>
                 <ul>{brief.data.top_actions.filter((a) => !/dispatch board|move stock/i.test(a)).map((a, i) => <li key={i}>{a}</li>)}</ul>
               </>)}
             </div>
@@ -82,7 +82,7 @@ export default function Briefing() {
             {s?.score ? (<>
               <div className="gauge"><span className="n">{Math.round(s.score.score)}</span><span className="of">/ 100</span></div>
               <p className="muted">{s.rank_in_unit ? t.rankOf(s.rank_in_unit, s.of) : <span className="skeleton">rank pending for this scenario</span>}</p>
-              <p className="faint" style={{ fontSize: 13 }}>Median {Math.round(s.score.median_days_of_stock)} {t.days} · {Math.round(s.score.share_under_14d * 100)}% under 14 · staffing gap {Math.round(s.score.staffing_gap * 100)}% <Badge kind="computed" /></p>
+              <p className="faint" style={{ fontSize: "var(--t-xs)" }}>Median {Math.round(s.score.median_days_of_stock)} {t.days} · {Math.round(s.score.share_under_14d * 100)}% under 14 · staffing gap {Math.round(s.score.staffing_gap * 100)}% <Badge kind="computed" /></p>
             </>) : <div className="gauge skeleton"><span className="n">00</span></div>}
           </section>
           <section className="section">

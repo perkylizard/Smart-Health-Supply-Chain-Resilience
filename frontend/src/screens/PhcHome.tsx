@@ -44,8 +44,8 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
   const Side = (
     <aside className="phc-side">
       <div className="card"><h3>{t.phcThisMonth}</h3>
-        {beds && <div style={{ marginBottom: 12 }}><span className="big">{beds.occupied}</span><span className="faint"> / {beds.beds}</span><div className="faint" style={{ fontSize: 13 }}>{t.phcBeds}</div></div>}
-        {mo && <div><span className="big" style={{ color: mo.in_position === 0 ? "var(--red)" : undefined }}>{mo.in_position}</span><div className="faint" style={{ fontSize: 13 }}>{t.phcDoctors}{mo.in_position > 0 ? `, ${mo.days_present} ${t.days}` : ""}</div></div>}
+        {beds && <div style={{ marginBottom: 12 }}><span className="big">{beds.occupied}</span><span className="faint"> / {beds.beds}</span><div className="faint" style={{ fontSize: "var(--t-xs)" }}>{t.phcBeds}</div></div>}
+        {mo && <div><span className="big" style={{ color: mo.in_position === 0 ? "var(--red)" : undefined }}>{mo.in_position}</span><div className="faint" style={{ fontSize: "var(--t-xs)" }}>{t.phcDoctors}{mo.in_position > 0 ? `, ${mo.days_present} ${t.days}` : ""}</div></div>}
       </div>
       {tab !== "deliveries" && <div className="card"><h3>{t.phcDeliveriesCard}</h3>
         {tr.data ? <p className="muted" style={{ margin: "0 0 12px" }}>{nMoving} {t.phcMoving} · {tx.length - nMoving - nDone} {t.phcWaiting}</p> : <p className="faint" style={{ margin: "0 0 12px" }}>…</p>}
@@ -57,7 +57,7 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
   );
   return (
     <div>
-      <p className="faint" style={{ fontSize: 13 }}><Link to={`/phc-pick/${fac.unit_id}/${encodeURIComponent(String(fac.district))}`}>{t.facility}</Link> · {String(fac.district)}</p>
+      <p className="faint" style={{ fontSize: "var(--t-xs)" }}><Link to={`/phc-pick/${fac.unit_id}/${encodeURIComponent(String(fac.district))}`}>{t.facility}</Link> · {String(fac.district)}</p>
       <h1 style={{ marginBottom: 4 }}>{String(fac.name)}</h1>
       <p className="muted" style={{ marginTop: 0 }}>{String(fac.type)} · <Badge kind={fac.source === "osm" ? "osm" : "simulated"} /></p>
       {tab !== "report" && <div className="phc-layout"><div>
@@ -66,7 +66,7 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
           <h2>{t.myStock} <span className="count">{low.length} {low.length === 1 ? "item" : "items"} {t.severity.amber.replace("under", "under")}</span></h2>
           {low.length > 0 && <div className="action-card" style={{ marginBottom: 12 }}><strong>{t.q1}</strong>
             <ul>{low.slice(0, 3).map((s) => <li key={s.commodity_id}>{s.commodity_name}: <span style={{ color: s.days_of_stock < 7 ? "var(--red)" : "var(--amber)", fontWeight: 500 }}>{Math.round(s.days_of_stock)} {t.days}</span></li>)}</ul>
-            {low.length > 3 && <p className="faint" style={{ margin: 0, fontSize: 13 }}>+{low.length - 3}</p>}</div>}
+            {low.length > 3 && <p className="faint" style={{ margin: 0, fontSize: "var(--t-xs)" }}>+{low.length - 3}</p>}</div>}
           <div className="list">{f.data.stock.map((s) => <div className="row" key={s.commodity_id} style={{ gridTemplateColumns: "1fr 200px" }}><div><span className="name">{s.commodity_name}</span><div className="sub">{Math.round(s.closing).toLocaleString("en-IN")} on hand</div></div><Scale days={s.days_of_stock} severity={s.severity} label={t.days} /></div>)}</div>
         </section>
       )}
@@ -84,7 +84,7 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
                 <div className="tc-meta"><span className={`chip ${x.direction === "incoming" ? "teal" : "amber"}`}>{x.direction === "incoming" ? t.incoming : t.outgoing}</span><span>{x.km} km · {x.eta_days} d</span></div>
               </div>
               <div className="tc-route"><span>{x.from_name}</span><span className="arrow" aria-hidden>→</span><strong>{x.to_name}</strong></div>
-              <div className="tc-actions"><span className={moving ? "" : "faint"} style={{ fontSize: 13 }}>{status}</span>
+              <div className="tc-actions"><span className={moving ? "" : "faint"} style={{ fontSize: "var(--t-xs)" }}>{status}</span>
                 {x.direction === "incoming" && moving && <button className="btn primary" style={{ marginLeft: "auto" }} onClick={() => delivered.mutate(x.transfer_id)}>{t.confirmArrived}</button>}
               </div>
             </div>;

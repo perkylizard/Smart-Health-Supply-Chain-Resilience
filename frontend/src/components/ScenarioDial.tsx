@@ -18,7 +18,7 @@ export default function ScenarioDial({ large }: { large?: boolean }) {
       </select>
       {cur.name !== "normal" && (
         <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span className="faint" style={{ fontSize: 13 }}>{t.intensity}</span>
+          <span className="faint" style={{ fontSize: "var(--t-xs)" }}>{t.intensity}</span>
           <input type="range" min={0} max={1} step={0.25} value={cur.intensity} aria-label={t.intensity}
             onChange={(e) => set.mutate({ name: cur.name, intensity: Number(e.target.value) })} />
           <span style={{ minWidth: 36, fontWeight: 600 }}>{Math.round(cur.intensity * 100)}%</span>

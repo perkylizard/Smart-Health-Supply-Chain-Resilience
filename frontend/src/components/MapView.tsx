@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import maplibregl from "maplibre-gl";
 import type { FacilityDot } from "../api";
 
-const colour: Record<string, string> = { red: "#c8372d", amber: "#c77c11", watch: "#2e7d5b", ok: "#2e7d5b", data_issue: "#3b6fb6" };
+const colour: Record<string, string> = { red: "#c62828", amber: "#b26a00", watch: "#2e7d32", ok: "#2e7d32", data_issue: "#1565c0" };
 
 /** Facility or district dots on an OpenStreetMap base. Created once the container has a size; draws on load and on data
  * changes. Note for anyone testing with automation: MapLibre paints on requestAnimationFrame, so a hidden browser tab
@@ -22,19 +22,19 @@ export default function MapView({ dots, onSelect, center, line }: { dots: Facili
     const src = m.getSource("dots") as maplibregl.GeoJSONSource | undefined;
     if (src) src.setData(fc); else {
       m.addSource("dots", { type: "geojson", data: fc });
-      m.addLayer({ id: "dots", type: "circle", source: "dots", paint: { "circle-radius": ["get", "r"], "circle-color": ["get", "colour"], "circle-stroke-width": 1.5, "circle-stroke-color": "#fbf8f2", "circle-opacity": 0.9 } });
+      m.addLayer({ id: "dots", type: "circle", source: "dots", paint: { "circle-radius": ["get", "r"], "circle-color": ["get", "colour"], "circle-stroke-width": 1.5, "circle-stroke-color": "#ffffff", "circle-opacity": 0.9 } });
       m.on("click", "dots", (e) => { const p = e.features?.[0]?.properties as unknown as FacilityDot; if (p && latest.current.onSelect) latest.current.onSelect(p); });
       m.on("mouseenter", "dots", () => { m.getCanvas().style.cursor = "pointer"; });
       m.on("mouseleave", "dots", () => { m.getCanvas().style.cursor = ""; });
     }
     const lf = { type: "FeatureCollection" as const, features: line ? [{ type: "Feature" as const, properties: {}, geometry: { type: "LineString" as const, coordinates: line } }] : [] };
     const ls = m.getSource("line") as maplibregl.GeoJSONSource | undefined;
-    if (ls) ls.setData(lf); else { m.addSource("line", { type: "geojson", data: lf }); m.addLayer({ id: "line", type: "line", source: "line", paint: { "line-color": "#0f6e6e", "line-width": 3, "line-dasharray": [2, 1] } }); }
+    if (ls) ls.setData(lf); else { m.addSource("line", { type: "geojson", data: lf }); m.addLayer({ id: "line", type: "line", source: "line", paint: { "line-color": "#1f3b73", "line-width": 3, "line-dasharray": [2, 1] } }); }
     if (valid.length) {
       const b = new maplibregl.LngLatBounds();
       valid.forEach((d) => b.extend([d.lon, d.lat]));
       m.resize();
-      m.fitBounds(b, { padding: 30, maxZoom: 11, animate: false });
+      m.fitBounds(b, { padding: 32, maxZoom: 11, animate: false });
     }
   };
 

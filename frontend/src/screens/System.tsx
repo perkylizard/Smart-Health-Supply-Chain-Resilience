@@ -14,6 +14,7 @@ export default function System() {
   const unitName = units.data?.units.find((u) => u.unit_id === unit)?.unit_name ?? unit;
   return (
     <div className="two-col settings">
+      <h1 className="sr-only">{t.system}</h1>
       <div>
         <section className="card settings-card"><h2>{t.scenario}</h2><p className="faint" style={{ margin: "4px 0 12px" }}>{t.scenarioHint}</p><ScenarioDial large /></section>
         <section className="card settings-card"><h2>{t.federated}</h2><Federated /></section>

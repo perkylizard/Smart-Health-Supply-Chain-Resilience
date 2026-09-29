@@ -42,7 +42,7 @@ export default function Warehouse() {
           </div>
         ))}
       </div>
-      <p className="faint" style={{ fontSize: 12, marginTop: 12 }}>{q.data?.provenance}</p>
+      <p className="faint" style={{ fontSize: "var(--t-xs)", marginTop: 12 }}>{q.data?.provenance}</p>
     </div>
   );
 }
@@ -64,7 +64,7 @@ export function WarehouseStock() {
       <p className="muted" style={{ marginTop: 0 }}>{q.data.provenance} <Badge kind={basis === "simulated" ? "simulated" : "real"} /></p>
       <div style={{ overflowX: "auto" }}>
         <table className="table"><thead><tr><th>commodity</th><th className="num">opening</th><th className="num">received</th><th className="num">unusable</th><th className="num">distributed</th><th className="num">closing</th><th className="num">{t.monthsOfStock}</th><th>distributed by month</th></tr></thead>
-          <tbody>{q.data.rows.map((r) => <tr key={r.item_code}><td>{r.item_name}{r.stale && <span className="faint" style={{ fontSize: 12 }}> · as of {monthName_(r.month)} {r.fy}</span>}</td><td className="num">{fmt(r.opening)}</td><td className="num">{fmt(r.received)}</td><td className="num">{fmt(r.unusable)}</td><td className="num">{fmt(r.distributed)}</td><td className="num">{fmt(r.closing)}</td><td className="num" style={{ color: r.months_of_stock != null && r.months_of_stock < 1 ? "var(--red)" : undefined, fontWeight: 600 }}>{r.months_of_stock == null ? "…" : r.months_of_stock.toFixed(1)}</td><td><Bars v={r.distributed_by_month} /></td></tr>)}</tbody></table>
+          <tbody>{q.data.rows.map((r) => <tr key={r.item_code}><td>{r.item_name}{r.stale && <span className="faint" style={{ fontSize: "var(--t-xs)" }}> · as of {monthName_(r.month)} {r.fy}</span>}</td><td className="num">{fmt(r.opening)}</td><td className="num">{fmt(r.received)}</td><td className="num">{fmt(r.unusable)}</td><td className="num">{fmt(r.distributed)}</td><td className="num">{fmt(r.closing)}</td><td className="num" style={{ color: r.months_of_stock != null && r.months_of_stock < 1 ? "var(--red)" : undefined, fontWeight: 600 }}>{r.months_of_stock == null ? "…" : r.months_of_stock.toFixed(1)}</td><td><Bars v={r.distributed_by_month} /></td></tr>)}</tbody></table>
       </div>
     </div>
   );

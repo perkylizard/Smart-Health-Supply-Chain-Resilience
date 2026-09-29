@@ -33,13 +33,13 @@ export default function LocationPicker({ variant = "bar" }: { variant?: "bar" | 
         <Dialog.Overlay className="dialog-overlay" />
         <Dialog.Content className="dialog dialog-wide" aria-describedby={undefined}>
           <Dialog.Title style={{ marginBottom: 4 }}>{t.changeLocation}</Dialog.Title>
-          <p className="faint" style={{ marginBottom: 12, fontSize: 13 }}>{needsDistrict ? t.chooseDistrictHint : t.chooseStateHint}</p>
+          <p className="faint" style={{ marginBottom: 12, fontSize: "var(--t-xs)" }}>{needsDistrict ? t.chooseDistrictHint : t.chooseStateHint}</p>
           <div className="loclist">
             <div className="loclist-col"><div className="menu-label" style={{ paddingLeft: 12 }}>{t.chooseState}</div><ul aria-label={t.chooseState}>
               {(units.data?.units ?? []).map((u) => (
                 <li key={u.unit_id}>
                   <button className={`loc-item${pick === u.unit_id ? " on" : ""}`} onClick={() => { if (needsDistrict) setPick(u.unit_id); else { setLocation(u.unit_id, ""); setOpen(false); } }}>
-                    <span>{u.unit_name}</span>{u.is_hero ? <span className="chip teal" style={{ minHeight: 22, fontSize: 11 }}>{t.hero}</span> : null}
+                    <span>{u.unit_name}</span>{u.is_hero ? <span className="chip teal" style={{ minHeight: 22, fontSize: "var(--t-xs)" }}>{t.hero}</span> : null}
                   </button>
                 </li>
               ))}
@@ -54,7 +54,7 @@ export default function LocationPicker({ variant = "bar" }: { variant?: "bar" | 
                     <li key={d.district}>
                       <button className={`loc-item${pick === unit && d.district === district ? " on" : ""}`} onClick={() => { setLocation(pick, d.district); setOpen(false); }}>
                         <span>{d.district}</span>
-                        <span className="faint" style={{ fontSize: 12 }}>{d.red_alerts > 0 ? <span style={{ color: "var(--red)" }}>{d.red_alerts} {t.severity.red}</span> : null}{d.score != null ? <span style={{ marginLeft: 8 }}>{Math.round(d.score)}</span> : null}</span>
+                        <span className="faint" style={{ fontSize: "var(--t-xs)" }}>{d.red_alerts > 0 ? <span style={{ color: "var(--red)" }}>{d.red_alerts} {t.severity.red}</span> : null}{d.score != null ? <span style={{ marginLeft: 8 }}>{Math.round(d.score)}</span> : null}</span>
                       </button>
                     </li>
                   ))}
