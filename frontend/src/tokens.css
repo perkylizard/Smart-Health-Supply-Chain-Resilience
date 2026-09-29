@@ -24,9 +24,9 @@
   --t-lg: 20px;   /* headline 6 */
   --t-xl: 24px;   /* headline 5 */
   --t-2xl: 34px;  /* headline 4 */
-  --font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --font-hi: "Noto Sans Devanagari", "Plus Jakarta Sans", system-ui, sans-serif;
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "Inter", system-ui, sans-serif; /* figures: Inter with tabular numerals (see body font-feature-settings) */
+  --font-hi: "Noto Sans Devanagari", "Inter", system-ui, sans-serif;
   /* layout */
   --appbar: 64px; --tabs-h: 48px; --content: 1280px; --gutter: 32px;
   /* elevation (Material 2 umbra/penumbra/ambient) */

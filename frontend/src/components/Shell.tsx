@@ -65,8 +65,8 @@ export default function Shell({ children, offline }: { children: React.ReactNode
             <span className="desktop-only"><LocationPicker /></span>
             {persona !== "phc" && <WhatIf className="desktop-only" />}
             {persona === "phc" && <RequestStockButton />}
-            <button className="hdr-btn" onClick={() => setLang(lang === "en" ? "hi" : "en")} aria-label={t.language} title={t.language}>{lang === "en" ? "हिं" : "EN"}</button>
-            {persona !== "phc" && <NavLink to={`${base}/system`} className="hdr-btn hdr-icon" aria-label={t.system} title={t.system}><Icon d={icons.system} /></NavLink>}
+            <button className="hdr-btn" onClick={() => setLang(lang === "en" ? "hi" : "en")} aria-label={t.language} title={t.language}>{lang === "en" ? "हिंदी" : "English"}</button>
+            {persona !== "phc" && <NavLink to={`${base}/system`} className="hdr-btn hdr-icon" title={t.system}><Icon d={icons.system} /><span className="hdr-lbl">{t.system}</span></NavLink>}
           </div>
         </div>
         {/* phones: the role's screens as a tab strip, then location and scenario as plain dropdowns */}

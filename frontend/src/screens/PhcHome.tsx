@@ -31,7 +31,7 @@ export function PhcPick() {
 }
 
 // a medicine the facility barely uses (under a unit a week) is never an alert, but it is not "adequate" either when it is out
-const statusOf = (a: Alert): [string, keyof typeof sB.en] => a.severity === "data_issue" ? ["blue", "stData"] : (a as Alert & { low_demand?: boolean }).low_demand ? ["", "stRare"] : a.severity === "red" ? ["red", "stCritical"] : a.severity === "amber" ? ["amber", "stWarn"] : ["green", "stOk"];
+const statusOf = (a: Alert): [string, keyof typeof sB.en] => a.severity === "data_issue" ? ["blue", "stData"] : (a as Alert & { low_demand?: boolean }).low_demand ? ["grey", "stRare"] : a.severity === "red" ? ["red", "stCritical"] : a.severity === "amber" ? ["amber", "stWarn"] : ["green", "stOk"];
 
 export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries" }) {
   const { facilityId, t, lang } = useApp();
@@ -122,7 +122,7 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
             </div>
             <div className="dtable-wrap">
               <table className="dtable stack">
-                <thead><tr><th>{b.colMedicine}</th><th>{b.colCategory}</th><th className="num">{b.colOnHand}</th><th>{b.colDays}</th><th>{b.colStatus}</th><th className="num">{b.colAction}</th></tr></thead>
+                <thead><tr><th>{b.colMedicine}</th><th>{b.colCategory}</th><th className="num">{b.colOnHand}</th><th className="days-col">{b.colDays}</th><th>{b.colStatus}</th><th className="num">{b.colAction}</th></tr></thead>
                 <tbody>{shown.map((s) => { const [tone, key] = statusOf(s); return (
                   <tr key={s.commodity_id}>
                     <td className="full"><div className="med-name">{s.commodity_name}</div>{(s as { reported?: boolean }).reported && <div className="med-sub"><span className="chip teal" style={{ minHeight: 20 }}>{t.reportedByYou}</span></div>}</td>
@@ -130,7 +130,7 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
                     <td className="num">{Math.round(s.closing).toLocaleString("en-IN")}</td>
                     <td><Scale days={s.days_of_stock} severity={s.severity} label={t.days} /></td>
                     <td><span className={`status-badge ${tone}`}>{b[key] as string}</span></td>
-                    <td className="num"><RequestDialog facilityId={facilityId!} facilityName={name} options={options} preset={s.commodity_id}><button className="btn quiet">{b.requestRow} +</button></RequestDialog></td>
+                    <td className="num"><RequestDialog facilityId={facilityId!} facilityName={name} options={options} preset={s.commodity_id}><button className="btn quiet nowrap">+ {b.requestRow}</button></RequestDialog></td>
                   </tr>); })}</tbody>
               </table>
             </div>

@@ -10,7 +10,7 @@ export default function RoleMenu() {
   return (
     <Menu.Root modal={false}>
       <Menu.Trigger asChild>
-        <button className="hdr-btn role" aria-label={t.persona}><span className="avatar" aria-hidden>{initials[persona]}</span><span className="role-text"><span className="faint role-lbl">{t.roleLbl}</span> {t.personas[persona]}</span><span className="chev" aria-hidden>▾</span></button>
+        <button className="hdr-btn role" aria-label={t.persona}><span className="avatar" aria-hidden>{initials[persona]}</span><span className="role-text"><span className="faint role-lbl">{t.roleLbl}</span> {t.personas[persona]}</span><svg className="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden><path d="M6 9l6 6 6-6" /></svg></button>
       </Menu.Trigger>
       <Menu.Portal>
         <Menu.Content className="menu" align="end" sideOffset={8}>

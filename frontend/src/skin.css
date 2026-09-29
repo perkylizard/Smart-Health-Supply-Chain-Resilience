@@ -169,3 +169,33 @@ html, body, #root { height: auto; min-height: 100%; }
 @media (max-width: 599px) { .hdr-primary-text { display: none; } .hdr-primary { padding: 0 12px; } .hdr-brand span { font-size: 15px; } .hdr-actions { gap: 6px; } }
 /* buttons and links inside tables keep the text face; only figures are monospaced */
 .table td .btn, .dtable td .btn, .table td a, .dtable td a, td.num .btn { font-family: var(--font); font-variant-numeric: normal; }
+
+/* ---------- Inter, header rhythm, table cells (29 Sep review) ---------- */
+body { font-family: var(--font); font-feature-settings: "tnum" 1, "cv11" 1; }
+.stock .stock-n, .gauge .n, .tile-n, .big, .table td.num, .dtable td.num, .kv dd, .qty-pill, .ra-days, .seg-n { font-family: var(--font); font-feature-settings: "tnum" 1; letter-spacing: -0.01em; }
+
+/* every header control: same height, same padding, icon and text on one centre line */
+.hdr-actions { gap: 8px; }
+.hdr-actions > *, .hdr-actions .hdr-btn, .hdr-actions .loc, .hdr-actions .hdr-primary { height: 36px; min-height: 36px; display: inline-flex; align-items: center; gap: 6px; line-height: 1; vertical-align: middle; }
+.hdr-actions > span.desktop-only { height: auto; }
+.hdr-btn, .hdr .loc { padding: 0 12px; font-size: 13px; }
+.hdr-btn svg, .hdr .loc svg { width: 16px; height: 16px; flex: none; }
+.hdr .loc { gap: 6px; }
+.hdr .loc .loc-text { gap: 0; }
+.hdr .loc .sep { margin: 0 6px; color: var(--ink-3); }
+.hdr-btn.role { padding: 0 10px 0 4px; }
+.hdr-btn.role .avatar { width: 28px; height: 28px; font-size: 11px; }
+.hdr-btn .chev { width: 14px; height: 14px; color: var(--ink-3); }
+.hdr-btn.whatif strong { font-weight: 600; color: var(--ink); }
+.hdr-btn.whatif.on strong { color: #78350f; }
+.hdr-lbl { font-weight: 600; }
+.hdr-icon.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+@media (max-width: 1240px) { .hdr-lbl, .role-lbl { display: none; } }
+
+/* days left: figure on one line, its meaning on the second; never more than two lines */
+.stock { min-width: 128px; }
+.stock .stock-n, .stock .stock-note { white-space: nowrap; }
+.table td:has(> .stock), .dtable td:has(> .stock), .table th.days-col, .dtable th.days-col { min-width: 140px; }
+.nowrap, .btn.nowrap { white-space: nowrap; }
+.table td .btn, .dtable td .btn { white-space: nowrap; }
+.chip.grey, .badge-st.grey { background: #f1f5f9; color: var(--ink-2); border: 1px solid var(--rule); }
