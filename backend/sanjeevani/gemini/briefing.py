@@ -52,9 +52,24 @@ def run(client: GeminiClient, summary: dict, lang: str = "en", case: str | None 
     return out
 
 
+CAUSE_EN = {"supply_missed": "a missed supply", "cases_up": "rising cases", "lead_time": "a long delivery time", "data_issue": "a reporting error"}
+CAUSE_HI = {"supply_missed": "छूटी आपूर्ति", "cases_up": "बढ़ते मामले", "lead_time": "लंबा डिलीवरी समय", "data_issue": "रिपोर्टिंग त्रुटि"}
+
+
 def fallback(summary: dict, lang: str = "en") -> BriefingOut:
-    c = summary.get("counts", {})
+    """Written from the engine's numbers when Gemini is unreachable or rate-limited: same shape as the AI briefing, so the
+    officer never sees a 'service unavailable' message in place of the day's most important facts."""
+    c = summary.get("counts", {}) or {}
     d = summary.get("district", "")
+    red, amber = int(c.get("red", 0) or 0), int(c.get("amber", 0) or 0)
+    top = [a for a in summary.get("alerts", []) if a.get("alert")][:3]
+    ready = int(summary.get("transfers_ready", 0) or 0)
     if lang == "hi":
-        return BriefingOut(headline=f"{d}: {c.get('red', 0)} लाल और {c.get('amber', 0)} पीली चेतावनियाँ", body=["ब्रीफिंग सेवा अभी उपलब्ध नहीं है; नीचे अलर्ट सूची देखें।"], top_actions=["डिस्पैच बोर्ड खोलें"], lang="hi")
-    return BriefingOut(headline=f"{d}: {c.get('red', 0)} red and {c.get('amber', 0)} amber alerts", body=["Briefing service is unavailable; the alert list below is current."], top_actions=["Open the dispatch board"], lang="en")
+        body = [f"{a.get('facility_name')} में {a.get('commodity_name')} {round(float(a.get('days_of_stock') or 0))} दिन का बचा है ({CAUSE_HI.get(a.get('cause'), 'कारण अज्ञात')})।" for a in top]
+        if ready: body.append(f"{ready} स्थानांतरण स्वीकृति के लिए तैयार हैं।")
+        return BriefingOut(headline=f"{d}: {red} सुविधा-दवाएँ 7 दिन से कम, {amber} 14 दिन से कम", body=body or ["आज कोई तत्काल कमी नहीं है।"],
+                           top_actions=[f"{top[0].get('facility_name')} के लिए स्टॉक भेजें"] if top else [], lang="hi")
+    body = [f"{a.get('facility_name')} has {round(float(a.get('days_of_stock') or 0))} days of {a.get('commodity_name')} left, because of {CAUSE_EN.get(a.get('cause'), 'an unknown cause')}." for a in top]
+    if ready: body.append(f"{ready} transfers are ready to approve.")
+    return BriefingOut(headline=f"{d}: {red} medicines under a week of stock, {amber} under two weeks", body=body or ["Nothing is running short today."],
+                       top_actions=[f"Send stock to {top[0].get('facility_name')}"] if top else [], lang="en")

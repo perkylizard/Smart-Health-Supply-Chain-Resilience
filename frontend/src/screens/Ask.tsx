@@ -20,22 +20,30 @@ export default function Ask() {
   return (
     <div>
       <h1 style={{ marginBottom: 12 }}>{t.ask}</h1>
-      <form onSubmit={(e) => { e.preventDefault(); run(); }} style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        <input className="input" style={{ flex: 1, minWidth: 260 }} value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.askPlaceholder} aria-label={t.ask} />
-        <button className="btn primary" type="submit" disabled={ask.isPending}>{t.run}</button>
-        <span style={{ display: "inline-flex", border: "1px solid var(--rule)", borderRadius: 6, overflow: "hidden" }}>
-          <button type="button" className="btn quiet" style={mode === "guided" ? { background: "var(--teal-soft)" } : {}} onClick={() => setMode("guided")}>{t.guided}</button>
-          <button type="button" className="btn quiet" style={mode === "advanced" ? { background: "var(--teal-soft)" } : {}} onClick={() => setMode("advanced")}>{t.advanced}</button>
-        </span>
-      </form>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "10px 0 20px" }}>
-        {t.examples.map((ex) => <button key={ex} className="chip" onClick={() => { setQ(ex); run(ex); }}>{ex}</button>)}
-      </div>
-      {mode === "advanced" && (
-        <div className="section">
-          <textarea className="input" value={sql} onChange={(e) => setSql(e.target.value)} aria-label="SQL" placeholder="SELECT ... (one read-only statement; tables: facilities, ledger, v_days_of_stock ...)" />
-          <button className="btn" style={{ marginTop: 8 }} onClick={() => run(q, sql)} disabled={!sql.trim() || ask.isPending}>{t.run} SQL</button>
+      <section className="card ask-card">
+        <div className="ask-tabs" role="tablist" aria-label={t.ask}>
+          <button type="button" role="tab" aria-selected={mode === "guided"} className={mode === "guided" ? "on" : ""} onClick={() => setMode("guided")}>{t.guided}<span>{t.guidedHint}</span></button>
+          <button type="button" role="tab" aria-selected={mode === "advanced"} className={mode === "advanced" ? "on" : ""} onClick={() => setMode("advanced")}>{t.advanced}<span>{t.advancedHint}</span></button>
         </div>
+        <form onSubmit={(e) => { e.preventDefault(); run(); }} className="ask-row">
+          <input className="input" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.askPlaceholder} aria-label={t.ask} />
+          <button className="btn primary" type="submit" disabled={ask.isPending || !q.trim()}>{ask.isPending ? t.asking : t.askBtn}</button>
+        </form>
+        {mode === "advanced" && (
+          <div style={{ marginTop: 12 }}>
+            <textarea className="input" value={sql} onChange={(e) => setSql(e.target.value)} aria-label="SQL" placeholder="SELECT ... (one read-only statement; tables: facilities, ledger, v_days_of_stock ...)" />
+            <button className="btn" style={{ marginTop: 8 }} onClick={() => run(q, sql)} disabled={!sql.trim() || ask.isPending}>{t.run} SQL</button>
+          </div>
+        )}
+        <div className="ask-examples"><span className="faint">{t.tryExample}</span>
+          {t.examples.map((ex) => <button key={ex} type="button" className="chip" onClick={() => { setQ(ex); run(ex); }}>{ex}</button>)}
+        </div>
+      </section>
+      {!ask.isPending && history.length === 0 && (
+        <section className="ask-empty">
+          <h2>{t.askEmptyTitle}</h2>
+          <ul>{t.askEmptyPoints.map((x) => <li key={x}>{x}</li>)}</ul>
+        </section>
       )}
       {ask.isPending && <p className="skeleton" style={{ height: 48 }}>Thinking about the question and running the query</p>}
       {history.map((r, i) => <Result key={i} r={r} />)}

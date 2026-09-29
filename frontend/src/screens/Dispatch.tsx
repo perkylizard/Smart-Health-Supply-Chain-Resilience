@@ -22,6 +22,10 @@ export default function Dispatch() {
   const [local, setLocal] = useState<Record<string, string>>({});
   const [selected, setSelected] = useState<Transfer | null>(null);
   const [leaving, setLeaving] = useState<string | null>(null);
+  // render in pages: 266 cards at once meant a thousand buttons and a 29-second first paint
+  const [shown, setShown] = useState(20);
+  // phones: one lane at a time, opening on the decision (proposals), not the list of needs
+  const [lane, setLane] = useState<"needs" | "proposed" | "transit">("proposed");
   const setStatus = (id: string, status: string) => setLocal((l) => ({ ...l, [id]: status }));
   const approve = useMutation({ mutationFn: (id: string) => api.approve(id), onMutate: (id) => { setLeaving(id); setTimeout(() => { setStatus(id, "approved"); setLeaving(null); }, 250); }, onSettled: () => qc.invalidateQueries({ queryKey: ["transfers"] }) });
   const reject = useMutation({ mutationFn: ({ id, reason }: { id: string; reason: string }) => api.reject(id, reason), onMutate: ({ id }) => setStatus(id, "rejected") });
@@ -41,7 +45,8 @@ export default function Dispatch() {
             <Dialog.Trigger asChild><button className="btn primary">{t.approveAll} ({proposed.length})</button></Dialog.Trigger>
             <Dialog.Portal><Dialog.Overlay className="dialog-overlay" /><Dialog.Content className="dialog">
               <Dialog.Title>{t.confirmAll(proposed.length)}</Dialog.Title>
-              <ul style={{ paddingLeft: 18 }}>{proposed.map((x) => <li key={x.transfer_id}>{x.quantity} {x.commodity_name ?? x.commodity_id.replace(/_/g, " ")}: {x.from_name} → {x.to_name}</li>)}</ul>
+              <ul style={{ paddingLeft: 18, maxHeight: "40vh", overflow: "auto" }}>{proposed.slice(0, 30).map((x) => <li key={x.transfer_id}>{x.quantity} {x.commodity_name ?? x.commodity_id.replace(/_/g, " ")}: {x.from_name} → {x.to_name}</li>)}</ul>
+              {proposed.length > 30 && <p className="faint" style={{ margin: 0 }}>{t.andMore(proposed.length - 30)}</p>}
               <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
                 <Dialog.Close asChild><button className="btn primary" onClick={() => proposed.forEach((x) => approve.mutate(x.transfer_id))}>{t.approveAll}</button></Dialog.Close>
                 <Dialog.Close asChild><button className="btn">{t.cancel}</button></Dialog.Close>
@@ -51,16 +56,21 @@ export default function Dispatch() {
         )}
       </div>
       {q.isLoading && <p className="skeleton" style={{ height: 80 }}>Loading proposals, the optimiser runs once per district</p>}
-      <div className="lanes">
+      <div className="lane-switch" role="tablist" aria-label={t.dispatch}>
+        {(["proposed", "needs", "transit"] as const).map((k) => <button key={k} role="tab" aria-selected={lane === k} className="chip" aria-pressed={lane === k} onClick={() => setLane(k)}>
+          {k === "proposed" ? t.proposed : k === "needs" ? t.needs : t.transit} <span className="faint">{k === "proposed" ? proposed.length : k === "needs" ? needs.length : transit.length}</span></button>)}
+      </div>
+      <div className="lanes" data-lane={lane}>
         <div className="lane needs"><h3>{t.needs} <span className="faint">{needs.length}</span></h3>
           {needs.map((a) => <div key={a.facility_id + a.commodity_id} style={{ padding: "8px 0", borderBottom: "1px solid var(--rule)" }}><div style={{ fontWeight: 500 }}>{a.facility_name}</div><div className="sub faint">{a.commodity_name} · {t.causes[a.cause] ?? ""}</div><Scale days={a.days_of_stock} severity={a.severity} label={t.days} /></div>)}
         </div>
         <div className="lane proposed"><h3>{t.proposed} <span className="faint">{proposed.length}</span></h3>
           {!q.isLoading && proposed.length === 0 && <div className="quiet">No transfer needed. Every facility with an alert has no reachable donor above 21 days, or nothing is under threshold.</div>}
-          {proposed.map((x) => <Card key={x.transfer_id} x={x} leaving={leaving === x.transfer_id} onSelect={() => setSelected(x)} actions={<>
+          {proposed.slice(0, shown).map((x) => <Card key={x.transfer_id} x={x} leaving={leaving === x.transfer_id} onSelect={() => setSelected(x)} actions={<>
             <button className="btn primary" onClick={() => approve.mutate(x.transfer_id)}>{t.approve}</button>
             <RejectMenu onPick={(r) => reject.mutate({ id: x.transfer_id, reason: r })} />
           </>} />)}
+          {proposed.length > shown && <button className="btn" style={{ width: "100%" }} onClick={() => setShown((n) => n + 20)}>{t.showMore(Math.min(20, proposed.length - shown), proposed.length - shown)}</button>}
         </div>
         <div className="lane transit"><h3>{t.transit} <span className="faint">{transit.length}</span></h3>
           {transit.map((x) => <Card key={x.transfer_id} x={x} onSelect={() => setSelected(x)} actions={x.status !== "delivered" ? <button className="btn" onClick={() => delivered.mutate(x.transfer_id)}>{t.delivered}</button> : null} />)}

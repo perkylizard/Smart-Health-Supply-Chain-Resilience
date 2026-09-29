@@ -36,7 +36,7 @@ export default function Briefing() {
               <p className="lead">{brief.data.body.join(" ")}</p>
               <p style={{ marginTop: 8, display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
                 {alerts[0] && <Explain kind="alert" item={alerts[0]}><button className="btn quiet" style={{ color: "var(--teal)", paddingLeft: 0 }}>{t.whyLink}</button></Explain>}
-                <Badge kind="ai" title={`${brief.data.model} · ${brief.data.status}`} />
+                <Badge kind={brief.data.status.startsWith("fallback") ? "computed" : "ai"} title={brief.data.status.startsWith("fallback") ? "Written from the alert numbers; Gemini was not reachable" : `${brief.data.model} · ${brief.data.status}`} />
               </p>
             </>) : (<>
               <h1 className="headline skeleton">Loading the morning briefing for this district</h1>

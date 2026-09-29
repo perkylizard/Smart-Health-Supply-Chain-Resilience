@@ -7,6 +7,7 @@ import { PERSONAS, icons } from "../personas";
 import LocationPicker from "./LocationPicker";
 import RoleMenu from "./RoleMenu";
 import WhatIf from "./WhatIf";
+import LoadErrorBanner from "./LoadErrorBanner";
 
 const Icon = ({ d }: { d: string }) => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden><path d={d} /></svg>;
 
@@ -40,7 +41,7 @@ export default function Shell({ children, offline }: { children: React.ReactNode
         <div className="bar">
           <button className="brand" onClick={goHome} title={t.homeHint}><i aria-hidden>S</i><span>Sanjeevani Grid</span></button>
           <span className="desktop-only"><LocationPicker /></span>
-          <form className="grow desktop-only" onSubmit={onAsk} role="search">
+          <form className={`grow desktop-only${loc.pathname.endsWith("/ask") ? " hidden-here" : ""}`} onSubmit={onAsk} role="search">
             <input className="input" name="q" placeholder={t.askPlaceholder} aria-label={t.ask} defaultValue={loc.pathname.endsWith("/ask") ? new URLSearchParams(loc.search).get("q") ?? "" : ""} />
           </form>
           <span className="spacer" />
@@ -71,6 +72,7 @@ export default function Shell({ children, offline }: { children: React.ReactNode
       </nav>
       <main className="content">
         {offline && <div className="banner" role="status">{t.offline}</div>}
+        {!offline && <LoadErrorBanner />}
         {children}
       </main>
     </div>

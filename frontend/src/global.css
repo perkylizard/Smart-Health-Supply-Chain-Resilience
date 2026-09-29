@@ -86,6 +86,7 @@ h3 { font-size: var(--t-md); font-weight: 500; letter-spacing: 0.15px; }
 .tabs .spacer { flex: 1; }
 .content { padding: var(--s5) var(--gutter) var(--s7); max-width: var(--content); width: 100%; margin: 0 auto; overflow: auto; }
 .banner { background: var(--amber-soft); color: var(--ink); padding: var(--s2) var(--s4); border-radius: var(--r1); margin-bottom: var(--s4); }
+.banner.error { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); flex-wrap: wrap; background: var(--red-soft); }
 
 /* ---------- controls ---------- */
 .select { min-height: 40px; padding: 0 32px 0 var(--s3); border-radius: var(--r1); border: 1px solid var(--rule); background: var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%237d858b' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 8px center; appearance: none; -webkit-appearance: none; }
@@ -277,3 +278,37 @@ textarea.input { min-height: 120px; padding: var(--s3); font-family: ui-monospac
 .phc-side h3 { margin-bottom: var(--s3); }
 .phc-side .big { font-size: var(--t-xl); font-weight: 500; }
 @media (max-width: 904px) { .phc-layout { grid-template-columns: 1fr; } .list-head { display: none; } .tier-label { min-width: 0; width: 100%; } }
+
+/* Move stock: lane switch on phones only; desktop keeps three lanes side by side */
+.lane-switch { display: none; gap: var(--s2); margin-bottom: var(--s4); }
+@media (max-width: 904px) {
+  .lane-switch { display: flex; }
+  .lanes[data-lane] > .lane { display: none; }
+  .lanes[data-lane="needs"] > .lane.needs, .lanes[data-lane="proposed"] > .lane.proposed, .lanes[data-lane="transit"] > .lane.transit { display: block; }
+  .lanes[data-lane] > .lane h3 { display: none; }
+}
+
+/* touch targets: 40px with a mouse, 44px wherever the pointer is a finger (WCAG 2.5.5 / HIG) */
+.btn { min-height: 40px; }
+@media (pointer: coarse) {
+  .btn, button.chip, .select, .input, .appbar .lang, .appbar .role, .appbar .loc, .loc-item, .menu-item, .tabs a { min-height: 44px; }
+  button.chip { padding: 0 14px; }
+  .tc-actions .btn.quiet, .row .btn.quiet { min-width: 44px; }
+}
+
+/* Ask */
+.appbar .grow.hidden-here { visibility: hidden; }
+.ask-card { padding: 0; overflow: hidden; margin-bottom: var(--s5); }
+.ask-tabs { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--rule); }
+.ask-tabs button { border: 0; background: transparent; padding: 12px 20px; text-align: left; cursor: pointer; font-weight: 500; color: var(--ink-2); border-bottom: 2px solid transparent; min-height: 56px; }
+.ask-tabs button span { display: block; font-size: var(--t-xs); font-weight: 400; color: var(--ink-3); margin-top: 2px; }
+.ask-tabs button.on { color: var(--teal-2); border-bottom-color: var(--teal); background: rgba(31,59,115,.04); }
+.ask-row { display: flex; gap: var(--s2); padding: var(--s4) var(--s5) 0; }
+.ask-row .input { flex: 1; min-height: 48px; font-size: var(--t-md); }
+.ask-row .btn { min-height: 48px; padding: 0 var(--s5); }
+.ask-card > div[style] { padding: 0 var(--s5); }
+.ask-examples { display: flex; gap: var(--s2); flex-wrap: wrap; align-items: center; padding: var(--s3) var(--s5) var(--s5); }
+.ask-empty { max-width: 640px; color: var(--ink-2); }
+.ask-empty h2 { font-size: var(--t-md); margin-bottom: var(--s2); color: var(--ink); }
+.ask-empty li { margin-bottom: 6px; }
+@media (max-width: 599px) { .ask-row { flex-direction: column; } .ask-tabs button { padding: 10px 12px; } }
