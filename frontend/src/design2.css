@@ -1,0 +1,35 @@
+/* Second design pass: India states table, league layout, compare card, Move stock confirmation. Reuses tokens from tokens.css. */
+.state-name { display: block; }
+.state-sub { display: block; font-size: var(--t-xs); color: var(--teal-2); margin-top: 2px; }
+.states-table tbody tr { cursor: pointer; }
+.states-table tbody tr[aria-selected="true"] td { background: var(--teal-soft); }
+
+.league-layout { display: grid; grid-template-columns: minmax(0, 760px) minmax(280px, 360px); gap: var(--s6); align-items: start; }
+.sort-row { display: flex; align-items: center; gap: var(--s2); flex-wrap: wrap; margin-bottom: var(--s3); }
+.score-fig { font-weight: 500; }
+.score-fig.red { color: var(--red); } .score-fig.amber { color: var(--amber); } .score-fig.green { color: var(--green); }
+.side-card { padding: var(--s4) var(--s5); }
+.side-card h2 { font-size: var(--t-md); margin-bottom: var(--s3); }
+.bands { list-style: none; padding: 0; margin: 0 0 var(--s4); display: grid; gap: 6px; font-size: var(--t-sm); }
+.bands li::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; vertical-align: middle; background: currentColor; }
+.bands .red { color: var(--red); } .bands .amber { color: var(--amber); } .bands .green { color: var(--green); }
+.bands span { color: var(--ink); }
+
+.compare-layout { display: grid; grid-template-columns: minmax(0, 720px) minmax(280px, 380px); gap: var(--s6); align-items: start; }
+.big-fig { font-size: var(--t-xl); font-weight: 500; line-height: 1.1; }
+.delta { font-size: var(--t-xs); color: var(--ink-3); }
+.delta.good { color: var(--green); } .delta.bad { color: var(--red); }
+
+/* Move stock: landing highlight and confirmation toast */
+.tcard.landed { animation: landed .6s ease-out; }
+@keyframes landed { from { background: var(--teal-soft); } to { background: var(--paper); } }
+.toast { position: fixed; left: 50%; bottom: var(--s5); transform: translateX(-50%); z-index: 30; display: flex; align-items: center; gap: var(--s3); max-width: min(560px, calc(100vw - 32px)); padding: 10px 12px 10px 16px; background: #1d2b2e; color: #fff; border-radius: var(--r1); box-shadow: var(--e8); font-size: var(--t-sm); animation: toast-in .2s ease-out; }
+.toast .btn.quiet { color: #b9c9ef; }
+@keyframes toast-in { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+.lane .quiet.lane-empty { font-size: var(--t-sm); }
+
+@media (prefers-reduced-motion: reduce) { .tcard.landed, .toast { animation: none; } }
+@media (max-width: 904px) {
+  .league-layout, .compare-layout { grid-template-columns: 1fr; }
+  .toast { bottom: calc(72px + env(safe-area-inset-bottom)); }
+}

@@ -24,8 +24,8 @@ export default function MapView({ dots, onSelect, center, line }: { dots: Facili
       m.addSource("dots", { type: "geojson", data: fc });
       m.addLayer({ id: "dots", type: "circle", source: "dots", paint: { "circle-radius": ["get", "r"], "circle-color": ["get", "colour"], "circle-stroke-width": 1.5, "circle-stroke-color": "#ffffff", "circle-opacity": 0.9 } });
       m.on("click", "dots", (e) => { const p = e.features?.[0]?.properties as unknown as FacilityDot; if (p && latest.current.onSelect) latest.current.onSelect(p); });
-      m.on("mouseenter", "dots", () => { m.getCanvas().style.cursor = "pointer"; });
-      m.on("mouseleave", "dots", () => { m.getCanvas().style.cursor = ""; });
+      m.on("mousemove", "dots", (e) => { const p = e.features?.[0]?.properties as unknown as FacilityDot | undefined; const c = m.getCanvas(); c.style.cursor = "pointer"; c.title = p ? p.facility_name : ""; });
+      m.on("mouseleave", "dots", () => { const c = m.getCanvas(); c.style.cursor = ""; c.title = ""; });
     }
     const lf = { type: "FeatureCollection" as const, features: line ? [{ type: "Feature" as const, properties: {}, geometry: { type: "LineString" as const, coordinates: line } }] : [] };
     const ls = m.getSource("line") as maplibregl.GeoJSONSource | undefined;

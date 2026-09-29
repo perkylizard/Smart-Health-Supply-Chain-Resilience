@@ -5,11 +5,13 @@ import { api, type FacilityDot, type NationalState } from "../api";
 import { useApp } from "../App";
 import Badge from "../components/Badge";
 import MapView from "../components/MapView";
+import { s2 } from "../strings2";
 
 function sev(m: number): FacilityDot["worst_severity"] { return m < 1 ? "red" : m < 2 ? "amber" : "ok"; }
 
 export default function NationalView() {
-  const { t, basis, setBasis } = useApp();
+  const { t, basis, setBasis, lang } = useApp();
+  const u = s2[lang];
   const q = useQuery({ queryKey: ["national", basis], queryFn: () => api.nationalStates(basis) });
   const [picked, setPicked] = useState<string | null>(null);
   const dq = useQuery({ queryKey: ["nationalDistricts", picked, basis], queryFn: () => api.nationalDistricts(picked!, basis), enabled: !!picked });
@@ -22,7 +24,7 @@ export default function NationalView() {
       <h1 className="sr-only">{t.indiaTitle}</h1>
       <div>
         <section className="qsection">
-          <h2>{t.indiaTitle} <span className="count">{q.data ? `${q.data.states.length} states, ${t.indiaMonth.toLowerCase()}: ${q.data.month}` : ""}</span></h2>
+          <h2>{t.indiaTitle} <span className="count">{q.data ? `${u.reporting(q.data.states.length, 36)} · ${q.data.month}` : ""}</span></h2>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
             <button className="chip" aria-pressed={basis === "real"} onClick={() => setBasis("real")}>{t.basisReal}</button>
             <button className="chip" aria-pressed={basis === "simulated"} onClick={() => setBasis("simulated")} title={t.basisSimulatedHint}>{t.basisSimulated}</button>
@@ -31,6 +33,7 @@ export default function NationalView() {
           <div className="legend"><span><i className="dot" style={{ background: "var(--red)" }} />under 1 {t.monthsOfStock}</span><span><i className="dot" style={{ background: "var(--amber)" }} />1 to 2</span><span><i className="dot" style={{ background: "var(--green)" }} />over 2</span><span className="faint">larger dot = {t.phcLevel}</span></div>
           <p className="faint" style={{ fontSize: "var(--t-xs)" }}>{q.data?.provenance} <Badge kind={badge} /></p>
         </section>
+        {!picked && <p className="muted" style={{ marginTop: -24 }}>{u.tapState}</p>}
         {picked && (
           <section className="qsection">
             <h2>{picked} <span className="count">{dq.data ? `${dq.data.districts.length} districts` : ""}</span></h2>
@@ -41,10 +44,13 @@ export default function NationalView() {
         )}
       </div>
       <aside>
-        <section className="section">
+        <section className="section card">
           <h2>States by {t.monthsOfStock}</h2>
-          <table className="table"><thead><tr><th>state</th><th className="num">median</th><th className="num">{t.underOneMonth}</th></tr></thead>
-            <tbody>{(q.data?.states ?? []).map((s) => <tr key={s.state} style={{ cursor: "pointer" }} onClick={() => setPicked(s.state)}><td>{s.state}{s.phc_level_available && <span className="chip teal" style={{ marginLeft: 8, fontSize: "var(--t-xs)" }}>PHC</span>}</td><td className="num">{s.median_months_of_stock.toFixed(1)}</td><td className="num">{Math.round(s.share_districts_under_1_month * 100)}%</td></tr>)}</tbody></table>
+          <table className="table states-table"><thead><tr><th>{u.stateCol}</th><th className="num">{u.medianCol}</th><th className="num">{t.underOneMonth}</th></tr></thead>
+            <tbody>{(q.data?.states ?? []).map((s) => <tr key={s.state} aria-selected={picked === s.state} tabIndex={0} onClick={() => setPicked(s.state)} onKeyDown={(e) => { if (e.key === "Enter") setPicked(s.state); }}>
+              <td><span className="state-name">{s.state}</span>{s.phc_level_available && <span className="state-sub">{u.phcDetail}</span>}</td>
+              <td className="num"><span style={{ color: s.median_months_of_stock < 1 ? "var(--red)" : s.median_months_of_stock < 2 ? "var(--amber)" : "var(--green)", fontWeight: 500 }}>{s.median_months_of_stock.toFixed(1)}</span></td>
+              <td className="num">{Math.round(s.share_districts_under_1_month * 100)}%</td></tr>)}</tbody></table>
         </section>
       </aside>
     </div>

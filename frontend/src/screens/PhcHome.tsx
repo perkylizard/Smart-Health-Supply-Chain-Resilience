@@ -6,6 +6,7 @@ import { useApp } from "../App";
 import Badge from "../components/Badge";
 import ChatWidget from "../components/ChatWidget";
 import Scale from "../components/Scale";
+import { MyRequests, RequestForm } from "../components/Requests";
 
 export function PhcPick() {
   const { unit, district, t } = useApp();
@@ -52,6 +53,7 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
         <Link className="btn" to={`/phc/${facilityId}/deliveries`}>{t.phcDeliveriesCard} →</Link></div>}
       {tab === "deliveries" && tr.data && <div className="card"><h3>{t.phcDeliveriesCard}</h3>
         <dl className="kv"><dt>{t.phcMoving}</dt><dd>{nMoving}</dd><dt>{t.phcWaiting}</dt><dd>{tx.length - nMoving - nDone}</dd><dt>{t.phcDone}</dt><dd>{nDone}</dd></dl></div>}
+      <div className="card"><h3>{t.requestStock}</h3><RequestForm facilityId={facilityId!} options={[...f.data.stock].sort((a, b) => a.days_of_stock - b.days_of_stock).map((s) => ({ id: s.commodity_id, name: s.commodity_name }))} /></div>
       {tab !== "report" && <div className="card"><h3>{t.phcOpenReport}</h3><p className="muted" style={{ margin: "0 0 12px" }}>{t.chatHint}</p><Link className="btn primary" to={`/phc/${facilityId}/report`}>{t.phcOpenReport}</Link></div>}
     </aside>
   );
@@ -67,9 +69,10 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
           {low.length > 0 && <div className="action-card" style={{ marginBottom: 12 }}><strong>{t.q1}</strong>
             <ul>{low.slice(0, 3).map((s) => <li key={s.commodity_id}>{s.commodity_name}: <span style={{ color: s.days_of_stock < 7 ? "var(--red)" : "var(--amber)", fontWeight: 500 }}>{Math.round(s.days_of_stock)} {t.days}</span></li>)}</ul>
             {low.length > 3 && <p className="faint" style={{ margin: 0, fontSize: "var(--t-xs)" }}>+{low.length - 3}</p>}</div>}
-          <div className="list">{f.data.stock.map((s) => <div className="row" key={s.commodity_id} style={{ gridTemplateColumns: "1fr 200px" }}><div><span className="name">{s.commodity_name}</span><div className="sub">{Math.round(s.closing).toLocaleString("en-IN")} on hand</div></div><Scale days={s.days_of_stock} severity={s.severity} label={t.days} /></div>)}</div>
+          <div className="list">{f.data.stock.map((s) => <div className="row" key={s.commodity_id} style={{ gridTemplateColumns: "1fr 200px" }}><div><span className="name">{s.commodity_name}</span><div className="sub">{Math.round(s.closing).toLocaleString("en-IN")} {t.onHand}{(s as { reported?: boolean }).reported && <span className="chip teal" style={{ minHeight: 20, fontSize: "var(--t-xs)" }}>{t.reportedByYou}</span>}</div></div><Scale days={s.days_of_stock} severity={s.severity} label={t.days} /></div>)}</div>
         </section>
       )}
+      {tab === "deliveries" && <MyRequests facilityId={facilityId!} />}
       {tab === "deliveries" && (
         <section className="qsection">
           <h2>{t.deliveries} <span className="count">{tr.data?.transfers.length ?? ""}</span></h2>

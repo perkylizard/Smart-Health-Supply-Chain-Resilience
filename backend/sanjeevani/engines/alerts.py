@@ -64,3 +64,37 @@ def compute_alerts(latest: pd.DataFrame, window: pd.DataFrame, fc: pd.DataFrame,
             "data_issue", "low_demand", "surplus_days", "scenario", "source"]
     df["scenario"] = scenario
     return df[[c for c in cols if c in df.columns]].sort_values(["alert", "days_of_stock"], ascending=[False, True]).reset_index(drop=True)
+
+
+def apply_reports(df: pd.DataFrame, reports: list[dict]) -> pd.DataFrame:
+    """Overlay PHC stock counts on computed alerts. A confirmed count is the facility stating how much it holds now, so it
+    replaces the ledger's closing stock for that facility and medicine (latest count wins), and days of stock, alert and
+    severity are recomputed with the same thresholds as compute_alerts. Rows touched get reported=True."""
+    if df is None or df.empty or not reports:
+        return df
+    latest: dict = {}
+    for r in sorted(reports, key=lambda r: r.get("received", 0)):
+        latest[(r["facility_id"], r["commodity_id"])] = r
+    keys = list(zip(df["facility_id"], df["commodity_id"]))
+    hit = np.array([k in latest for k in keys])
+    if not hit.any():
+        return df
+    out = df.copy()
+    if "reported" not in out.columns:
+        out["reported"] = False
+    idx = out.index[hit]
+    q = np.array([float(latest[keys[i]]["quantity"]) for i in np.nonzero(hit)[0]])
+    daily = np.maximum(out.loc[idx, "weekly_demand_p90"].to_numpy(float) / 7.0, 1e-6)
+    days = np.minimum(q / daily, 365.0).round(1)
+    thr = out.loc[idx, "lead_days"].to_numpy(float) + BUFFER_DAYS
+    low = out.loc[idx, "weekly_demand_p90"].to_numpy(float) < LOW_DEMAND_WEEKLY
+    out.loc[idx, "closing"] = q
+    out.loc[idx, "days_of_stock"] = days
+    out.loc[idx, "data_issue"] = False
+    out.loc[idx, "alert"] = (days < thr) & ~low
+    out.loc[idx, "severity"] = np.select([low, days < RED, days < AMBER, days < WATCH], ["ok", "red", "amber", "watch"], "ok")
+    out.loc[idx, "reported"] = True
+    if "reported_at" not in out.columns:
+        out["reported_at"] = np.nan
+    out.loc[idx, "reported_at"] = [latest[keys[i]].get("received") for i in np.nonzero(hit)[0]]
+    return out.sort_values(["alert", "days_of_stock"], ascending=[False, True]).reset_index(drop=True)

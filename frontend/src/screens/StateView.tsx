@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { api, type DistrictRow, type FacilityDot, type Transfer } from "../api";
@@ -8,6 +8,7 @@ import Explain from "../components/Explain";
 import MapView from "../components/MapView";
 import Scale from "../components/Scale";
 import CarePanel from "../components/CarePanel";
+import { s2 } from "../strings2";
 
 function scoreSeverity(s: number | null): FacilityDot["worst_severity"] { return s == null ? "data_issue" : s < 45 ? "red" : s < 60 ? "amber" : "ok"; }
 
@@ -78,25 +79,49 @@ export default function StateView() {
   );
 }
 
-function LeagueTable({ rows }: { rows: DistrictRow[] }) {
-  const { unit, t } = useApp();
+function band(score: number | null) { return score == null ? "" : score < 45 ? "red" : score < 60 ? "amber" : "green"; }
+
+function LeagueTable({ rows, start = 0 }: { rows: DistrictRow[]; start?: number }) {
+  const { unit, t, lang } = useApp();
+  const u = s2[lang];
   return (
-    <table className="table"><thead><tr><th>#</th><th>{t.district}</th><th className="num">score</th><th className="num">median {t.days}</th><th className="num">red</th></tr></thead>
-      <tbody>{rows.map((r, i) => <tr key={r.district}><td>{i + 1}</td><td><Link to={`/dho/${unit}/${encodeURIComponent(r.district)}`}>{r.district}</Link></td><td className="num">{r.score == null ? "…" : Math.round(r.score)}</td><td className="num">{r.median_days_of_stock == null ? "…" : Math.round(r.median_days_of_stock)}</td><td className="num">{r.red_alerts}</td></tr>)}</tbody></table>
+    <table className="table"><thead><tr><th>#</th><th>{t.district}</th><th className="num">{u.colScore}</th><th className="num">{u.colDays}</th><th className="num">{u.colRed}</th></tr></thead>
+      <tbody>{rows.map((r, i) => <tr key={r.district}><td>{start + i + 1}</td><td><Link to={`/dho/${unit}/${encodeURIComponent(r.district)}`}>{r.district}</Link></td>
+        <td className="num"><span className={`score-fig ${band(r.score)}`}>{r.score == null ? "…" : Math.round(r.score)}</span></td>
+        <td className="num">{r.median_days_of_stock == null ? "…" : Math.round(r.median_days_of_stock)}</td><td className="num">{r.red_alerts}</td></tr>)}</tbody></table>
+  );
+}
+
+export function ScoreCard() {
+  const { lang } = useApp();
+  const u = s2[lang];
+  return (
+    <section className="card side-card">
+      <h2>{u.scoreCard}</h2>
+      <ul className="bands"><li className="red"><span>{u.bandLow}</span></li><li className="amber"><span>{u.bandMid}</span></li><li className="green"><span>{u.bandHigh}</span></li></ul>
+      <dl className="kv">{u.weights.map(([k, v]) => <Fragment key={k}><dt>{k}</dt><dd>{v}</dd></Fragment>)}</dl>
+      <p className="faint" style={{ fontSize: "var(--t-xs)", margin: "12px 0 0" }}><Badge kind="computed" /></p>
+    </section>
   );
 }
 
 export function DistrictsTable() {
-  const { unit, t } = useApp();
+  const { unit, t, lang } = useApp();
+  const u = s2[lang];
   const d = useQuery({ queryKey: ["districts", unit], queryFn: () => api.districts(unit) });
   const [sort, setSort] = useState<"score" | "red_alerts" | "median_days_of_stock">("score");
   const rows = [...(d.data?.districts ?? [])].sort((a, b) => sort === "score" ? (b.score ?? 0) - (a.score ?? 0) : sort === "red_alerts" ? b.red_alerts - a.red_alerts : (b.median_days_of_stock ?? 0) - (a.median_days_of_stock ?? 0));
+  const labels = { score: u.sortScore, red_alerts: u.sortRed, median_days_of_stock: u.sortDays };
   return (
     <div>
       <h1 style={{ marginBottom: 12 }}>{t.leagueTitle}</h1>
-      <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>{(["score", "red_alerts", "median_days_of_stock"] as const).map((k) => <button key={k} className="chip" style={sort === k ? { background: "var(--teal-soft)" } : {}} onClick={() => setSort(k)}>{k.replace(/_/g, " ")}</button>)}</div>
-      <LeagueTable rows={rows} />
-      <p className="faint" style={{ fontSize: "var(--t-xs)" }}>Score: median days of stock 40, share under 14 days 20, staffing gap 20, transfer latency 10, reporting 10. <Badge kind="computed" /></p>
+      <div className="league-layout">
+        <div>
+          <div className="sort-row"><span className="faint" style={{ fontSize: "var(--t-xs)" }}>{u.sortBy}</span>{(["score", "red_alerts", "median_days_of_stock"] as const).map((k) => <button key={k} className="chip" aria-pressed={sort === k} onClick={() => setSort(k)}>{labels[k]}</button>)}</div>
+          {d.isLoading ? <p className="skeleton" style={{ height: 200 }}>Scoring every district</p> : <LeagueTable rows={rows} />}
+        </div>
+        <aside><ScoreCard /></aside>
+      </div>
     </div>
   );
 }

@@ -29,14 +29,16 @@ export default function Warehouse() {
                     <div className="tc-title">{x.commodity_name}</div>
                     <div className="tc-sub">{(x.units_per_case ?? 1) >= 10 && x.cases ? `${x.cases.toLocaleString("en-IN")} ${t.cases} ${t.ofN} ${x.units_per_case}, ${x.quantity.toLocaleString("en-IN")} ${t.units}` : `${x.quantity.toLocaleString("en-IN")} ${x.quantity === 1 ? t.unit1 : t.units}`}</div>
                   </div>
-                  {t.causes[x.cause] && <div className="tc-meta"><span className={`chip ${x.cause === "cases_up" ? "red" : "amber"}`}>{t.causes[x.cause]}</span></div>}
+                  {x.source === "request" ? <div className="tc-meta"><span className="chip blue">{t.requestedByFacility}</span></div>
+                    : t.causes[x.cause] && <div className="tc-meta"><span className={`chip ${x.cause === "cases_up" ? "red" : "amber"}`}>{t.causes[x.cause]}</span></div>}
                 </div>
                 <div className="tc-route"><span className="faint">{t.forFacility}</span><strong>{x.facility_name}</strong><span className="faint">{x.type}</span></div>
-                <div className="tc-stats" style={{ gridTemplateColumns: "1fr" }}><Scale days={x.days_of_stock} severity={x.days_of_stock < 7 ? "red" : x.days_of_stock < 14 ? "amber" : "ok"} label={t.days} /></div>
+                {x.days_of_stock != null ? <div className="tc-stats" style={{ gridTemplateColumns: "1fr" }}><Scale days={x.days_of_stock} severity={x.days_of_stock < 7 ? "red" : x.days_of_stock < 14 ? "amber" : "ok"} label={t.days} /></div>
+                  : x.note ? <div className="tc-stats" style={{ gridTemplateColumns: "1fr" }}><span className="muted">“{x.note}”</span></div> : null}
                 {lane !== "delivered" && <div className="tc-actions">
                   {lane === "pending" && <button className="btn primary" onClick={() => set.mutate({ id: x.indent_id, status: "dispatched" })}>{t.markDispatched}</button>}
                   {lane === "dispatched" && <button className="btn primary" onClick={() => set.mutate({ id: x.indent_id, status: "delivered" })}>{t.markDelivered}</button>}
-                  {lane === "pending" && <button className="btn" onClick={() => set.mutate({ id: x.indent_id, status: "cancelled" })}>{t.cancel}</button>}
+                  {lane === "pending" && x.source !== "request" && <button className="btn" onClick={() => set.mutate({ id: x.indent_id, status: "cancelled" })}>{t.cancel}</button>}
                 </div>}
               </div>
             ))}

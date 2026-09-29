@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
@@ -8,11 +8,13 @@ import Badge from "../components/Badge";
 import Explain from "../components/Explain";
 import MapView from "../components/MapView";
 import Scale from "../components/Scale";
+import { s2 } from "../strings2";
 
 const STEPS = ["proposed", "approved", "picked_up", "delivered"];
 
 export default function Dispatch() {
-  const { unit, district, t, base } = useApp();
+  const { unit, district, t, base, lang } = useApp();
+  const u = s2[lang];
   const [sp] = useSearchParams();
   const commodity = sp.get("commodity") ?? undefined;
   const qc = useQueryClient();
@@ -27,12 +29,26 @@ export default function Dispatch() {
   // phones: one lane at a time, opening on the decision (proposals), not the list of needs
   const [lane, setLane] = useState<"needs" | "proposed" | "transit">("proposed");
   const setStatus = (id: string, status: string) => setLocal((l) => ({ ...l, [id]: status }));
-  const approve = useMutation({ mutationFn: (id: string) => api.approve(id), onMutate: (id) => { setLeaving(id); setTimeout(() => { setStatus(id, "approved"); setLeaving(null); }, 250); }, onSettled: () => qc.invalidateQueries({ queryKey: ["transfers"] }) });
+  // the signature moment: the approved card leaves Proposals, lands at the top of In transit with a brief highlight,
+  // and a toast confirms what happened with a way to see it. Nothing here is destructive, so there is no undo to fake.
+  const [landed, setLanded] = useState<string[]>([]);
+  const [flash, setFlash] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+  const transitRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { if (!toast) return; const h = setTimeout(() => setToast(null), 5000); return () => clearTimeout(h); }, [toast]);
+  const reduced = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const approve = useMutation({ mutationFn: (id: string) => api.approve(id), onMutate: (id) => {
+    setLeaving(id);
+    setTimeout(() => { setStatus(id, "approved"); setLeaving(null); setLanded((l) => [id, ...l.filter((x) => x !== id)]); if (!reduced) { setFlash(id); setTimeout(() => setFlash(null), 650); } }, reduced ? 0 : 250);
+  }, onSettled: () => qc.invalidateQueries({ queryKey: ["transfers"] }) });
+  const approveOne = (x: Transfer) => { approve.mutate(x.transfer_id); setToast(`${u.approved}: ${x.quantity.toLocaleString("en-IN")} ${x.commodity_name ?? x.commodity_id.replace(/_/g, " ")} → ${x.to_name}`); };
+  const viewTransit = () => { setLane("transit"); setToast(null); transitRef.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" }); };
   const reject = useMutation({ mutationFn: ({ id, reason }: { id: string; reason: string }) => api.reject(id, reason), onMutate: ({ id }) => setStatus(id, "rejected") });
   const delivered = useMutation({ mutationFn: (id: string) => api.delivered(id), onMutate: (id) => setStatus(id, "delivered") });
   const transfers = useMemo(() => (q.data?.transfers ?? []).map((x) => ({ ...x, status: local[x.transfer_id] ?? x.status })), [q.data, local]);
   const proposed = transfers.filter((x) => x.status === "proposed");
-  const transit = transfers.filter((x) => ["approved", "picked_up", "delivered"].includes(x.status));
+  const transit = transfers.filter((x) => ["approved", "picked_up", "delivered"].includes(x.status))
+    .sort((a, b) => { const ia = landed.indexOf(a.transfer_id), ib = landed.indexOf(b.transfer_id); return (ia < 0 ? 1e9 : ia) - (ib < 0 ? 1e9 : ib); });
   const needs = (summary.data?.alerts ?? []).filter((a) => a.alert && (!commodity || a.commodity_id === commodity)).slice(0, 20);
   const byId = useMemo(() => Object.fromEntries((dots.data?.facilities ?? []).map((f) => [f.facility_id, f])), [dots.data]);
   const line = selected && byId[selected.from_id] && byId[selected.to_id] ? [[byId[selected.from_id].lon, byId[selected.from_id].lat], [byId[selected.to_id].lon, byId[selected.to_id].lat]] as [number, number][] : undefined;
@@ -48,7 +64,7 @@ export default function Dispatch() {
               <ul style={{ paddingLeft: 16, maxHeight: "40vh", overflow: "auto" }}>{proposed.slice(0, 30).map((x) => <li key={x.transfer_id}>{x.quantity} {x.commodity_name ?? x.commodity_id.replace(/_/g, " ")}: {x.from_name} → {x.to_name}</li>)}</ul>
               {proposed.length > 30 && <p className="faint" style={{ margin: 0 }}>{t.andMore(proposed.length - 30)}</p>}
               <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-                <Dialog.Close asChild><button className="btn primary" onClick={() => proposed.forEach((x) => approve.mutate(x.transfer_id))}>{t.approveAll}</button></Dialog.Close>
+                <Dialog.Close asChild><button className="btn primary" onClick={() => { proposed.forEach((x) => approve.mutate(x.transfer_id)); setToast(`${u.approved}: ${proposed.length}`); }}>{t.approveAll}</button></Dialog.Close>
                 <Dialog.Close asChild><button className="btn">{t.cancel}</button></Dialog.Close>
               </div>
             </Dialog.Content></Dialog.Portal>
@@ -67,15 +83,17 @@ export default function Dispatch() {
         <div className="lane proposed"><h3>{t.proposed} <span className="faint">{proposed.length}</span></h3>
           {!q.isLoading && proposed.length === 0 && <div className="quiet">No transfer needed. Every facility with an alert has no reachable donor above 21 days, or nothing is under threshold.</div>}
           {proposed.slice(0, shown).map((x) => <Card key={x.transfer_id} x={x} leaving={leaving === x.transfer_id} onSelect={() => setSelected(x)} actions={<>
-            <button className="btn primary" onClick={() => approve.mutate(x.transfer_id)}>{t.approve}</button>
+            <button className="btn primary" onClick={() => approveOne(x)}>{t.approve}</button>
             <RejectMenu onPick={(r) => reject.mutate({ id: x.transfer_id, reason: r })} />
           </>} />)}
           {proposed.length > shown && <button className="btn" style={{ width: "100%" }} onClick={() => setShown((n) => n + 20)}>{t.showMore(Math.min(20, proposed.length - shown), proposed.length - shown)}</button>}
         </div>
-        <div className="lane transit"><h3>{t.transit} <span className="faint">{transit.length}</span></h3>
-          {transit.map((x) => <Card key={x.transfer_id} x={x} onSelect={() => setSelected(x)} actions={x.status !== "delivered" ? <button className="btn" onClick={() => delivered.mutate(x.transfer_id)}>{t.delivered}</button> : null} />)}
+        <div className="lane transit" ref={transitRef}><h3>{t.transit} <span className="faint">{transit.length}</span></h3>
+          {transit.length === 0 && <div className="quiet lane-empty">{u.transitEmpty}</div>}
+          {transit.map((x) => <Card key={x.transfer_id} x={x} landed={flash === x.transfer_id} onSelect={() => setSelected(x)} actions={x.status !== "delivered" ? <button className="btn" onClick={() => delivered.mutate(x.transfer_id)}>{t.delivered}</button> : null} />)}
         </div>
       </div>
+      {toast && <div className="toast" role="status" aria-live="polite"><span>{toast}</span><button className="btn quiet" onClick={viewTransit}>{u.viewTransit}</button></div>}
       {dots.data && (
         <section className="section" style={{ marginTop: 24 }}>
           <MapView dots={dots.data.facilities.filter((f) => selected ? [selected.from_id, selected.to_id].includes(f.facility_id) : f.worst_severity === "red")} line={line} />
@@ -86,11 +104,11 @@ export default function Dispatch() {
   );
 }
 
-function Card({ x, actions, onSelect, leaving }: { x: Transfer; actions: React.ReactNode; onSelect: () => void; leaving?: boolean }) {
+function Card({ x, actions, onSelect, leaving, landed }: { x: Transfer; actions: React.ReactNode; onSelect: () => void; leaving?: boolean; landed?: boolean }) {
   const { t } = useApp();
   const doneIdx = STEPS.indexOf(x.status);
   return (
-    <div className={`tcard${leaving ? " leaving" : ""}`} onClick={onSelect} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") onSelect(); }}>
+    <div className={`tcard${leaving ? " leaving" : ""}${landed ? " landed" : ""}`} onClick={onSelect} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") onSelect(); }}>
       <div className="tc-head">
         <div>
           <div className="tc-title">{x.commodity_name ?? x.commodity_id.replace(/_/g, " ")}</div>

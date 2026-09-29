@@ -186,6 +186,16 @@ def indents(unit_id: str, district: str, request: Request):
     for r in recs:
         st = state.transfer_status(r["indent_id"])
         r["status"] = st["status"] if st else "pending"
+        r["source"] = "alert"
+    # facility requests approved by the District Health Officer join the queue first; the warehouse dispatches them
+    from app.routes_requests import _all, _enrich
+    lane = {"approved": "pending", "dispatched": "dispatched", "delivered": "delivered"}
+    upc = app.state.store.commodities().set_index("commodity_id")["units_per_case"].to_dict()
+    reqs = [x for x in _enrich(request, [r for r in _all(request) if r["unit_id"] == unit_id and r["district"] == district]) if x["status"] in lane]
+    recs = [{"indent_id": x["request_id"], "facility_id": x["facility_id"], "facility_name": x["facility_name"], "type": x["type"],
+             "commodity_id": x["commodity_id"], "commodity_name": x["commodity_name"], "quantity": x["quantity"], "units_per_case": max(1.0, float(upc.get(x["commodity_id"], 1) or 1)),
+             "cases": int(-(-x["quantity"] // max(1.0, float(upc.get(x["commodity_id"], 1) or 1)))), "days_of_stock": None, "cause": "requested", "lead_days": None,
+             "note": x.get("note"), "status": lane[x["status"]], "source": "request"} for x in reqs] + recs
     return {"district": district, "indents": recs, "scenario": state.get_scenario(),
             "provenance": "Quantity = stock to reach 60 days of P90 forecast demand, each facility's demand capped at 3x the district median for that medicine; facilities and stock are simulated, forecast from BigQuery TimesFM where cached"}
 

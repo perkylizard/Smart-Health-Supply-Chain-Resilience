@@ -31,8 +31,9 @@ export interface Briefing { headline: string; body: string[]; top_actions: strin
 export interface AskResult { mode: string; question: string; answer: string; rows: Record<string, unknown>[]; row_count?: number; chart?: { type: string; x?: string; y?: string } | null; sql?: string; sql_checked?: string | null; check?: { ok: boolean; reason: string }; error?: string | null; shape?: string; params?: Record<string, string>; status: string; attempts?: number; restate?: string }
 
 export interface NationalState { state: string; districts: number; median_months_of_stock: number; share_districts_under_1_month: number; lat: number | null; lon: number | null; phc_level_available: boolean }
-export interface Indent { indent_id: string; facility_id: string; facility_name: string; type: string; commodity_id: string; commodity_name: string; category: string; days_of_stock: number; cause: string; quantity: number; units_per_case?: number; cases?: number; lead_days: number; status: string }
+export interface Indent { indent_id: string; facility_id: string; facility_name: string; type: string; commodity_id: string; commodity_name: string; category: string; days_of_stock: number | null; cause: string; quantity: number; units_per_case?: number; cases?: number; lead_days: number | null; status: string; source?: "alert" | "request"; note?: string | null }
 export interface WarehouseRow { item_code: string; item_name: string; fy: string; month: number; stale: boolean; opening: number; received: number; unusable: number; distributed: number; closing: number; months_of_stock: number | null; reporting_error?: boolean; history?: LedgerMonth[] }
+export interface StockRequest { request_id: string; facility_id: string; facility_name: string; type: string; district: string; commodity_id: string; commodity_name: string; quantity: number; note?: string | null; status: "requested" | "approved" | "declined" | "dispatched" | "delivered"; decision_reason?: string | null; received: number; updated: number }
 export interface LedgerMonth { fy: string; month: number; opening: number | null; received: number | null; unusable: number | null; distributed: number | null; closing: number | null; error: boolean }
 export interface Brief { facts: { district: string; score: Score | null; rank: number | null; of: number; counts: Partial<Record<Severity, number>>; facilities: number; transfers_approved: number; transfers_delivered: number; data_issues: number; staffing_gap: number | null; top_risks: string[]; scenario: Scenario; trends: Record<string, number | null> }; narrative: { title: string; sections: { heading: string; bullets: string[] }[]; next_week_risks: string[] } | null; status: string; generated: string; provenance: string }
 
@@ -58,6 +59,10 @@ export const api = {
   units: () => get<{ units: Unit[] }>("/units"),
   districts: (u: string) => get<{ districts: DistrictRow[]; scenario: Scenario }>(`/units/${u}/districts`),
   /** Names only: instant, for dropdowns and pickers. Use `districts` only where scores are shown. */
+  createRequest: (b: { facility_id: string; commodity_id: string; quantity: number; note?: string }) => post<StockRequest>("/requests", b),
+  facilityRequests: (id: string) => get<{ requests: StockRequest[] }>(`/facilities/${id}/requests`),
+  districtRequests: (u: string, d: string, status?: string) => get<{ requests: StockRequest[] }>(`/districts/${u}/${encodeURIComponent(d)}/requests${status ? `?status=${status}` : ""}`),
+  moveRequest: (id: string, status: "approved" | "declined", reason?: string) => post<StockRequest>(`/requests/${id}/${status}`, { reason: reason ?? null }),
   districtNames: (u: string) => get<{ districts: { district: string; facilities: number }[] }>(`/units/${u}/district-names`),
   summary: (u: string, d: string) => get<Summary>(`/districts/${u}/${encodeURIComponent(d)}/summary`),
   facilities: (u: string, d: string) => get<{ facilities: FacilityDot[]; provenance: string }>(`/districts/${u}/${encodeURIComponent(d)}/facilities`),

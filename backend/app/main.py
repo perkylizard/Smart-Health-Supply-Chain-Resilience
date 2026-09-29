@@ -81,6 +81,10 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
         sc = state.get_scenario()
         return (unit_id, district, sc["name"], sc["intensity"], int(sc["updated"]))
 
+    def stock_reports() -> list[dict]:
+        """Confirmed PHC stock counts (Report screen). Requests and escalations are other kinds of entry."""
+        return [e for e in state.entries() if e.get("kind") in (None, "count") and "commodity_id" in e and "quantity" in e]
+
     def alerts_for(unit_id: str, district: str | None = None) -> pd.DataFrame:
         key = _key_for(unit_id, district)
         with _lock_guard:
@@ -88,14 +92,15 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
         with lock:  # one computation per key; concurrent callers wait for it instead of recomputing
             out = _alerts_cached(*key)
             _ready.add(key)
-            return out
+        # PHC counts are applied on top of the cached engine output, so a confirmed count shows everywhere at once
+        return A.apply_reports(out, stock_reports())
 
     def alerts_for_unit_if_ready(unit_id: str) -> pd.DataFrame | None:
         """Unit-wide alerts are expensive (whole state). Return them if cached; otherwise compute in the
         background and return None so the district page renders now and fills the rank on the next fetch."""
         key = _key_for(unit_id, None)
         if key in _ready:
-            return _alerts_cached(*key)
+            return A.apply_reports(_alerts_cached(*key), stock_reports())
         _th.Thread(target=lambda: alerts_for(unit_id), daemon=True).start()
         return None
 
@@ -202,7 +207,7 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
                 "provenance": {"stock": PROVENANCE["stock_ledger"], "forecast": PROVENANCE["forecast"], "name": PROVENANCE["facility_names"]}}
 
     @lru_cache(maxsize=512)
-    def _proposals_cached(unit_id: str, district: str, commodity_id: str | None, scenario: str, intensity: float, stamp: int) -> pd.DataFrame:
+    def _proposals_cached(unit_id: str, district: str, commodity_id: str | None, scenario: str, intensity: float, stamp: int, n_reports: int = 0) -> pd.DataFrame:
         al_d = alerts_for(unit_id, district)
         # donors may come from the whole unit (cross-district), recipients from this district
         al_u = alerts_for(unit_id)
@@ -219,7 +224,7 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
 
     def proposals_for(unit_id: str, district: str, commodity_id: str | None = None) -> pd.DataFrame:
         sc = state.get_scenario()
-        return _proposals_cached(unit_id, district, commodity_id, sc["name"], sc["intensity"], int(sc["updated"]))
+        return _proposals_cached(unit_id, district, commodity_id, sc["name"], sc["intensity"], int(sc["updated"]), len(stock_reports()))
 
     @app.get("/transfers/{unit_id}/{district}")
     def transfers(unit_id: str, district: str, commodity_id: str | None = None):
@@ -283,16 +288,19 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
 
     @app.post("/entries")
     def add_entry(body: EntryIn):
-        return state.add_entry(body.model_dump())
+        # a stock count from the facility: it replaces that medicine's closing stock and recomputes its alert (see alerts_for)
+        return state.add_entry({**body.model_dump(), "kind": "count"})
 
     from app.routes_ai import router as ai_router
     from app.routes_personas import router as persona_router
     from app.routes_federated import router as federated_router
     from app.routes_care import router as care_router
+    from app.routes_requests import router as requests_router
     app.include_router(ai_router)
     app.include_router(persona_router)
     app.include_router(federated_router)
     app.include_router(care_router)
+    app.include_router(requests_router)
     app.state.alerts_for = alerts_for
 
     # warm the hero unit so the first page a judge opens is fast

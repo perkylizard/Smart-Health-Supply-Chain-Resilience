@@ -328,3 +328,11 @@ textarea.input { min-height: 120px; padding: var(--s3); font-family: ui-monospac
 .sheet-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--s3); margin-bottom: var(--s4); }
 .sheet-table { box-shadow: none; }
 @keyframes sheet-in { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* stock requests */
+.req-form { display: grid; gap: var(--s3); }
+.req-form label { display: grid; gap: 4px; font-size: var(--t-xs); color: var(--ink-2); }
+.req-form .btn { justify-self: start; }
+.req-inbox { margin-bottom: var(--s6); padding: var(--s4) var(--s5); }
+.req-inbox .tcard { box-shadow: none; border: 1px solid var(--rule); }
+.req-inbox .tc-actions { flex-wrap: wrap; }
