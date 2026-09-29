@@ -1,4 +1,5 @@
 import { useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, type StockRequest } from "../api";
 import { useApp } from "../App";
@@ -26,7 +27,7 @@ const S = {
 const tone: Record<string, string> = { requested: "amber", approved: "teal", declined: "red", dispatched: "blue", delivered: "green" };
 
 /** PHC side: raise a request for a medicine. `options` are the facility's own medicines, most urgent first. */
-export function RequestForm({ facilityId, options, preset }: { facilityId: string; options: { id: string; name: string }[]; preset?: string }) {
+export function RequestForm({ facilityId, options, preset, hideHint = false }: { facilityId: string; options: { id: string; name: string }[]; preset?: string; hideHint?: boolean }) {
   const { lang } = useApp(); const s = S[lang];
   const qc = useQueryClient();
   const [cid, setCid] = useState(preset ?? options[0]?.id ?? "");
@@ -37,7 +38,7 @@ export function RequestForm({ facilityId, options, preset }: { facilityId: strin
   const ok = cid && Number(qty) > 0;
   return (
     <form className="req-form" onSubmit={(e) => { e.preventDefault(); if (ok) m.mutate(); }}>
-      <p className="muted" style={{ margin: "0 0 12px" }}>{s.requestHint}</p>
+      {!hideHint && <p className="muted" style={{ margin: "0 0 12px" }}>{s.requestHint}</p>}
       <label>{s.medicine}<select className="select" value={cid} onChange={(e) => setCid(e.target.value)}>{options.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}</select></label>
       <label>{s.quantity}<input className="input" type="number" inputMode="numeric" min={1} value={qty} onChange={(e) => setQty(e.target.value)} placeholder="0" required /></label>
       <label>{s.note}<input className="input" value={note} maxLength={300} onChange={(e) => setNote(e.target.value)} placeholder={s.notePh} /></label>
@@ -53,8 +54,9 @@ export function MyRequests({ facilityId }: { facilityId: string }) {
   const q = useQuery({ queryKey: ["myRequests", facilityId], queryFn: () => api.facilityRequests(facilityId), refetchInterval: 15_000 });
   const rows = q.data?.requests ?? [];
   return (
-    <section className="qsection">
-      <h2>{s.mine} <span className="count">{rows.length || ""}</span></h2>
+    <section className="card">
+      <div className="card-head"><div><h2>{s.mine} {rows.length > 0 && <span className="faint">({rows.length})</span>}</h2></div></div>
+      {q.isLoading && <p className="skeleton" style={{ height: 60 }}>…</p>}
       {q.data && rows.length === 0 && <div className="quiet">{s.none}</div>}
       {rows.map((r) => <RequestCard key={r.request_id} r={r} />)}
     </section>
@@ -97,5 +99,27 @@ export function RequestsInbox({ unit, district }: { unit: string; district: stri
           <button className="btn" onClick={() => setAsking(r.request_id)}>{s.decline}</button>
         </>} />)}
     </div>
+  );
+}
+
+/** The request form in the design's modal pattern: icon tile header, body, slate footer. `children` is the trigger. */
+export function RequestDialog({ facilityId, facilityName, options, preset, children }: { facilityId: string; facilityName?: string; options: { id: string; name: string }[]; preset?: string; children: React.ReactNode }) {
+  const { lang } = useApp(); const s = S[lang];
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger asChild>{children}</Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="dialog-overlay" />
+        <Dialog.Content className="dialog mdl" aria-describedby={undefined}>
+          <div className="mdl-head">
+            <span className="mdl-icon" aria-hidden>+</span>
+            <div><Dialog.Title asChild><h2>{s.request}</h2></Dialog.Title><p>{facilityName ? `${facilityName} · ` : ""}{s.requestHint}</p></div>
+            <Dialog.Close asChild><button className="mdl-x" aria-label="Close">×</button></Dialog.Close>
+          </div>
+          <div className="mdl-body"><RequestForm key={preset ?? "any"} facilityId={facilityId} options={options} preset={preset} hideHint /></div>
+          <div className="mdl-foot"><Dialog.Close asChild><button className="btn">{lang === "hi" ? "बंद करें" : "Close"}</button></Dialog.Close></div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }

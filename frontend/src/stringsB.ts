@@ -1,0 +1,78 @@
+/* Strings for the PHC, warehouse, magistrate, facility, location and explain screens (English and Hindi, same keys). */
+const en = {
+  // PHC stock
+  phcTitle: (n: string) => `${n}: essential medicines`, updateRegister: "Update register", requestStock: "Request stock",
+  tItems: "Medicines tracked", tItemsSub: "In this facility's stock ledger", tCritical: "Critical", tCriticalSub: "Under a week of stock",
+  tCovered: "Two weeks or more", tCoveredSub: (n: number, all: number) => `${n} of ${all} medicines have at least 14 days`,
+  tBeds: "Beds occupied", tDoctor: "Medical officer", doctorPresent: (d: number) => `In post, present ${d} days this month`, doctorNone: "Not in post",
+  colMedicine: "Medicine", colCategory: "Category", colOnHand: "On hand", colDays: "Days left", colStatus: "Status", colAction: "Action",
+  stCritical: "Critical low", stWarn: "Watch", stOk: "Adequate", stRare: "Rarely used", stData: "Check report", allCats: "All", findMed: "Find a medicine", noMatch: "No medicine matches this filter.",
+  requestRow: "Request", stockCard: "Stock ledger", stockCardSub: "Every medicine this facility holds, most urgent first",
+  cat: { outbreak: "Outbreak", maternal: "Maternal", emergency: "Emergency", chronic: "Chronic", child: "Child health", consumable: "Consumables", family_planning: "Family planning", vaccine: "Vaccines" } as Record<string, string>,
+  // deliveries
+  delivTitle: (n: string) => `Deliveries for ${n}`, delivSub: "Stock moving to and from this facility", activeTitle: "On the way and waiting", receivedTitle: "Received",
+  receivedEmpty: "Nothing received yet.", activeEmpty: "Nothing is on its way or waiting for approval.",
+  // report
+  modeMsg: "Quick message", modePhoto: "Photo of register", preview: "Live preview", detected: (n: number) => `${n} items detected`,
+  previewEmpty: "Type a line such as “ORS ke 40 packet bache hain” to see what will be recorded.", savedBanner: (n: number) => `Saved ${n} entries. The district sees the new stock now.`,
+  photoSoon: "Reading a photo of the register needs live AI, which is not switched on in this deployment. Use a quick message for now.",
+  // warehouse
+  storeEyebrow: "District store", indentsTitle: (d: string) => `Indents queue, ${d}`, indentsSub: "What facilities need and what the district health officer approved, grouped by facility",
+  colCurrent: "Stock at facility", colQty: "Quantity", colSource: "Source", prEmergency: "Emergency", prHigh: "High", prRoutine: "Routine",
+  items: (n: number) => `${n} ${n === 1 ? "item" : "items"}`, dispatchAll: "Mark all dispatched", deliverAll: "Mark all delivered", laneEmpty: "Nothing in this list.",
+  groupsShown: (n: number, all: number) => `Showing ${n} of ${all} facilities`, showMoreFac: "Show more facilities",
+  stockTitle: "District store stock book", stockSub: "The district's own medicine ledger, each medicine at its latest reported month",
+  balanced: (ok: number, n: number) => `${ok} of ${n} months balance (opening + received − unusable − distributed = closing)`,
+  mismatch: "does not balance", csv: "Download CSV",
+  // magistrate
+  dmEyebrow: "Office of the District Magistrate", printMemo: "Print", escalateState: "Escalate to state", escalateTitle: "Escalate to the state officer",
+  escalateHint: "Say what you need from the state. It appears on the State officer's screen.", send: "Send", sentOk: "Sent. The state officer sees it on the State screen.",
+  digest: "Executive digest", benchTitle: "Against the state median", stateMedian: "state median", better: "better", worse: "worse",
+  bScore: "Resilience score", bDays: "Median days of stock", bRed: "Red alerts", bStaff: "Staffing gap",
+  facTitle: (d: string) => `Facilities in ${d}`, facSub: "Beds, doctor and stock at every facility in the district", findFac: "Find a facility",
+  cFac: "Facility", cBeds: "Beds", cOcc: "Occupancy", cDoc: "Doctor", cWorst: "Lowest stock", cRed: "Red alerts", cTier: "Status",
+  tierHigh: "High concern", tierWatch: "Watch", tierStable: "Stable", docYes: "present", docNo: "absent",
+  // facility
+  backTo: (d: string) => `Back to ${d}`, bedsCard: "Beds", staffCard: "Doctors and staff", moIn: "Medical officer in post", moOut: "No medical officer in post",
+  referral: (n: string, km: number, b: number) => `Referral: send patients to ${n}, ${km} km, ${b} beds free`, noReferral: "No nearby CHC or hospital has beds free",
+  bedsOk: "Beds available", requestFor: "Request stock for this facility", kmStore: (k: number) => `${k} km from the district store`,
+  // location
+  step1: "State or union territory", step2: "District", stateOnly: "Pick a state or union territory.",
+  // explain
+  whyTitle: "Why", understood: "Understood", confidence: "Confidence", numbers: "Numbers used", about: "About",
+};
+const hi: typeof en = {
+  phcTitle: (n: string) => `${n}: आवश्यक दवाएँ`, updateRegister: "रजिस्टर अपडेट करें", requestStock: "स्टॉक माँगें",
+  tItems: "दर्ज दवाएँ", tItemsSub: "इस सुविधा के स्टॉक लेजर में", tCritical: "गंभीर", tCriticalSub: "एक हफ़्ते से कम स्टॉक",
+  tCovered: "दो हफ़्ते या अधिक", tCoveredSub: (n: number, all: number) => `${all} में से ${n} दवाओं में कम से कम 14 दिन`,
+  tBeds: "भरे बिस्तर", tDoctor: "चिकित्सा अधिकारी", doctorPresent: (d: number) => `तैनात, इस महीने ${d} दिन उपस्थित`, doctorNone: "तैनात नहीं",
+  colMedicine: "दवा", colCategory: "श्रेणी", colOnHand: "उपलब्ध", colDays: "बचे दिन", colStatus: "स्थिति", colAction: "कार्य",
+  stCritical: "गंभीर कमी", stWarn: "निगरानी", stOk: "पर्याप्त", stRare: "कम उपयोग", stData: "रिपोर्ट जाँचें", allCats: "सभी", findMed: "दवा खोजें", noMatch: "इस फ़िल्टर से कोई दवा नहीं मिली।",
+  requestRow: "माँगें", stockCard: "स्टॉक लेजर", stockCardSub: "इस सुविधा की हर दवा, सबसे ज़रूरी पहले",
+  cat: { outbreak: "प्रकोप", maternal: "मातृ", emergency: "आपातकाल", chronic: "दीर्घकालिक", child: "शिशु स्वास्थ्य", consumable: "उपभोग्य", family_planning: "परिवार नियोजन", vaccine: "टीके" },
+  delivTitle: (n: string) => `${n} की डिलीवरी`, delivSub: "इस सुविधा से आने-जाने वाला स्टॉक", activeTitle: "रास्ते में और प्रतीक्षा में", receivedTitle: "प्राप्त",
+  receivedEmpty: "अभी कुछ प्राप्त नहीं हुआ।", activeEmpty: "कुछ भी रास्ते में या स्वीकृति की प्रतीक्षा में नहीं है।",
+  modeMsg: "त्वरित संदेश", modePhoto: "रजिस्टर की फ़ोटो", preview: "लाइव पूर्वावलोकन", detected: (n: number) => `${n} दवाएँ पहचानी गईं`,
+  previewEmpty: "“ORS ke 40 packet bache hain” जैसी पंक्ति लिखें, दर्ज होने वाली जानकारी यहाँ दिखेगी।", savedBanner: (n: number) => `${n} प्रविष्टियाँ सहेजी गईं। ज़िला अब नया स्टॉक देखता है।`,
+  photoSoon: "रजिस्टर की फ़ोटो पढ़ने के लिए लाइव AI चाहिए, जो इस संस्करण में चालू नहीं है। अभी त्वरित संदेश का उपयोग करें।",
+  storeEyebrow: "ज़िला भंडार", indentsTitle: (d: string) => `इंडेंट कतार, ${d}`, indentsSub: "सुविधाओं की ज़रूरत और ज़िला स्वास्थ्य अधिकारी की स्वीकृति, सुविधा के अनुसार",
+  colCurrent: "सुविधा पर स्टॉक", colQty: "मात्रा", colSource: "स्रोत", prEmergency: "आपातकालीन", prHigh: "उच्च", prRoutine: "सामान्य",
+  items: (n: number) => `${n} दवाएँ`, dispatchAll: "सभी भेजे गए", deliverAll: "सभी पहुँचे", laneEmpty: "इस सूची में कुछ नहीं।",
+  groupsShown: (n: number, all: number) => `${all} में से ${n} सुविधाएँ`, showMoreFac: "और सुविधाएँ दिखाएँ",
+  stockTitle: "ज़िला भंडार स्टॉक बुक", stockSub: "ज़िले का अपना दवा लेजर, हर दवा अपने नवीनतम रिपोर्ट किए गए महीने पर",
+  balanced: (ok: number, n: number) => `${n} में से ${ok} महीने संतुलित (शुरुआती + प्राप्त − अनुपयोगी − वितरित = अंतिम)`,
+  mismatch: "संतुलित नहीं", csv: "CSV डाउनलोड करें",
+  dmEyebrow: "ज़िलाधिकारी कार्यालय", printMemo: "प्रिंट", escalateState: "राज्य को भेजें", escalateTitle: "राज्य अधिकारी को भेजें",
+  escalateHint: "बताएँ कि राज्य से क्या चाहिए। यह राज्य अधिकारी की स्क्रीन पर दिखेगा।", send: "भेजें", sentOk: "भेजा गया। राज्य अधिकारी इसे राज्य स्क्रीन पर देखते हैं।",
+  digest: "कार्यकारी सारांश", benchTitle: "राज्य के मध्य मान से तुलना", stateMedian: "राज्य मध्य मान", better: "बेहतर", worse: "कमज़ोर",
+  bScore: "सुदृढ़ता स्कोर", bDays: "औसत स्टॉक दिन", bRed: "लाल अलर्ट", bStaff: "स्टाफ़ कमी",
+  facTitle: (d: string) => `${d} की सुविधाएँ`, facSub: "ज़िले की हर सुविधा पर बिस्तर, डॉक्टर और स्टॉक", findFac: "सुविधा खोजें",
+  cFac: "सुविधा", cBeds: "बिस्तर", cOcc: "भराव", cDoc: "डॉक्टर", cWorst: "सबसे कम स्टॉक", cRed: "लाल अलर्ट", cTier: "स्थिति",
+  tierHigh: "गंभीर चिंता", tierWatch: "निगरानी", tierStable: "स्थिर", docYes: "उपस्थित", docNo: "अनुपस्थित",
+  backTo: (d: string) => `${d} पर वापस`, bedsCard: "बिस्तर", staffCard: "डॉक्टर और स्टाफ़", moIn: "चिकित्सा अधिकारी तैनात", moOut: "कोई चिकित्सा अधिकारी तैनात नहीं",
+  referral: (n: string, km: number, b: number) => `रेफ़रल: मरीज़ों को ${n} भेजें, ${km} किमी, ${b} बिस्तर खाली`, noReferral: "पास के किसी CHC या अस्पताल में बिस्तर खाली नहीं",
+  bedsOk: "बिस्तर उपलब्ध", requestFor: "इस सुविधा के लिए स्टॉक माँगें", kmStore: (k: number) => `ज़िला भंडार से ${k} किमी`,
+  step1: "राज्य या केंद्र शासित प्रदेश", step2: "ज़िला", stateOnly: "राज्य या केंद्र शासित प्रदेश चुनें।",
+  whyTitle: "क्यों", understood: "समझ गया", confidence: "विश्वास", numbers: "प्रयुक्त संख्याएँ", about: "विषय",
+};
+export const sB = { en, hi };

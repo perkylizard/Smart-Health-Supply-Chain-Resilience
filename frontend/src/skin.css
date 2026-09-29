@@ -165,3 +165,7 @@ html, body, #root { height: auto; min-height: 100%; }
 
 .hdr .loc .sep { margin: 0 6px; }
 .hdr .loc .loc-text { display: inline-flex; align-items: center; }
+
+@media (max-width: 599px) { .hdr-primary-text { display: none; } .hdr-primary { padding: 0 12px; } .hdr-brand span { font-size: 15px; } .hdr-actions { gap: 6px; } }
+/* buttons and links inside tables keep the text face; only figures are monospaced */
+.table td .btn, .dtable td .btn, .table td a, .dtable td a, td.num .btn { font-family: var(--font); font-variant-numeric: normal; }

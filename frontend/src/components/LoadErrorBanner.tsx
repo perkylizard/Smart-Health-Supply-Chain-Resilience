@@ -12,8 +12,13 @@ export default function LoadErrorBanner() {
   const [busy, setBusy] = useState(false);
   useEffect(() => {
     const count = () => setFailed(qc.getQueryCache().getAll().filter((q) => q.state.status === "error" && q.getObserversCount() > 0 && !String((q.state.error as Error | null)?.message ?? "").startsWith("404")).length);
-    count();
-    return qc.getQueryCache().subscribe(count);
+    // cache events fire while other components render; defer the state update to the next tick so React never sees
+    // this banner updating during someone else's render
+    let t: ReturnType<typeof setTimeout> | undefined;
+    const schedule = () => { if (t === undefined) t = setTimeout(() => { t = undefined; count(); }, 0); };
+    schedule();
+    const unsub = qc.getQueryCache().subscribe(schedule);
+    return () => { unsub(); if (t !== undefined) clearTimeout(t); };
   }, [qc]);
   if (!failed) return null;
   const retry = async () => {

@@ -18,7 +18,7 @@ function RequestStockButton() {
   if (!facilityId) return null;
   return (
     <Dialog.Root>
-      <Dialog.Trigger asChild><button className="hdr-primary"><span aria-hidden>+</span> {t.requestStock}</button></Dialog.Trigger>
+      <Dialog.Trigger asChild><button className="hdr-primary" aria-label={t.requestStock}><span aria-hidden>+</span><span className="hdr-primary-text"> {t.requestStock}</span></button></Dialog.Trigger>
       <Dialog.Portal><Dialog.Overlay className="dialog-overlay" /><Dialog.Content className="dialog" aria-describedby={undefined}>
         <Dialog.Title style={{ marginBottom: 8 }}>{t.requestStock}</Dialog.Title>
         {f.data ? <RequestForm facilityId={facilityId} options={[...f.data.stock].sort((a, b) => a.days_of_stock - b.days_of_stock).map((s) => ({ id: s.commodity_id, name: s.commodity_name }))} /> : <p className="skeleton" style={{ height: 120 }}>…</p>}
