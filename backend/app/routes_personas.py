@@ -227,12 +227,17 @@ def warehouse_stock(unit_id: str, district: str, request: Request, basis: str = 
     own_fy = led.merge(last[["item_code", "fy"]], on=["item_code", "fy"])  # each item's history within its own latest FY
     hist = own_fy.groupby("item_code")["distributed"].apply(lambda x: [None if pd.isna(v) else float(v) for v in x]).rename("distributed_by_month").reset_index()
     out = last.merge(hist, on="item_code", how="left")
+    # full month-by-month ledger per item for the detail sheet; a negative closing is a reporting error in the source, flagged not hidden
+    months = own_fy.assign(error=own_fy["closing"] < 0)[["item_code", "fy", "month", "opening", "received", "unusable", "distributed", "closing", "error"]]
+    history = {k: _clean(g.drop(columns=["item_code"])) for k, g in months.groupby("item_code")}
+    out["history"] = out["item_code"].map(history)
+    out["reporting_error"] = out["closing"] < 0
     provisional = bool(led["provisional"].iloc[-1]) if "provisional" in led.columns else False
     prov = ("Simulated continuation of this district's real HMIS series to March 2026 (scripts/synth_hmis_extend.py); not actual stock" if basis == "simulated"
             else "HMIS sections M17/M19/M20, real district monthly stock ledger (MoHFW, GODL), not simulated; each commodity at its latest reported month"
                  + (" ; FY 2020-21 figures are labelled provisional by MoHFW" if provisional else ""))
     return {"district": district, "state": st, "fy": latest_fy, "month": latest_month, "provisional": provisional, "basis": basis,
-            "rows": _clean(out[["item_code", "item_name", "fy", "month", "stale", "opening", "received", "unusable", "distributed", "closing", "months_of_stock", "distributed_by_month"]].sort_values("months_of_stock")),
+            "rows": _clean(out.assign(months_of_stock=out["months_of_stock"].where(~out["reporting_error"]))[["item_code", "item_name", "fy", "month", "stale", "opening", "received", "unusable", "distributed", "closing", "months_of_stock", "reporting_error", "history"]].sort_values(["reporting_error", "months_of_stock"], na_position="last")),
             "provenance": prov}
 
 

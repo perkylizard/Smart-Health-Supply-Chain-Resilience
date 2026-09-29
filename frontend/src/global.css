@@ -322,3 +322,9 @@ textarea.input { min-height: 120px; padding: var(--s3); font-family: ui-monospac
   .phc-layout { grid-template-columns: minmax(0, 1.4fr) minmax(360px, 1fr); }
 }
 @media (min-width: 2400px) { :root { --content: 2000px; } }
+
+/* side sheet (Material 2 modal side sheet): slides in from the right, full width on phones */
+.sheet { position: fixed; top: 0; right: 0; bottom: 0; width: min(560px, 100vw); background: var(--paper); box-shadow: var(--e24); z-index: 21; overflow: auto; padding: var(--s5); animation: sheet-in .22s ease-out; }
+.sheet-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--s3); margin-bottom: var(--s4); }
+.sheet-table { box-shadow: none; }
+@keyframes sheet-in { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }

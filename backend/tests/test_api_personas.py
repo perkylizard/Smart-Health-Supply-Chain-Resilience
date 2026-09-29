@@ -91,3 +91,11 @@ def test_indents_are_counted_in_whole_cases(client):
 def test_transfers_carry_readable_medicine_names(client):
     tr = client.get("/transfers/bihar/Araria").json()["transfers"]
     assert tr and all(x["commodity_name"] and "_" not in x["commodity_name"] for x in tr)
+
+
+def test_store_stock_has_monthly_history_and_flags_negative_closing(client):
+    rows = client.get("/districts/bihar/Araria/warehouse").json()["rows"]
+    assert all(isinstance(r["history"], list) and r["history"] for r in rows)
+    for r in rows:
+        if r["closing"] is not None and r["closing"] < 0:
+            assert r["reporting_error"] is True and r["months_of_stock"] is None

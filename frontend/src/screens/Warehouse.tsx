@@ -1,6 +1,7 @@
+import * as Dialog from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "../api";
+import { api, type WarehouseRow } from "../api";
 import { useApp } from "../App";
 import Badge from "../components/Badge";
 import Scale from "../components/Scale";
@@ -50,10 +51,10 @@ export default function Warehouse() {
 export function WarehouseStock() {
   const { unit, district, t, basis, setBasis } = useApp();
   const q = useQuery({ queryKey: ["warehouse", unit, district, basis], queryFn: () => api.warehouse(unit, district, basis) });
+  const [open, setOpen] = useState<WarehouseRow | null>(null);
   if (q.isError) return <div className="quiet">No public HMIS ledger exists for this district.</div>;
   if (!q.data) return <p className="skeleton" style={{ height: 120 }}>Loading the store's ledger</p>;
-  const monthName_ = (m: number) => ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][m];
-  const monthName = monthName_(q.data.month);
+  const monthName = MONTHS[q.data.month];
   return (
     <div>
       <h1 style={{ marginBottom: 4 }}>{t.storeStock} <span className="faint" style={{ fontSize: "var(--t-sm)", fontWeight: 400 }}>{district} · {monthName} {q.data.fy}{q.data.provisional && <span className="faint" title="MoHFW labels FY 2020-21 figures provisional"> · provisional</span>}</span></h1>
@@ -63,15 +64,39 @@ export function WarehouseStock() {
       </div>
       <p className="muted" style={{ marginTop: 0 }}>{q.data.provenance} <Badge kind={basis === "simulated" ? "simulated" : "real"} /></p>
       <div style={{ overflowX: "auto" }}>
-        <table className="table"><thead><tr><th>commodity</th><th className="num">opening</th><th className="num">received</th><th className="num">unusable</th><th className="num">distributed</th><th className="num">closing</th><th className="num">{t.monthsOfStock}</th><th>distributed by month</th></tr></thead>
-          <tbody>{q.data.rows.map((r) => <tr key={r.item_code}><td>{r.item_name}{r.stale && <span className="faint" style={{ fontSize: "var(--t-xs)" }}> · as of {monthName_(r.month)} {r.fy}</span>}</td><td className="num">{fmt(r.opening)}</td><td className="num">{fmt(r.received)}</td><td className="num">{fmt(r.unusable)}</td><td className="num">{fmt(r.distributed)}</td><td className="num">{fmt(r.closing)}</td><td className="num" style={{ color: r.months_of_stock != null && r.months_of_stock < 1 ? "var(--red)" : undefined, fontWeight: 600 }}>{r.months_of_stock == null ? "…" : r.months_of_stock.toFixed(1)}</td><td><Bars v={r.distributed_by_month} /></td></tr>)}</tbody></table>
+        <table className="table"><thead><tr><th>{t.commodityHead}</th><th className="num">{t.openingHead}</th><th className="num">{t.receivedHead}</th><th className="num">{t.unusableHead}</th><th className="num">{t.distributedHead}</th><th className="num">{t.closingHead}</th><th className="num">{t.monthsOfStock}</th><th><span className="sr-only">{t.monthlyDetail}</span></th></tr></thead>
+          <tbody>{q.data.rows.map((r) => <tr key={r.item_code}>
+            <td>{r.item_name}{r.stale && <span className="faint" style={{ fontSize: "var(--t-xs)" }}> · {t.asOf} {MONTHS[r.month]} {r.fy}</span>}</td>
+            <td className="num">{fmt(r.opening)}</td><td className="num">{fmt(r.received)}</td><td className="num">{fmt(r.unusable)}</td><td className="num">{fmt(r.distributed)}</td>
+            <td className="num" style={r.reporting_error ? { color: "var(--blue)" } : undefined}>{fmt(r.closing)}</td>
+            <td className="num">{r.reporting_error ? <span className="chip blue" title={t.reportErrorHint}>{t.reportError}</span> : <span style={{ color: r.months_of_stock != null && r.months_of_stock < 1 ? "var(--red)" : undefined, fontWeight: 500 }}>{r.months_of_stock == null ? "…" : r.months_of_stock.toFixed(1)}</span>}</td>
+            <td className="num"><button className="btn quiet" onClick={() => setOpen(r)} aria-label={`${t.viewMonths}: ${r.item_name}`}>{t.viewMonths}</button></td>
+          </tr>)}</tbody></table>
       </div>
+      <Dialog.Root open={!!open} onOpenChange={(o) => { if (!o) setOpen(null); }}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="dialog-overlay" />
+          <Dialog.Content className="sheet" aria-describedby={undefined}>
+            {open && <>
+              <div className="sheet-head">
+                <div><Dialog.Title>{open.item_name}</Dialog.Title><p className="faint" style={{ margin: "4px 0 0" }}>{district} · {t.monthlyDetail} · FY {open.fy}</p></div>
+                <Dialog.Close asChild><button className="btn quiet" aria-label={t.close}>✕</button></Dialog.Close>
+              </div>
+              <table className="table sheet-table"><thead><tr><th>{t.monthHead}</th><th className="num">{t.openingHead}</th><th className="num">{t.receivedHead}</th><th className="num">{t.distributedHead}</th><th className="num">{t.closingHead}</th></tr></thead>
+                <tbody>{(open.history ?? []).map((m) => <tr key={`${m.fy}-${m.month}`}>
+                  <td>{MONTHS[m.month]} {m.month >= 4 ? m.fy.slice(0, 4) : `20${m.fy.slice(5, 7)}`}</td>
+                  <td className="num">{fmt(m.opening)}</td><td className="num">{fmt(m.received)}</td><td className="num">{fmt(m.distributed)}</td>
+                  <td className="num" style={m.error ? { color: "var(--blue)" } : undefined}>{fmt(m.closing)}{m.error && <span className="sr-only"> {t.reportError}</span>}</td>
+                </tr>)}</tbody></table>
+              {(open.history ?? []).some((m) => m.error) && <p className="faint" style={{ fontSize: "var(--t-xs)" }}><span className="chip blue" style={{ minHeight: 22 }}>{t.reportError}</span> {t.reportErrorHint}</p>}
+              <p className="faint" style={{ fontSize: "var(--t-xs)" }}>{q.data.provenance}</p>
+            </>}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </div>
   );
 }
 
+const MONTHS = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 function fmt(v: number | null) { return v == null ? "…" : Math.round(v).toLocaleString("en-IN"); }
-function Bars({ v }: { v: (number | null)[] }) {
-  const vals = v.map((x) => x ?? 0); const max = Math.max(...vals, 1);
-  return <svg width={vals.length * 7} height="20" aria-hidden>{vals.map((x, i) => <rect key={i} x={i * 7} y={20 - (x / max) * 18} width="5" height={(x / max) * 18} fill="var(--teal)" />)}</svg>;
-}
