@@ -61,5 +61,12 @@ export default function MapView({ dots, onSelect, center, line }: { dots: Facili
   }, []);
 
   useEffect(() => { draw(); }, [dots, line]); // eslint-disable-line react-hooks/exhaustive-deps
+  // keep the canvas matched to its card: layouts settle after the map loads (fonts, grids, sheets opening)
+  useEffect(() => {
+    if (!ref.current || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(() => { map.current?.resize(); });
+    ro.observe(ref.current);
+    return () => ro.disconnect();
+  }, []);
   return <div className="map" ref={ref} />;
 }

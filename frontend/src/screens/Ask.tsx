@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { api, type AskResult } from "../api";
 import { useApp } from "../App";
 import Badge from "../components/Badge";
+import { sA } from "../stringsA";
 
 export default function Ask() {
   const { unit, district, lang, t } = useApp();
@@ -17,30 +18,36 @@ export default function Ask() {
   const lastAuto = useRef<string | null>(null);
   useEffect(() => { const qq = sp.get("q"); if (qq && lastAuto.current !== qq) { lastAuto.current = qq; setQ(qq); run(qq); } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sp.get("q")]);
+  const a = sA[lang];
+  const [picked, setPicked] = useState<string | null>(null);
   return (
-    <div>
-      <h1 style={{ marginBottom: 12 }}>{t.ask}</h1>
-      <section className="card ask-card">
-        <div className="ask-tabs" role="tablist" aria-label={t.ask}>
-          <button type="button" role="tab" aria-selected={mode === "guided"} className={mode === "guided" ? "on" : ""} onClick={() => setMode("guided")}>{t.guided}<span>{t.guidedHint}</span></button>
-          <button type="button" role="tab" aria-selected={mode === "advanced"} className={mode === "advanced" ? "on" : ""} onClick={() => setMode("advanced")}>{t.advanced}<span>{t.advancedHint}</span></button>
+    <div className="pg ask">
+      <section className="card pg-hero">
+        <p className="eyebrow"><span className="eyebrow-accent">{a.askEyebrow}</span><span aria-hidden> · </span>{a.askEyebrowSub}</p>
+        <h1>{a.askTitle}</h1>
+        <p className="faint pg-sub">{a.askSub}</p>
+        <div className="ask-tabs2 seg" role="tablist" aria-label={t.ask}>
+          <button type="button" role="tab" aria-selected={mode === "guided"} className={mode === "guided" ? "on" : ""} onClick={() => setMode("guided")} title={t.guidedHint}>{t.guided}</button>
+          <button type="button" role="tab" aria-selected={mode === "advanced"} className={mode === "advanced" ? "on" : ""} onClick={() => setMode("advanced")} title={t.advancedHint}>{t.advanced}</button>
+          <span className="faint ask-mode-hint">{mode === "guided" ? t.guidedHint : t.advancedHint}</span>
         </div>
-        <form onSubmit={(e) => { e.preventDefault(); run(); }} className="ask-row">
+        <form onSubmit={(e) => { e.preventDefault(); setPicked(null); run(); }} className="ask-box">
+          <span className="ask-glass" aria-hidden>⌕</span>
           <input className="input" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.askPlaceholder} aria-label={t.ask} />
-          <button className="btn primary" type="submit" disabled={ask.isPending || !q.trim()}>{ask.isPending ? t.asking : t.askBtn}</button>
+          <button className="btn dark" type="submit" disabled={ask.isPending || !q.trim()}>{ask.isPending ? t.asking : t.askBtn}</button>
         </form>
         {mode === "advanced" && (
-          <div style={{ marginTop: 12 }}>
+          <div className="ask-sql-edit">
             <textarea className="input" value={sql} onChange={(e) => setSql(e.target.value)} aria-label="SQL" placeholder="SELECT ... (one read-only statement; tables: facilities, ledger, v_days_of_stock ...)" />
             <button className="btn" style={{ marginTop: 8 }} onClick={() => run(q, sql)} disabled={!sql.trim() || ask.isPending}>{t.run} SQL</button>
           </div>
         )}
-        <div className="ask-examples"><span className="faint">{t.tryExample}</span>
-          {t.examples.map((ex) => <button key={ex} type="button" className="chip" onClick={() => { setQ(ex); run(ex); }}>{ex}</button>)}
+        <div className="ask-try"><span className="faint">{t.tryExample}</span>
+          {t.examples.map((ex) => <button key={ex} type="button" className="chip" aria-pressed={picked === ex} onClick={() => { setPicked(ex); setQ(ex); run(ex); }}>{ex}</button>)}
         </div>
       </section>
       {!ask.isPending && history.length === 0 && (
-        <section className="ask-empty">
+        <section className="card ask-empty2">
           <h2>{t.askEmptyTitle}</h2>
           <ul>{t.askEmptyPoints.map((x) => <li key={x}>{x}</li>)}</ul>
         </section>
@@ -52,29 +59,46 @@ export default function Ask() {
 }
 
 function Result({ r }: { r: AskResult }) {
-  const { t } = useApp();
+  const { t, lang } = useApp();
+  const a = sA[lang];
   const [showSql, setShowSql] = useState(false);
+  const [copied, setCopied] = useState(false);
   const cols = r.rows?.length ? Object.keys(r.rows[0]) : [];
-  const csv = () => { const lines = [cols.join(","), ...r.rows.map((row) => cols.map((c) => JSON.stringify(row[c] ?? "")).join(","))]; const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/csv" })); a.download = "answer.csv"; a.click(); };
+  const csv = () => { const lines = [cols.join(","), ...r.rows.map((row) => cols.map((c) => JSON.stringify(row[c] ?? "")).join(","))]; const el = document.createElement("a"); el.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/csv" })); el.download = "answer.csv"; el.click(); };
+  const sqlText = r.sql_checked ?? r.sql ?? "";
+  const copy = () => { navigator.clipboard?.writeText(sqlText).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500); }).catch(() => {}); };
+  const n = r.row_count ?? r.rows?.length ?? 0;
   return (
-    <section className="section card">
-      <p className="faint" style={{ fontSize: "var(--t-xs)" }}>{r.question}{r.shape ? ` · ${r.shape}` : ""}{r.status !== "ok" ? ` · ${r.status}` : ""}</p>
-      <p style={{ fontSize: "var(--t-md)", fontWeight: 500 }}>{r.answer || r.error || "No answer."}</p>
-      {r.chart && r.chart.type !== "table" && r.rows?.length > 0 && <Chart rows={r.rows} x={r.chart.x!} y={r.chart.y!} kind={r.chart.type} />}
-      {r.rows?.length > 0 && (
-        <div style={{ overflowX: "auto", marginTop: 8 }}>
-          <table className="table"><thead><tr>{cols.map((c) => <th key={c} className={typeof r.rows[0][c] === "number" ? "num" : ""}>{c}</th>)}</tr></thead>
-            <tbody>{r.rows.slice(0, 25).map((row, i) => <tr key={i}>{cols.map((c) => <td key={c} className={typeof row[c] === "number" ? "num" : ""}>{fmt(row[c])}</td>)}</tr>)}</tbody></table>
+    <div className="pg-grid ask-result">
+      <section className="card">
+        <div className="card-head">
+          <div><h2>{a.answerTitle}</h2><p className="faint">{r.question}{r.shape ? ` · ${r.shape}` : ""}{r.status !== "ok" ? ` · ${r.status}` : ""}</p></div>
+          <Badge kind="ai" />
         </div>
-      )}
-      <div style={{ display: "flex", gap: 8, marginTop: 12, alignItems: "center", flexWrap: "wrap" }}>
-        {r.rows?.length > 0 && <span className="faint" style={{ fontSize: "var(--t-xs)" }}>{r.row_count ?? r.rows.length} {t.rows}</span>}
-        {r.rows?.length > 0 && <button className="btn quiet" onClick={csv}>{t.exportCsv}</button>}
-        {r.sql && <button className="btn quiet" onClick={() => setShowSql((s) => !s)}>{t.showSql}</button>}
-        <Badge kind="ai" /> {r.check && !r.check.ok && <span className="chip red">{r.check.reason}</span>}
-      </div>
-      {showSql && r.sql && <pre className="pre" style={{ marginTop: 8 }}>{r.sql_checked ?? r.sql}</pre>}
-    </section>
+        <div className="ask-answer">{r.answer || r.error || "No answer."}</div>
+        {r.check && !r.check.ok && <p><span className="chip red">{r.check.reason}</span></p>}
+        {r.chart && r.chart.type !== "table" && r.rows?.length > 0 && <><h3 className="ask-h3">{a.chartTitle}</h3><Chart rows={r.rows} x={r.chart.x!} y={r.chart.y!} kind={r.chart.type} /></>}
+        {sqlText && <button className="lnk-btn ask-sqltoggle" onClick={() => setShowSql((v) => !v)}>{showSql ? a.hideSql : a.inspectSql}</button>}
+        {showSql && sqlText && (
+          <div className="ask-sql">
+            <div className="ask-sql-head"><span>{a.verifiedQuery}</span><button className="lnk-btn" onClick={copy}>{copied ? a.copied : a.copy}</button></div>
+            <pre>{sqlText}</pre>
+          </div>
+        )}
+      </section>
+      <section className="card">
+        <div className="card-head">
+          <div><h2>{a.recordsTitle(n)}</h2><p className="faint">{n} {t.rows}</p></div>
+          {r.rows?.length > 0 && <button className="btn" onClick={csv}>{t.exportCsv}</button>}
+        </div>
+        {r.rows?.length > 0 ? (
+          <div className="tbl-wrap">
+            <table className="table"><thead><tr>{cols.map((c) => <th key={c} className={typeof r.rows[0][c] === "number" ? "num" : ""}>{c}</th>)}</tr></thead>
+              <tbody>{r.rows.slice(0, 25).map((row, i) => <tr key={i}>{cols.map((c) => <td key={c} className={typeof row[c] === "number" ? "num" : ""}>{fmt(row[c])}</td>)}</tr>)}</tbody></table>
+          </div>
+        ) : <p className="muted">{a.noRecords}</p>}
+      </section>
+    </div>
   );
 }
 
@@ -87,13 +111,11 @@ function Chart({ rows, x, y, kind }: { rows: Record<string, unknown>[], x: strin
     const pts = data.map((d, i) => `${pad + (i / Math.max(1, data.length - 1)) * (w - 2 * pad)},${h - pad - (d.y / max) * (h - 2 * pad)}`).join(" ");
     return <svg viewBox={`0 0 ${w} ${h}`} style={{ width: "100%", maxWidth: w, marginTop: 8 }} role="img" aria-label={`${y} by ${x}`}><polyline fill="none" stroke="var(--teal)" strokeWidth="2.5" points={pts} /></svg>;
   }
-  const bw = (w - 2 * pad) / data.length;
+  // comparisons: horizontal labelled bars with the value in figures, top 12
+  const top = data.slice(0, 12);
   return (
-    <svg viewBox={`0 0 ${w} ${h + 40}`} style={{ width: "100%", maxWidth: w, marginTop: 8 }} role="img" aria-label={`${y} by ${x}`}>
-      {data.map((d, i) => { const bh = (d.y / max) * (h - 2 * pad); return <g key={i}>
-        <rect x={pad + i * bw + 2} y={h - pad - bh} width={Math.max(2, bw - 4)} height={bh} fill="var(--teal)" rx="2" />
-        <text x={pad + i * bw + bw / 2} y={h + 12} fontSize="9" textAnchor="end" transform={`rotate(-35 ${pad + i * bw + bw / 2} ${h + 12})`} fill="var(--ink-3)">{d.x.slice(0, 18)}</text>
-      </g>; })}
-    </svg>
+    <ul className="hbars" role="img" aria-label={`${y} by ${x}`}>
+      {top.map((d, i) => <li key={i}><span className="hb-l" title={d.x}>{d.x}</span><span className="hb-t"><i style={{ width: `${Math.max(2, (d.y / max) * 100)}%` }} /></span><span className="hb-v">{fmt(d.y)}</span></li>)}
+    </ul>
   );
 }

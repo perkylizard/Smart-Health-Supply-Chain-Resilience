@@ -80,6 +80,8 @@ export default function Briefing() {
 
       <div className="today-grid">
         <div className="today-main">
+          {/* narrow screens: the proactive warnings come right after the briefing, not below every other card */}
+          <div className="narrow-only"><ResilienceAlerts unit={unit} district={district} /></div>
           {/* rebalancing proposals: the decision, first */}
           <section className="card proposals">
             <div className="card-head">
@@ -122,7 +124,7 @@ export default function Briefing() {
           </section>
         </div>
         <aside className="today-side">
-          <ResilienceAlerts unit={unit} district={district} />
+          <div className="wide-only"><ResilienceAlerts unit={unit} district={district} /></div>
           <RequestsInbox unit={unit} district={district} />
           <div style={{ marginBottom: "var(--s6)" }}><CarePanel unit={unit} district={district} /></div>
           <section className="card">
