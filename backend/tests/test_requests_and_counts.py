@@ -69,3 +69,23 @@ def test_resilience_alerts_endpoint(client):
     first = r["alerts"][0]
     assert first["tier"] == "critical" and first["runs_out_in_days"] <= first["resupply_in_days"]
     assert any(a["fix_from"] for a in r["alerts"])
+
+
+def test_state_sees_requests_by_district_and_count_history(client):
+    facs = client.get("/districts/bihar/Araria/facilities").json()["facilities"]
+    f = facs[2]["facility_id"]
+    rid = client.post("/requests", json={"facility_id": f, "commodity_id": "ors", "quantity": 12}).json()["request_id"]
+    u = client.get("/units/bihar/requests").json()
+    assert any(r["request_id"] == rid for r in u["requests"])
+    ara = next(d for d in u["by_district"] if d["district"] == "Araria")
+    assert ara["requested"] >= 1 and ara["total"] >= ara["requested"]
+    client.post("/entries", json={"facility_id": f, "commodity_id": "ors", "quantity": 77, "channel": "chat"})
+    client.post("/entries", json={"facility_id": f, "commodity_id": "zinc_20mg", "quantity": 5, "channel": "chat"})
+    d = client.get("/districts/bihar/Araria/counts").json()
+    assert d["total"] >= 2 and d["counts"][0]["commodity_id"] == "zinc_20mg" and d["counts"][0]["facility_name"]
+    s = client.get("/units/bihar/counts").json()
+    assert any(x["district"] == "Araria" and x["counts"] >= 2 for x in s["by_district"])
+    assert len(client.get(f"/facilities/{f}/counts").json()["counts"]) >= 2
+    # escalations are entries too, but never show up as counts
+    client.post("/escalations", json={"unit_id": "bihar", "district": "Araria", "reason": "x"})
+    assert all("commodity_id" in c for c in client.get("/units/bihar/counts").json()["counts"])

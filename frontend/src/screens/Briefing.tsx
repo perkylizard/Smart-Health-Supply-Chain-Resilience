@@ -9,7 +9,7 @@ import MapView from "../components/MapView";
 import Scale from "../components/Scale";
 import Sparkline from "../components/Sparkline";
 import CarePanel from "../components/CarePanel";
-import { RequestsInbox } from "../components/Requests";
+import { CountHistory, RequestsInbox } from "../components/Requests";
 import ResilienceAlerts from "../components/ResilienceAlerts";
 
 export default function Briefing() {
@@ -126,6 +126,7 @@ export default function Briefing() {
         <aside className="today-side">
           <div className="wide-only"><ResilienceAlerts unit={unit} district={district} /></div>
           <RequestsInbox unit={unit} district={district} />
+          <CountHistory unit={unit} district={district} />
           <div style={{ marginBottom: "var(--s6)" }}><CarePanel unit={unit} district={district} /></div>
           <section className="card">
             <h2>{t.trend}</h2>

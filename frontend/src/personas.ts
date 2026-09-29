@@ -36,3 +36,6 @@ export function homePath(p: PersonaId, unit: string, district: string, facilityI
     case "warehouse": return `/warehouse/${unit}/${d}`;
   }
 }
+
+/** Menus list roles by hierarchy, top to bottom: state, district administration, district health, district store, facility. */
+export const ROLE_ORDER: PersonaId[] = ["state", "dm", "dho", "warehouse", "phc"];

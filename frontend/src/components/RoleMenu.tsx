@@ -1,6 +1,6 @@
 import * as Menu from "@radix-ui/react-dropdown-menu";
 import { useApp } from "../App";
-import { PERSONAS, type PersonaId } from "../personas";
+import { PERSONAS, ROLE_ORDER, type PersonaId } from "../personas";
 
 const initials: Record<PersonaId, string> = { dho: "DH", state: "ST", phc: "PH", dm: "DM", warehouse: "WH" };
 
@@ -16,7 +16,7 @@ export default function RoleMenu() {
         <Menu.Content className="menu" align="end" sideOffset={8}>
           <Menu.Label className="menu-label">{t.persona}</Menu.Label>
           <Menu.RadioGroup value={persona} onValueChange={(v) => setPersona(v as PersonaId)}>
-            {(Object.keys(PERSONAS) as PersonaId[]).map((id) => (
+            {ROLE_ORDER.map((id) => (
               <Menu.RadioItem key={id} value={id} className="menu-item">
                 <span className="avatar small" aria-hidden>{initials[id]}</span>
                 <span><span className="menu-title">{t.personas[id]}</span><span className="menu-hint">{t.personaHints[id]}</span></span>

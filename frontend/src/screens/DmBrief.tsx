@@ -1,3 +1,4 @@
+import { CountHistory, DistrictRequestsView } from "../components/Requests";
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -97,6 +98,8 @@ export default function DmBrief() {
             <h2>{t.dataQuality}</h2><ul><li>{f.data_issues} facility-commodity rows look like reporting errors and were excluded from alerts.</li></ul>
             <p style={{ margin: 0 }}><Link to={`/dm/${unit}/${encodeURIComponent(district)}/compare`}>{t.neighbours} →</Link></p>
           </section>
+          <DistrictRequestsView unit={unit} district={district} />
+          <CountHistory unit={unit} district={district} />
         </aside>
       </div>
       <p className="faint" style={{ fontSize: "var(--t-xs)" }}>{q.data.provenance}</p>

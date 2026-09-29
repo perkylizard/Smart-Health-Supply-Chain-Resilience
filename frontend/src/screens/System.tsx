@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
 import { useApp } from "../App";
-import { PERSONAS, type PersonaId } from "../personas";
+import { PERSONAS, ROLE_ORDER, type PersonaId } from "../personas";
 import ScenarioDial from "../components/ScenarioDial";
 import Federated from "../components/Federated";
 import Badge from "../components/Badge";
@@ -48,7 +48,7 @@ export default function System() {
           <div className="card">
             <Sec n={1} title={a.secRole}>
               <div className="opt-grid" role="radiogroup" aria-label={a.secRole}>
-                {(Object.keys(PERSONAS) as PersonaId[]).map((id) => (
+                {ROLE_ORDER.map((id) => (
                   <button key={id} role="radio" aria-checked={persona === id} className={`opt${persona === id ? " on" : ""}`} onClick={() => setPersona(id)}>
                     <span className="opt-t">{t.personas[id]}{persona === id && <span className="opt-on">{a.active}</span>}</span>
                     <span className="opt-d">{t.personaHints[id]}</span>

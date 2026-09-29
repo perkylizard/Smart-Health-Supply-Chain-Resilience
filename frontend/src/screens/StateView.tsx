@@ -8,6 +8,7 @@ import Explain from "../components/Explain";
 import MapView from "../components/MapView";
 import Scale from "../components/Scale";
 import CarePanel from "../components/CarePanel";
+import { CountHistory, StateRequests } from "../components/Requests";
 import { s2 } from "../strings2";
 import { sA } from "../stringsA";
 
@@ -106,6 +107,8 @@ export default function StateView() {
             <div className="card-head"><div><h2>{t.leagueTitle}</h2></div><Link to={`/state/${unit}/districts`}>{a.allDistricts} →</Link></div>
             {d.isLoading ? <p className="skeleton" style={{ height: 200 }}>…</p> : <LeagueTable rows={[...rows].sort((x, y) => (y.score ?? 0) - (x.score ?? 0)).slice(0, 12)} />}
           </section>
+          <StateRequests unit={unit} />
+          <CountHistory unit={unit} />
           <div style={{ marginBottom: "var(--s6)" }}><CarePanel unit={unit} /></div>
         </aside>
       </div>

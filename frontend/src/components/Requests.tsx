@@ -1,7 +1,7 @@
 import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { api, type StockRequest } from "../api";
+import { api, type StockCount, type StockRequest } from "../api";
 import { useApp } from "../App";
 
 const S = {
@@ -79,25 +79,134 @@ function RequestCard({ r, actions }: { r: StockRequest; actions?: React.ReactNod
 
 /** District Health Officer side: open requests from the district's facilities, approve or decline with a reason. */
 export function RequestsInbox({ unit, district }: { unit: string; district: string }) {
-  const { lang } = useApp(); const s = S[lang];
+  const { lang } = useApp(); const s = S[lang]; const v = V[lang];
   const qc = useQueryClient();
   const q = useQuery({ queryKey: ["districtRequests", unit, district], queryFn: () => api.districtRequests(unit, district, "requested"), refetchInterval: 15_000 });
   const [asking, setAsking] = useState<string | null>(null);
-  const m = useMutation({ mutationFn: ({ id, st, reason }: { id: string; st: "approved" | "declined"; reason?: string }) => api.moveRequest(id, st, reason),
-    onSuccess: () => { setAsking(null); qc.invalidateQueries({ queryKey: ["districtRequests"] }); qc.invalidateQueries({ queryKey: ["indents"] }); } });
-  const rows = q.data?.requests ?? [];
+  const [groupsShown, setGroupsShown] = useState(4);
+  const [find, setFind] = useState("");
+  const done = () => { setAsking(null); qc.invalidateQueries({ queryKey: ["districtRequests"] }); qc.invalidateQueries({ queryKey: ["indents"] }); qc.invalidateQueries({ queryKey: ["unitRequests"] }); };
+  const m = useMutation({ mutationFn: ({ id, st, reason }: { id: string; st: "approved" | "declined"; reason?: string }) => api.moveRequest(id, st, reason), onSuccess: done });
+  const bulk = useMutation({ mutationFn: async (ids: string[]) => { for (const id of ids) await api.moveRequest(id, "approved"); }, onSettled: done });
+  const rows = (q.data?.requests ?? []).filter((r) => !find || `${r.facility_name} ${r.commodity_name}`.toLowerCase().includes(find.toLowerCase()));
+  // many requests: one group per facility (oldest waiting first), each item decided on its own or all at once
+  const groups = Object.values(rows.reduce((g, r) => { (g[r.facility_id] ??= []).push(r); return g; }, {} as Record<string, StockRequest[]>))
+    .map((items) => items.sort((a, b) => a.received - b.received)).sort((a, b) => a[0].received - b[0].received);
+  const total = q.data?.requests.length ?? 0;
   return (
     <div className="card req-inbox">
-      <h2 style={{ fontSize: "var(--t-lg)" }}>{s.inbox} {rows.length > 0 && <span className="chip amber" style={{ marginLeft: 8, minHeight: 24 }}>{rows.length}</span>}</h2>
-      <p className="faint" style={{ margin: "4px 0 12px", fontSize: "var(--t-xs)" }}>{s.inboxHint}</p>
-      {q.data && rows.length === 0 && <p className="muted" style={{ margin: 0 }}>{s.inboxEmpty}</p>}
-      {rows.slice(0, 6).map((r) => <RequestCard key={r.request_id} r={r} actions={asking === r.request_id ? <>
-          <span className="faint" style={{ fontSize: "var(--t-xs)" }}>{s.declineWhy}</span>
-          {s.declineReasons.map((why) => <button key={why} className="btn" onClick={() => m.mutate({ id: r.request_id, st: "declined", reason: why })}>{why}</button>)}
-        </> : <>
-          <button className="btn primary" disabled={m.isPending} onClick={() => m.mutate({ id: r.request_id, st: "approved" })}>{s.approve}</button>
-          <button className="btn" onClick={() => setAsking(r.request_id)}>{s.decline}</button>
-        </>} />)}
+      <h2 style={{ fontSize: "var(--t-lg)" }}>{s.inbox} {total > 0 && <span className="chip amber" style={{ marginLeft: 8, minHeight: 24 }}>{total}</span>}</h2>
+      <p className="faint" style={{ margin: "4px 0 12px", fontSize: "var(--t-xs)" }}>{s.inboxHint}{total > 0 ? ` ${v.fromN(groups.length)}` : ""}</p>
+      {total > 3 && <input className="input" style={{ minHeight: 36, marginBottom: 12 }} placeholder={v.find} value={find} onChange={(e) => setFind(e.target.value)} aria-label={v.find} />}
+      {q.data && total === 0 && <p className="muted" style={{ margin: 0 }}>{s.inboxEmpty}</p>}
+      {groups.slice(0, groupsShown).map((items) => (
+        <div key={items[0].facility_id} className="req-group">
+          <div className="req-group-head">
+            <div><b>{items[0].facility_name}</b> <span className="faint">· {items[0].type} · {v.waitingFor(ago(items[0].received, lang))}</span></div>
+            {items.length > 1 && <button className="btn soft" disabled={bulk.isPending} onClick={() => bulk.mutate(items.map((r) => r.request_id))}>{v.approveAll(items.length)}</button>}
+          </div>
+          {items.map((r) => (
+            <div key={r.request_id} className="req-item">
+              <div className="req-item-main"><b>{r.commodity_name}</b><span className="req-qty">{r.quantity.toLocaleString("en-IN")} {s.units}</span>{r.note && <span className="faint req-note">“{r.note}”</span>}</div>
+              <div className="req-item-act">{asking === r.request_id ? <>
+                {s.declineReasons.map((why) => <button key={why} className="btn" onClick={() => m.mutate({ id: r.request_id, st: "declined", reason: why })}>{why}</button>)}
+                <button className="btn quiet" onClick={() => setAsking(null)}>{v.cancel}</button>
+              </> : <>
+                <button className="btn primary" disabled={m.isPending || bulk.isPending} onClick={() => m.mutate({ id: r.request_id, st: "approved" })}>{s.approve}</button>
+                <button className="btn" onClick={() => setAsking(r.request_id)}>{s.decline}</button>
+              </>}</div>
+            </div>
+          ))}
+        </div>
+      ))}
+      {groups.length > groupsShown && <button className="btn quiet" onClick={() => setGroupsShown((n) => n + 4)}>{v.moreFac(groups.length - groupsShown)}</button>}
+    </div>
+  );
+}
+
+const V = {
+  en: { fromN: (n: number) => `From ${n} ${n === 1 ? "facility" : "facilities"}, oldest first.`, find: "Find a facility or medicine", waitingFor: (a: string) => `waiting ${a}`, approveAll: (n: number) => `Approve all ${n}`, cancel: "Cancel", moreFac: (n: number) => `Show ${n} more facilities`,
+    stateTitle: "Requests from facilities, statewide", stateHint: "Each district's health officer approves or declines. Shown here so the state can see where demand is building.", district: "District", waiting: "Waiting", approved: "Approved", declined: "Declined", moving: "On the way", delivered: "Delivered", latest: "Latest requests", none: "No facility has raised a request yet.",
+    dmTitle: "Requests from facilities", dmHint: "Raised by PHC staff in this district; the District Health Officer decides.",
+    countsTitle: "Stock counts from facilities", countsHint: "What PHC staff reported through the Report screen. Each count replaces that medicine's stock and recomputes its alerts.", countsState: "Stock counts from facilities, statewide", when: "When", facility: "Facility", medicine: "Medicine", qty: "Count", via: "Via", noCounts: "No facility has reported a count yet.", nFacilities: (n: number, c: number) => `${c} counts from ${n} facilities`, more: (n: number) => `Show ${n} more`, chat: "message", web: "form" },
+  hi: { fromN: (n: number) => `${n} सुविधाओं से, सबसे पुराना पहले।`, find: "सुविधा या दवा खोजें", waitingFor: (a: string) => `${a} से प्रतीक्षा`, approveAll: (n: number) => `सभी ${n} स्वीकृत करें`, cancel: "रद्द करें", moreFac: (n: number) => `${n} और सुविधाएँ`,
+    stateTitle: "सुविधाओं के अनुरोध, पूरे राज्य में", stateHint: "हर ज़िले के स्वास्थ्य अधिकारी निर्णय लेते हैं। राज्य देख सके कि मांग कहाँ बढ़ रही है।", district: "ज़िला", waiting: "प्रतीक्षा", approved: "स्वीकृत", declined: "अस्वीकृत", moving: "रास्ते में", delivered: "पहुँचा", latest: "नवीनतम अनुरोध", none: "अभी किसी सुविधा ने अनुरोध नहीं किया।",
+    dmTitle: "सुविधाओं के अनुरोध", dmHint: "इस ज़िले के PHC स्टाफ के अनुरोध; निर्णय ज़िला स्वास्थ्य अधिकारी का।",
+    countsTitle: "सुविधाओं की स्टॉक गिनती", countsHint: "PHC स्टाफ ने रिपोर्ट स्क्रीन से जो बताया। हर गिनती उस दवा का स्टॉक बदलती है और अलर्ट फिर से गणना होते हैं।", countsState: "सुविधाओं की स्टॉक गिनती, पूरे राज्य में", when: "कब", facility: "सुविधा", medicine: "दवा", qty: "गिनती", via: "माध्यम", noCounts: "अभी किसी सुविधा ने गिनती नहीं भेजी।", nFacilities: (n: number, c: number) => `${n} सुविधाओं से ${c} गिनतियाँ`, more: (n: number) => `${n} और दिखाएँ`, chat: "संदेश", web: "फ़ॉर्म" },
+};
+
+const short = (lang: "en" | "hi"): Record<string, string> => { const v = V[lang]; return { requested: v.waiting, approved: v.approved, declined: v.declined, dispatched: v.moving, delivered: v.delivered }; };
+
+function ago(ts: number, lang: "en" | "hi") {
+  const m = Math.max(0, Math.round((Date.now() / 1000 - ts) / 60));
+  if (lang === "hi") return m < 1 ? "अभी" : m < 60 ? `${m} मिनट` : m < 1440 ? `${Math.round(m / 60)} घंटे` : `${Math.round(m / 1440)} दिन`;
+  return m < 1 ? "just now" : m < 60 ? `${m} min` : m < 1440 ? `${Math.round(m / 60)} h` : `${Math.round(m / 1440)} d`;
+}
+
+/** State officer: every request in the state by district, read-only (the district's health officer decides). */
+export function StateRequests({ unit }: { unit: string }) {
+  const { lang } = useApp(); const v = V[lang]; const s = S[lang];
+  const q = useQuery({ queryKey: ["unitRequests", unit], queryFn: () => api.unitRequests(unit), refetchInterval: 15_000 });
+  const d = q.data;
+  return (
+    <div className="card req-inbox">
+      <h2 style={{ fontSize: "var(--t-lg)" }}>{v.stateTitle} {d && d.requests.length > 0 && <span className="chip amber" style={{ marginLeft: 8, minHeight: 24 }}>{d.requests.filter((r) => r.status === "requested").length}</span>}</h2>
+      <p className="faint" style={{ margin: "4px 0 12px", fontSize: "var(--t-xs)" }}>{v.stateHint}</p>
+      {d && d.requests.length === 0 && <p className="muted" style={{ margin: 0 }}>{v.none}</p>}
+      {d && d.by_district.length > 0 && (
+        <table className="table" style={{ marginBottom: 12 }}><thead><tr><th>{v.district}</th><th className="num">{v.waiting}</th><th className="num">{v.approved}</th><th className="num">{v.moving}</th><th className="num">{v.delivered}</th><th className="num">{v.declined}</th></tr></thead>
+          <tbody>{d.by_district.slice(0, 10).map((x) => <tr key={x.district}><td>{x.district}</td><td className="num" style={x.requested ? { color: "var(--amber)", fontWeight: 600 } : undefined}>{x.requested}</td><td className="num">{x.approved}</td><td className="num">{x.dispatched}</td><td className="num">{x.delivered}</td><td className="num">{x.declined}</td></tr>)}</tbody></table>
+      )}
+      {d && d.requests.length > 0 && <><h3 className="req-sub">{v.latest}</h3>{d.requests.slice(0, 5).map((r) => <StatusLine key={r.request_id} r={r} s={s} lang={lang} showDistrict />)}</>}
+    </div>
+  );
+}
+
+/** District Magistrate: the district's requests and where each stands, read-only. */
+export function DistrictRequestsView({ unit, district }: { unit: string; district: string }) {
+  const { lang } = useApp(); const v = V[lang]; const s = S[lang];
+  const q = useQuery({ queryKey: ["districtRequestsAll", unit, district], queryFn: () => api.districtRequests(unit, district), refetchInterval: 15_000 });
+  const rows = q.data?.requests ?? [];
+  const n = (st: string) => rows.filter((r) => r.status === st).length;
+  return (
+    <div className="card req-inbox">
+      <h2 style={{ fontSize: "var(--t-lg)" }}>{v.dmTitle}</h2>
+      <p className="faint" style={{ margin: "4px 0 12px", fontSize: "var(--t-xs)" }}>{v.dmHint}</p>
+      {q.data && rows.length === 0 && <p className="muted" style={{ margin: 0 }}>{v.none}</p>}
+      {rows.length > 0 && <div className="req-counts">{(["requested", "approved", "dispatched", "delivered", "declined"] as const).map((st) => <div key={st} title={s.status[st]}><span className="big">{n(st)}</span><span className="faint">{short(lang)[st]}</span></div>)}</div>}
+      {rows.slice(0, 6).map((r) => <StatusLine key={r.request_id} r={r} s={s} lang={lang} />)}
+    </div>
+  );
+}
+
+function StatusLine({ r, s, lang, showDistrict }: { r: StockRequest; s: typeof S.en; lang: "en" | "hi"; showDistrict?: boolean }) {
+  return (
+    <div className="req-line">
+      <div><b>{r.commodity_name}</b> <span className="req-qty">{r.quantity.toLocaleString("en-IN")}</span><div className="faint" style={{ fontSize: 12 }}>{r.facility_name}{showDistrict ? ` · ${r.district}` : ""} · {ago(r.received, lang)}{r.decision_reason ? ` · ${r.decision_reason}` : ""}</div></div>
+      <span className={`chip ${tone[r.status]} nowrap`} style={{ minHeight: 24 }} title={s.status[r.status]}>{short(lang)[r.status]}</span>
+    </div>
+  );
+}
+
+/** Count history: what PHC staff reported, newest first. District view, or statewide with a per-district summary. */
+export function CountHistory({ unit, district }: { unit: string; district?: string }) {
+  const { lang } = useApp(); const v = V[lang];
+  type Counts = { counts: StockCount[]; total: number; facilities?: number; by_district?: { district: string; counts: number; facilities: number; latest: number }[] };
+  const q = useQuery<Counts>({ queryKey: ["counts", unit, district ?? "*"], queryFn: () => (district ? api.districtCounts(unit, district) : api.unitCounts(unit)) as Promise<Counts>, refetchInterval: 15_000 });
+  const [shown, setShown] = useState(8);
+  const rows = q.data?.counts ?? [];
+  const byD = q.data?.by_district;
+  return (
+    <div className="card req-inbox">
+      <h2 style={{ fontSize: "var(--t-lg)" }}>{district ? v.countsTitle : v.countsState}</h2>
+      <p className="faint" style={{ margin: "4px 0 12px", fontSize: "var(--t-xs)" }}>{v.countsHint}{q.data && q.data.total > 0 && district ? ` ${v.nFacilities(q.data.facilities ?? 0, q.data.total)}.` : ""}</p>
+      {q.data && rows.length === 0 && <p className="muted" style={{ margin: 0 }}>{v.noCounts}</p>}
+      {byD && byD.length > 0 && <p className="faint" style={{ fontSize: 12, margin: "0 0 8px" }}>{byD.slice(0, 6).map((x) => `${x.district} ${x.counts}`).join(" · ")}</p>}
+      {rows.length > 0 && (
+        <table className="table"><thead><tr><th>{v.when}</th><th>{v.facility}</th><th>{v.medicine}</th><th className="num">{v.qty}</th></tr></thead>
+          <tbody>{rows.slice(0, shown).map((c) => <tr key={c.entry_id}><td className="nowrap faint">{ago(c.received, lang)}</td><td>{c.facility_name}{district ? "" : <span className="faint"> · {c.district}</span>}</td><td>{c.commodity_name}</td><td className="num">{Math.round(c.quantity).toLocaleString("en-IN")}</td></tr>)}</tbody></table>
+      )}
+      {rows.length > shown && <button className="btn quiet" onClick={() => setShown((n) => n + 20)}>{v.more(Math.min(20, rows.length - shown))}</button>}
     </div>
   );
 }
