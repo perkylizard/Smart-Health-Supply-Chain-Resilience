@@ -19,7 +19,7 @@ export default function WhatIf({ className = "", compact = false }: { className?
       <Menu.Trigger asChild>
         {compact
           ? <button className={`iconbtn${on ? " on" : ""} ${className}`} aria-label={`${t.scenario}: ${label}`} title={label}><Flask />{on && <i className="dot" aria-hidden />}</button>
-          : <button className={`chip whatif${on ? " amber" : ""} ${className}`} aria-label={t.scenario}><Flask />{label}</button>}
+          : <button className={`hdr-btn whatif${on ? " on" : ""} ${className}`} aria-label={t.scenario}><Flask /><span className="faint role-lbl">{t.scenarioLbl}</span> <strong>{on ? label : t.scenarioOff}</strong></button>}
       </Menu.Trigger>
       <Menu.Portal>
         <Menu.Content className="menu" align="end" sideOffset={8}>

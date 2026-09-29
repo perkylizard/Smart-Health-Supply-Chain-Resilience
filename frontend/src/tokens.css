@@ -2,21 +2,21 @@
    Names kept from the first version (--paper, --ink, --teal, ...) so every screen keeps working; values are the new system. */
 :root {
   /* colour: cool grey background, white surfaces, deep teal primary; red/amber/green/blue stay semantic (severity) */
-  --paper: #ffffff;            /* surface */
-  --paper-2: #f3f6f6;          /* background and low-emphasis surfaces */
-  --bg: #f3f6f6;
-  --ink: #1d2b2e;              /* on-surface, high emphasis */
-  --ink-2: rgba(29, 43, 46, 0.72);   /* medium emphasis */
-  --ink-3: rgba(29, 43, 46, 0.56);   /* low emphasis, captions */
-  --rule: rgba(29, 43, 46, 0.14);    /* outlines and dividers */
-  --teal: #1f3b73;             /* primary: navy */
-  --teal-2: #142a54;           /* primary variant, text on light surfaces */
-  --teal-soft: #dde5f5;        /* primary container */
+  --paper: #ffffff;            /* surface (white cards) */
+  --paper-2: #f8fafc;          /* slate-50: quiet panels inside cards */
+  --bg: #f8fafc;
+  --ink: #0f172a;              /* slate-900 */
+  --ink-2: #475569;            /* slate-600 */
+  --ink-3: #64748b;            /* slate-500 */
+  --rule: #e2e8f0;             /* slate-200 hairlines */
+  --teal: #115e59;             /* primary: teal-800 */
+  --teal-2: #134e4a;           /* teal-900 */
+  --teal-soft: #f0fdfa;        /* teal-50 */
   --on-primary: #ffffff;
-  --red: #c62828; --red-soft: #fbe3e1; --amber: #b26a00; --amber-soft: #ffe8c2; --green: #2e7d32; --green-soft: #dcefdc; --blue: #1565c0; --blue-soft: #dde8f7;
+  --red: #e11d48; --red-soft: #fff1f2; --amber: #b45309; --amber-soft: #fffbeb; --green: #059669; --green-soft: #ecfdf5; --blue: #1d4ed8; --blue-soft: #eff6ff;
   /* 8dp grid */
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
-  --r1: 4px; --r2: 8px; --r-pill: 999px;
+  --r1: 8px; --r2: 16px; --r-pill: 999px;
   /* Material type scale (subset), sentence case throughout */
   --t-xs: 12px;   /* caption */
   --t-sm: 14px;   /* body 2, tables, dense lists */
@@ -24,18 +24,19 @@
   --t-lg: 20px;   /* headline 6 */
   --t-xl: 24px;   /* headline 5 */
   --t-2xl: 34px;  /* headline 4 */
-  --font: "Roboto", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-hi: "Noto Sans Devanagari", "Roboto", system-ui, sans-serif;
+  --font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-hi: "Noto Sans Devanagari", "Plus Jakarta Sans", system-ui, sans-serif;
   /* layout */
-  --appbar: 64px; --tabs-h: 48px; --content: 1440px; --gutter: 24px;
+  --appbar: 64px; --tabs-h: 48px; --content: 1280px; --gutter: 32px;
   /* elevation (Material 2 umbra/penumbra/ambient) */
-  --e1: 0 1px 1px rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12), 0 1px 3px rgba(0,0,0,.20);
-  --e2: 0 2px 2px rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.12), 0 1px 5px rgba(0,0,0,.20);
-  --e4: 0 4px 5px rgba(0,0,0,.14), 0 1px 10px rgba(0,0,0,.12), 0 2px 4px -1px rgba(0,0,0,.20);
-  --e8: 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12), 0 5px 5px -3px rgba(0,0,0,.20);
+  --e1: 0 1px 2px rgba(15,23,42,.04);
+  --e2: 0 1px 3px rgba(15,23,42,.08);
+  --e4: 0 4px 12px -2px rgba(15,23,42,.10);
+  --e8: 0 12px 28px -6px rgba(15,23,42,.18);
   --e24: 0 24px 38px 3px rgba(0,0,0,.14), 0 9px 46px 8px rgba(0,0,0,.12), 0 11px 15px -7px rgba(0,0,0,.20);
   --shadow: var(--e1);
-  --focus: 0 0 0 3px rgba(31, 59, 115, 0.35);
+  --focus: 0 0 0 3px rgba(17, 94, 89, 0.30);
 }
 :root[data-theme="dark"] {
     --paper: #1e2526; --paper-2: #121717; --bg: #121717;

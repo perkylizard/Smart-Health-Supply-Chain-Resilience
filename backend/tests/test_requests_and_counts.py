@@ -61,3 +61,11 @@ def test_approved_request_appears_in_the_warehouse_queue(client):
     assert row["source"] == "request" and row["status"] == "pending" and row["quantity"] == 90
     client.post(f"/requests/{rid}/dispatched")
     assert q()[rid]["status"] == "dispatched"
+
+
+def test_resilience_alerts_endpoint(client):
+    r = client.get("/districts/bihar/Araria/resilience-alerts").json()
+    assert set(r["counts"]) == {"critical", "warning", "watch"} and r["alerts"] and r["facilities_at_risk"] > 0
+    first = r["alerts"][0]
+    assert first["tier"] == "critical" and first["runs_out_in_days"] <= first["resupply_in_days"]
+    assert any(a["fix_from"] for a in r["alerts"])

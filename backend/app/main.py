@@ -296,12 +296,15 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
     from app.routes_federated import router as federated_router
     from app.routes_care import router as care_router
     from app.routes_requests import router as requests_router
+    from app.routes_resilience import router as resilience_router
     app.include_router(ai_router)
     app.include_router(persona_router)
     app.include_router(federated_router)
     app.include_router(care_router)
     app.include_router(requests_router)
+    app.include_router(resilience_router)
     app.state.alerts_for = alerts_for
+    app.state.proposals_for = proposals_for
 
     # warm the hero unit so the first page a judge opens is fast
     import threading
