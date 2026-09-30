@@ -31,3 +31,15 @@ test("the local parser knows every medicine in the facility's own list", () => {
   expect(parseLocal("metfor 120, ORS khatam", names)).toEqual([{ commodity_id: "metformin_500", quantity: 120 }, { commodity_id: "ors", quantity: 0 }]);
   expect(parseLocal("amlodipine", names)).toEqual([]);  // no quantity, not a count
 });
+
+test("a formula word matching several products asks which one instead of guessing", () => {
+  const names = { ifa_adult: "Iron folic acid tablet (adult)", ifa_blue: "IFA blue (adolescent)", ifa_pink: "IFA pink (junior 6-10)", ifa_syrup: "IFA syrup (paediatric)",
+    zinc_20mg: "Zinc 20 mg dispersible tablet", ad_01: "AD syringe 0.1 ml", ad_05: "AD syringe 0.5 ml", ns: "IV fluid normal saline 500 ml", rl: "IV fluid Ringer lactate 500 ml" };
+  const ifa = parseLocal("IFA 30 bache hain", names)[0];
+  expect(ifa.commodity_id).toBe(""); expect(ifa.options?.length).toBe(4); expect(ifa.quantity).toBe(30);
+  expect(parseLocal("IFA syrup 12", names)).toEqual([{ commodity_id: "ifa_syrup", quantity: 12 }]);
+  expect(parseLocal("zinc khatam", names)).toEqual([{ commodity_id: "zinc_20mg", quantity: 0 }]);  // only one zinc product: no question
+  expect(parseLocal("AD syringe 0.5 ml 100", names)).toEqual([{ commodity_id: "ad_05", quantity: 100 }]);
+  expect(parseLocal("normal saline 20", names)).toEqual([{ commodity_id: "ns", quantity: 20 }]);
+  expect(parseLocal("IV fluid 20", names)[0].options?.sort()).toEqual(["ns", "rl"]);
+});

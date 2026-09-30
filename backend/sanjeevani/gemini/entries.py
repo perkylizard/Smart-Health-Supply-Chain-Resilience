@@ -25,7 +25,9 @@ def build_prompt(kind: str, catalogue: list[tuple[str, str]], lang: str) -> str:
             kind, "a typed message from primary health centre staff saying how much of each medicine is left (Hindi, English or Hinglish, often with typos)")
     return (f"{lang_line(lang)}\nYou read {what}. For each medicine mentioned, report the quantity ON HAND NOW (for a register, the closing balance). "
             "Words such as khatam, nahi hai, finished or out mean 0. Hindi numbers (bees = 20, chalis = 40, sau = 100) are numbers. "
-            "Use only medicines from this list, by id; skip anything not on it and mention it in 'unclear'. Never guess a quantity.\n\n"
+            "Use only medicines from this list, by id; skip anything not on it and mention it in 'unclear'. Never guess a quantity. "
+            "A formula or salt name alone (zinc, iron or IFA, IV fluid, AD syringe) can match several products: if the words, dose or form do not pick exactly one, "
+            "leave it out and say in 'unclear' which products it could be.\n\n"
             f"Medicines at this facility:\n{listing}")
 
 

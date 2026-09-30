@@ -450,3 +450,5 @@ textarea.input { min-height: 120px; padding: var(--s3); font-family: ui-monospac
 .sf-cols { display: grid; grid-template-columns: 7fr 5fr; gap: 24px; }
 @media (max-width: 904px) { .sf-cols { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .loading-note, .loading-note.out, .ln-text, .ln-dots i, .skeleton, .content .card, .content .pg-hero, .content .tile, .content .digest { animation: none; } }
+.report-which { display: flex; flex-direction: column; gap: 4px; flex: 1; font-size: 13px; font-weight: 600; color: var(--amber); }
+.report-which .select { min-height: 36px; font-weight: 500; color: var(--ink); }

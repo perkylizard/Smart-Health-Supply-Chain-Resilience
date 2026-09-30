@@ -7,7 +7,7 @@ import Badge from "./Badge";
 import { sB } from "../stringsB";
 import { audioToWav, photoToJpeg } from "../media";
 
-type Row = { commodity_id: string; quantity: number };
+type Row = { commodity_id: string; quantity: number; options?: string[] };
 type Status = "pending" | "saving" | "saved" | "error" | "edited" | "replaced";
 type Msg =
   | { id: number; kind: "me"; text: string }
@@ -16,7 +16,14 @@ type Msg =
 
 /** Photo of the register and voice notes are read by Gemini (/ai/entries/parse); typing uses the on-device parser. */
 const LIVE_MEDIA = true;
-const ALIASES: [RegExp, string][] = [[/ors|ओआरएस|ओ आर एस/i, "ors"], [/zinc|जिंक/i, "zinc_20mg"], [/paracetamol|पैरासिटामोल/i, "paracetamol_500"], [/ifa|iron|आयरन/i, "ifa_adult"], [/amox/i, "amoxicillin_500"]];
+/** Formula words staff actually type, the catalogue products each can mean, and the product used when no list is loaded. */
+const FORMULAS: [RegExp, RegExp, string][] = [
+  [/\bors\b|ओआरएस|ओ आर एस/i, /\bors\b/i, "ors"],
+  [/zinc|जिंक/i, /zinc/i, "zinc_20mg"],
+  [/paracetamol|पैरासिटामोल/i, /paracetamol/i, "paracetamol_500"],
+  [/\bifa\b|iron|आयरन/i, /\bifa\b|iron/i, "ifa_adult"],
+  [/amox/i, /amox/i, "amoxicillin_500"],
+];
 const NUM: Record<string, number> = { ek: 1, do: 2, teen: 3, char: 4, paanch: 5, das: 10, bees: 20, tees: 30, chalis: 40, pachas: 50, sau: 100, एक: 1, दो: 2, दस: 10, बीस: 20, तीस: 30, चालीस: 40, पचास: 50, सौ: 100 };
 
 const ZERO = /\b(khatam|khatm|khtm|khatma|khatam ho gaya|finished|over|nil|none|out|zero|nahi|nahin|nhi)\b|खत्म|ख़त्म|समाप्त|नहीं|शून्य/i;
@@ -28,29 +35,41 @@ function keysFor(id: string, name: string): string[] {
   return [...new Set(words.slice(0, 2))];
 }
 
-/** On-device parser. Knows the common Hindi and English names, and every medicine in this facility's own list. */
-export function parseLocal(text: string, names: Record<string, string> = {}): { commodity_id: string; quantity: number }[] {
-  const out: { commodity_id: string; quantity: number }[] = [];
-  const cat = Object.entries(names).map(([id, name]) => ({ id, keys: keysFor(id, name) }));
-  let waiting: string | undefined;  // "Amlodipine 5 mg tablet, khtm": a quantity after a comma belongs to the medicine before it
+export type ParsedRow = { commodity_id: string; quantity: number; options?: string[] };
+
+/** On-device parser. A formula word ("zinc", "IFA", "IV fluid") can mean several products in the facility's list: other words in
+ *  the line (a dose like 20 mg or 0.5 ml, a form like syrup, a variant like blue or junior) narrow it; if several still fit, the
+ *  row carries them as options and the read-back asks "Which one?" instead of guessing. */
+export function parseLocal(text: string, names: Record<string, string> = {}): ParsedRow[] {
+  const out: ParsedRow[] = [];
+  const cat = Object.entries(names).map(([id, name]) => ({ id, name: name.toLowerCase(), keys: keysFor(id, name) }));
+  let waiting: { id: string; options?: string[] } | undefined;  // "Amlodipine 5 mg tablet, khtm": a quantity after a comma belongs to the medicine before it
   for (const seg of text.split(/[,;।\n]| aur | और | and /i)) {
-    let c = ALIASES.find(([re]) => re.test(seg))?.[1];
-    if (!c && cat.length) {
-      const low = seg.toLowerCase();
-      // a word of the segment that starts a medicine's key (typos after 5 letters are fine: "amlodip", "metfor")
-      const tokens = low.split(/[^a-z\u0900-\u097f]+/).filter((w) => w.length >= 3);
-      const hit = cat.find((m) => m.keys.some((k) => tokens.some((w) => (w.length >= 5 ? k.startsWith(w.slice(0, 5)) : w === k) || low.includes(k))));
-      c = hit?.id;
+    const low = seg.toLowerCase();
+    const tokens = low.split(/[^a-z\u0900-\u097f]+/).filter((w) => w.length >= 3);
+    let cands: string[] = [];
+    const f = FORMULAS.find(([re]) => re.test(seg));
+    if (f) cands = cat.length ? cat.filter((m) => f[1].test(m.name) || f[1].test(m.id.replace(/_/g, " "))).map((m) => m.id) : [f[2]];
+    if (!cands.length && cat.length)
+      cands = cat.filter((m) => m.keys.some((k) => tokens.some((w) => (w.length >= 5 ? k.startsWith(w.slice(0, 5)) : w === k) || low.includes(k)))).map((m) => m.id);
+    let pick: { id: string; options?: string[] } | undefined;
+    if (cands.length === 1) pick = { id: cands[0] };
+    else if (cands.length > 1) {
+      const dose = [...low.matchAll(/(\d+(?:\.\d+)?)\s*(mg|ml|iu|mcg)\b/g)].map((m) => m[1] + " " + m[2]);
+      const score = (id: string) => { const n = names[id].toLowerCase(); return tokens.filter((w) => !ZERO.test(w) && !(w in NUM) && !(f && f[0].test(w)) && n.includes(w)).length + dose.filter((d) => n.includes(d) || n.includes(d.replace(" ", ""))).length * 2; };
+      const scored = cands.map((id) => [id, score(id)] as const).sort((a, b) => b[1] - a[1]);
+      const top = scored.filter(([, v]) => v === scored[0][1]);
+      pick = top.length === 1 && scored[0][1] > 0 ? { id: top[0][0] } : { id: "", options: top.map(([id]) => id) };
     }
-    const named = !!c;
-    c = c ?? waiting;
-    if (!c) continue;
+    const named = !!pick;
+    const target = pick ?? waiting;
+    if (!target) continue;
     const zero = ZERO.test(seg);
-    const nums = seg.replace(/\d+\s*(mg|ml|iu|mcg)\b/gi, " ").match(/\d+/g);  // "Amlodipine 5 mg, 40 left" is 40, not 5
+    const nums = seg.replace(/\d+(?:\.\d+)?\s*(mg|ml|iu|mcg)\b/gi, " ").match(/\d+/g);  // "Amlodipine 5 mg, 40 left" is 40, not 5
     const n = nums?.[nums.length - 1];
     const word = Object.keys(NUM).find((k) => (/^[a-z]+$/i.test(k) ? new RegExp(`\\b${k}\\b`, "i") : new RegExp(k)).test(seg));
-    if (!zero && !n && !word) { waiting = named ? c : waiting; continue; }  // a medicine without a quantity is not a count (yet)
-    out.push({ commodity_id: c, quantity: zero ? 0 : n ? Number(n) : NUM[word!] });
+    if (!zero && !n && !word) { waiting = named ? target : waiting; continue; }  // a medicine without a quantity is not a count (yet)
+    out.push({ commodity_id: target.id, quantity: zero ? 0 : n ? Number(n) : NUM[word!], ...(target.options ? { options: target.options } : {}) });
     waiting = undefined;
   }
   return out;
@@ -60,11 +79,11 @@ const MW = {
   en: { readingPhoto: "Reading the register photo…", listening: "Recording… tap Stop when done", stop: "Stop", readingVoice: "Listening to the voice note…", readingText: "Reading your message with Gemini…",
     heard: "Heard", saw: "Read from the photo", unclear: "Could not read", none: "No medicine from your list was found. Try a clearer photo, or type it.",
     failed: "Could not read that. Check the connection, or type the stock instead.", noMic: "Microphone not available. Allow it in the browser, or type instead.",
-    now: "now", was: "was", asking: "Waiting for microphone permission… allow it in the browser prompt.", byAi: "Read by Gemini; check each line before saving", mediaNote: "Photo and voice are read by Gemini; you confirm before anything is saved." },
+    now: "now", was: "was", which: (n: number) => `Which one? ${n} products match`, choose: "Choose the product", asking: "Waiting for microphone permission… allow it in the browser prompt.", byAi: "Read by Gemini; check each line before saving", mediaNote: "Photo and voice are read by Gemini; you confirm before anything is saved." },
   hi: { readingPhoto: "रजिस्टर की फ़ोटो पढ़ी जा रही है…", listening: "रिकॉर्ड हो रहा है… पूरा होने पर रोकें दबाएँ", stop: "रोकें", readingVoice: "वॉइस नोट सुना जा रहा है…", readingText: "Gemini आपका संदेश पढ़ रहा है…",
     heard: "सुना", saw: "फ़ोटो से पढ़ा", unclear: "पढ़ा नहीं जा सका", none: "आपकी सूची की कोई दवा नहीं मिली। साफ़ फ़ोटो लें, या टाइप करें।",
     failed: "पढ़ा नहीं जा सका। कनेक्शन जाँचें, या स्टॉक टाइप करें।", noMic: "माइक्रोफ़ोन उपलब्ध नहीं। ब्राउज़र में अनुमति दें, या टाइप करें।",
-    now: "अब", was: "पहले", asking: "माइक्रोफ़ोन अनुमति की प्रतीक्षा… ब्राउज़र में अनुमति दें।", byAi: "Gemini ने पढ़ा; सहेजने से पहले हर पंक्ति जाँचें", mediaNote: "फ़ोटो और आवाज़ Gemini पढ़ता है; सहेजने से पहले आप पुष्टि करते हैं।" },
+    now: "अब", was: "पहले", which: (n: number) => `कौन सा? ${n} उत्पाद मिलते हैं`, choose: "उत्पाद चुनें", asking: "माइक्रोफ़ोन अनुमति की प्रतीक्षा… ब्राउज़र में अनुमति दें।", byAi: "Gemini ने पढ़ा; सहेजने से पहले हर पंक्ति जाँचें", mediaNote: "फ़ोटो और आवाज़ Gemini पढ़ता है; सहेजने से पहले आप पुष्टि करते हैं।" },
 };
 
 export default function ChatWidget({ facilityId, names = {}, onHand = {}, withHeader = false }: { facilityId: string; names?: Record<string, string>; onHand?: Record<string, number>; withHeader?: boolean }) {
@@ -112,6 +131,8 @@ export default function ChatWidget({ facilityId, names = {}, onHand = {}, withHe
       setTimeout(() => { if (r.state === "recording") r.stop(); }, 30_000);
     } catch { note(mw.noMic); }
   };
+  /** "Which one?": the staff member picks the product a formula word meant */
+  const pickRow = (msgId: number, i: number, id: string) => setMsgs((ms) => ms.map((x) => (x.id === msgId && x.kind === "parsed" ? { ...x, rows: x.rows.map((r, j) => (j === i ? { commodity_id: id, quantity: r.quantity } : r)) } : x)));
   const setStatus = (id: number, status: Status) => setMsgs((m) => m.map((x) => (x.id === id && x.kind === "parsed" ? { ...x, status } : x)));
 
   const save = useMutation({
@@ -165,10 +186,16 @@ export default function ChatWidget({ facilityId, names = {}, onHand = {}, withHe
               <div key={m.id} className={`report-confirm${m.status === "edited" || m.status === "replaced" ? " is-closed" : ""}`}>
                 <p className="report-confirm-title">{t.readBack}</p>
                 {m.via && m.via !== "text" && m.via !== "ai" && m.transcript && <p className="faint report-heard">{m.via === "voice" ? mw.heard : mw.saw}: “{m.transcript}”</p>}
-                <ul>{m.rows.map((r, i) => <li key={i}><span>{label(r.commodity_id)}</span><strong>{r.quantity.toLocaleString("en-IN")}{r.quantity === 0 && <span className="faint"> ({t.finished})</span>}{change(r.commodity_id, r.quantity)}</strong></li>)}</ul>
+                <ul>{m.rows.map((r, i) => <li key={i}>{r.options && !r.commodity_id ? (
+                  <label className="report-which"><span>{mw.which(r.options.length)}</span>
+                    <select className="select" value="" onChange={(e) => pickRow(m.id, i, e.target.value)} aria-label={mw.which(r.options.length)}>
+                      <option value="" disabled>{mw.choose}</option>
+                      {r.options.map((o) => <option key={o} value={o}>{label(o)}</option>)}
+                    </select></label>
+                ) : <span>{label(r.commodity_id)}</span>}<strong>{r.quantity.toLocaleString("en-IN")}{r.quantity === 0 && <span className="faint"> ({t.finished})</span>}{r.commodity_id && change(r.commodity_id, r.quantity)}</strong></li>)}</ul>
                 {(m.status === "pending" || m.status === "saving" || m.status === "error") && (
                   <div className="report-confirm-actions">
-                    <button type="button" className="btn primary" disabled={m.status === "saving"} onClick={() => save.mutate({ id: m.id, rows: m.rows })}>{m.status === "saving" ? t.saving : t.confirmSave}</button>
+                    <button type="button" className="btn primary" disabled={m.status === "saving" || m.rows.some((r) => !r.commodity_id)} onClick={() => save.mutate({ id: m.id, rows: m.rows })}>{m.status === "saving" ? t.saving : t.confirmSave}</button>
                     <button type="button" className="btn" disabled={m.status === "saving"} onClick={() => edit(m)}>{t.edit}</button>
                   </div>
                 )}
@@ -183,7 +210,7 @@ export default function ChatWidget({ facilityId, names = {}, onHand = {}, withHe
         <form className="report-composer" onSubmit={(e) => { e.preventDefault(); send(); }}>
           <div className="report-compose-row">
             <label htmlFor={`report-input-${facilityId}`} className="sr-only-report">{t.reportField}</label>
-            <input id={`report-input-${facilityId}`} ref={input} className="input" value={text} onChange={(e) => setText(e.target.value)} placeholder="ORS ke 40 packet bache hain, zinc khatam" autoComplete="off" />
+            <input id={`report-input-${facilityId}`} ref={input} className="input" value={text} onChange={(e) => setText(e.target.value)} placeholder="ORS ke 40 packet bache hain, Zinc 20 mg khatam" autoComplete="off" />
             <button className="btn primary" type="submit" disabled={!text.trim() || !!busy}>{t.send}</button>
           </div>
           <div className="report-media">
@@ -215,7 +242,7 @@ export default function ChatWidget({ facilityId, names = {}, onHand = {}, withHe
           <aside className="parse-preview" aria-live="polite">
             <h3><span>{b.preview}</span>{live.length > 0 && <span className="status-badge green">{b.detected(live.length)}</span>}</h3>
             {live.length === 0 ? <p className="empty">{b.previewEmpty}</p> : (
-              <ul>{live.map((r, i) => <li key={i}><span>{label(r.commodity_id)}</span><b>{mw.now} {r.quantity.toLocaleString("en-IN")}{r.quantity === 0 && <span className="faint"> ({t.finished})</span>}{change(r.commodity_id, r.quantity)}</b></li>)}</ul>
+              <ul>{live.map((r, i) => <li key={i}><span>{r.options && !r.commodity_id ? mw.which(r.options.length) : label(r.commodity_id)}</span><b>{mw.now} {r.quantity.toLocaleString("en-IN")}{r.quantity === 0 && <span className="faint"> ({t.finished})</span>}{r.commodity_id && change(r.commodity_id, r.quantity)}</b></li>)}</ul>
             )}
             <p className="faint" style={{ margin: "10px 0 0", fontSize: 11 }}><Badge kind="computed" title={t.localParser} /> {t.localParser}</p>
           </aside>
