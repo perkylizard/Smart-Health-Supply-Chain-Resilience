@@ -1,6 +1,6 @@
 import { Fragment, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api, type DistrictRow, type FacilityDot, type Transfer } from "../api";
 import { useApp } from "../App";
 import Badge from "../components/Badge";
@@ -27,6 +27,7 @@ export default function StateView() {
   const approve = useMutation({ mutationFn: (id: string) => api.approve(id), onMutate: (id) => setLocal((l) => ({ ...l, [id]: "approved" })), onSettled: () => qc.invalidateQueries({ queryKey: ["unitTransfers"] }) });
   const reject = useMutation({ mutationFn: (id: string) => api.reject(id, "state_declined"), onMutate: (id) => setLocal((l) => ({ ...l, [id]: "rejected" })), onSettled: () => qc.invalidateQueries({ queryKey: ["unitTransfers"] }) });
   const rows = d.data?.districts ?? [];
+  const nav = useNavigate(); // a district dot opens that district, as the league table does
   const dots = useMemo<FacilityDot[]>(() => rows.map((x: DistrictRow) => ({
     facility_id: x.district, facility_name: x.district, type: "DH", lat: x.lat, lon: x.lon, worst_severity: scoreSeverity(x.score), worst_days: x.median_days_of_stock ?? 0,
     worst_commodity: "", red: x.red_alerts, amber: 0, data_issues: 0, source: "computed", dist_to_warehouse_km: 0, beds: 0,
@@ -61,9 +62,9 @@ export default function StateView() {
       <div className="pg-grid">
         <div>
           <section className="card" data-tour="st-map">
-            <div className="card-head"><div><h2>{a.mapTitle2}</h2><p className="faint">{d.data ? `${rows.length} ${t.districtsTab.toLowerCase()}` : ""}</p></div></div>
+            <div className="card-head"><div><h2>{a.mapTitle2}</h2><p className="faint">{d.data ? `${rows.length} ${t.districtsTab.toLowerCase()} · ${lang === "hi" ? "किसी ज़िले पर टैप करें, वह खुल जाएगा" : "tap a district to open it"}` : ""}</p></div></div>
             {d.isLoading && <p className="skeleton" style={{ height: 240 }}>…</p>}
-            {dots.length > 0 && <MapView dots={dots} />}
+            {dots.length > 0 && <MapView dots={dots} onSelect={(f) => nav(`/dho/${unit}/${encodeURIComponent(f.facility_id)}`)} />}
             <div className="legend">
               <span><i className="dot" style={{ background: "var(--red)" }} />score under 45</span><span><i className="dot" style={{ background: "var(--amber)" }} />45 to 60</span><span><i className="dot" style={{ background: "var(--green)" }} />over 60</span>
             </div>

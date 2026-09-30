@@ -2,7 +2,7 @@ import { refreshRequestViews } from "../components/Requests";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { api, type Transfer } from "../api";
 import { useApp } from "../App";
 import Badge from "../components/Badge";
@@ -15,6 +15,7 @@ import { sA } from "../stringsA";
 const STEPS = ["proposed", "approved", "picked_up", "delivered"];
 
 export default function Dispatch() {
+  const nav = useNavigate(); // a dot on the route map opens that facility
   const { unit, district, t, base, lang } = useApp();
   const u = s2[lang];
   const [sp] = useSearchParams();
@@ -122,7 +123,7 @@ export default function Dispatch() {
           {dots.data && (
             <section className="card">
               <div className="card-head"><div><h2>{a.mapTitle}</h2><p className="faint">{a.mapSub}</p></div></div>
-              <MapView dots={dots.data.facilities.filter((f) => selected ? [selected.from_id, selected.to_id].includes(f.facility_id) : f.worst_severity === "red")} line={line} />
+              <MapView dots={dots.data.facilities.filter((f) => selected ? [selected.from_id, selected.to_id].includes(f.facility_id) : f.worst_severity === "red")} line={line} onSelect={(f) => nav(`/facility/${f.facility_id}`)} />
               <p className="faint" style={{ fontSize: "var(--t-xs)", marginTop: 8 }}>{q.data?.provenance}</p>
             </section>
           )}
