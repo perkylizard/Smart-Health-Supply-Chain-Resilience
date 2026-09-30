@@ -16,6 +16,7 @@ const en = {
   askTitle: "Ask the district", askSub: "Answers come from the district's ledgers through checked, read-only queries",
   answerTitle: "Answer", inspectSql: "Inspect SQL", hideSql: "Hide SQL", verifiedQuery: "Verified read-only query", copy: "Copy", copied: "Copied",
   recordsTitle: (n: number) => `Records (${n})`, noRecords: "This answer has no rows to show.", chartTitle: "Comparison",
+  historyTitle: "Earlier questions", historySub: (n: number) => `${n} asked in this session. Open one to see its answer again.`, historyOpen: "Show answer", historyClear: "Clear history", rowsShort: (n: number) => `${n} rows`,
   // State
   stEyebrow: "State command", stSub: (n: number) => `${n} districts · district scores, cross-district approvals and escalations`,
   viewLeague: "View district league",
@@ -70,6 +71,7 @@ const hi: typeof en = {
   askTitle: "ज़िले से पूछें", askSub: "उत्तर ज़िले के लेजर से जाँची हुई, केवल-पढ़ने वाली क्वेरी द्वारा आते हैं",
   answerTitle: "उत्तर", inspectSql: "SQL देखें", hideSql: "SQL छिपाएँ", verifiedQuery: "जाँची हुई केवल-पढ़ने वाली क्वेरी", copy: "कॉपी करें", copied: "कॉपी हुआ",
   recordsTitle: (n: number) => `रिकॉर्ड (${n})`, noRecords: "इस उत्तर में दिखाने के लिए पंक्तियाँ नहीं हैं।", chartTitle: "तुलना",
+  historyTitle: "पहले पूछे गए प्रश्न", historySub: (n: number) => `इस सत्र में ${n} प्रश्न। उत्तर दोबारा देखने के लिए कोई प्रश्न खोलें।`, historyOpen: "उत्तर देखें", historyClear: "इतिहास साफ़ करें", rowsShort: (n: number) => `${n} पंक्तियाँ`,
   stEyebrow: "राज्य कमांड", stSub: (n: number) => `${n} ज़िले · ज़िला स्कोर, अंतर-ज़िला स्वीकृतियाँ और एस्केलेशन`,
   viewLeague: "ज़िला तालिका देखें",
   tileAlert: "अलर्ट वाले ज़िले", tileAlertSub: (n: number) => `${n} में से, स्कोर 60 से कम (निगरानी या जोखिम)`,

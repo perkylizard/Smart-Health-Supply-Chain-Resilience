@@ -9,7 +9,7 @@ import MapView from "../components/MapView";
 import Scale from "../components/Scale";
 import Sparkline from "../components/Sparkline";
 import CarePanel from "../components/CarePanel";
-import { CountHistory, RequestsInbox } from "../components/Requests";
+import { CountHistory, RequestsInbox, RequestsWaiting } from "../components/Requests";
 import ResilienceAlerts from "../components/ResilienceAlerts";
 
 export default function Briefing() {
@@ -35,6 +35,7 @@ export default function Briefing() {
   const opd = s?.sparklines.opd ?? [];
   return (
     <div className="today">
+      <div className="rw-phone"><RequestsWaiting unit={unit} district={district} /></div>
       {whatIf && <p className="chip amber" style={{ marginBottom: 12 }}>{t.whatIf}: {s.scenario.name.replace(/_/g, " ")} {Math.round(s.scenario.intensity * 100)}%</p>}
 
       {/* hero: where you are, how the district stands, the four numbers that matter */}
@@ -61,6 +62,9 @@ export default function Briefing() {
           <div className="tile"><div className="tile-h"><span>{t.tileOpd}</span><Badge kind="real" /></div><div className="tile-n">{opd.length ? Math.round(opd[opd.length - 1]).toLocaleString("en-IN") : "…"}</div><div className="tile-s">{t.tileOpdSub}</div></div>
         </div>
       </section>
+
+      {/* open facility requests: surfaced first so the officer never has to scroll past the alerts to find them */}
+      <div className="rw-wide"><RequestsWaiting unit={unit} district={district} /></div>
 
       {/* the morning briefing (Gemini, or written from the numbers when Gemini is unreachable) */}
       <section className="card brief-card">
@@ -124,8 +128,8 @@ export default function Briefing() {
           </section>
         </div>
         <aside className="today-side">
-          <div className="wide-only"><ResilienceAlerts unit={unit} district={district} /></div>
           <RequestsInbox unit={unit} district={district} />
+          <div className="wide-only"><ResilienceAlerts unit={unit} district={district} /></div>
           <CountHistory unit={unit} district={district} />
           <div style={{ marginBottom: "var(--s6)" }}><CarePanel unit={unit} district={district} /></div>
           <section className="card">

@@ -12,14 +12,17 @@ export default function Ask() {
   const [mode, setMode] = useState<"guided" | "advanced">("guided");
   const [q, setQ] = useState(sp.get("q") ?? "");
   const [sql, setSql] = useState("");
-  const [history, setHistory] = useState<AskResult[]>([]);
-  const ask = useMutation({ mutationFn: (body: Parameters<typeof api.ask>[0]) => api.ask(body), onSuccess: (r) => { setHistory((h) => [r, ...h]); if (r.sql) setSql(r.sql); } });
+  type Entry = { id: number; at: Date; r: AskResult };
+  const [history, setHistory] = useState<Entry[]>([]);
+  const nextId = useRef(0);
+  const ask = useMutation({ mutationFn: (body: Parameters<typeof api.ask>[0]) => api.ask(body), onSuccess: (r) => { setHistory((h) => [{ id: nextId.current++, at: new Date(), r }, ...h]); if (r.sql) setSql(r.sql); } });
   const run = (question = q, userSql?: string) => { if (!question.trim() && !userSql) return; ask.mutate({ question: question || "(edited SQL)", unit, district, lang, mode, sql: userSql ?? null }); };
   const lastAuto = useRef<string | null>(null);
   useEffect(() => { const qq = sp.get("q"); if (qq && lastAuto.current !== qq) { lastAuto.current = qq; setQ(qq); run(qq); } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sp.get("q")]);
   const a = sA[lang];
   const [picked, setPicked] = useState<string | null>(null);
+  const [current, ...earlier] = history;
   return (
     <div className="pg ask">
       <section className="card pg-hero">
@@ -53,7 +56,27 @@ export default function Ask() {
         </section>
       )}
       {ask.isPending && <p className="skeleton" style={{ height: 48 }}>Thinking about the question and running the query</p>}
-      {history.map((r, i) => <Result key={i} r={r} />)}
+      {current && <Result key={current.id} r={current.r} />}
+      {earlier.length > 0 && (
+        <section className="card ask-history" aria-label={a.historyTitle}>
+          <div className="card-head">
+            <div><h2>{a.historyTitle}</h2><p className="faint">{a.historySub(earlier.length)}</p></div>
+            <button type="button" className="lnk-btn" onClick={() => setHistory((h) => h.slice(0, 1))}>{a.historyClear}</button>
+          </div>
+          <ul className="ask-hist-list">
+            {earlier.map((e) => (
+              <li key={e.id}>
+                <button type="button" className="ask-hist-item" onClick={() => { setHistory((h) => [e, ...h.filter((x) => x.id !== e.id)]); setQ(e.r.question); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+                  <span className="ask-hist-q">{e.r.question}</span>
+                  <span className="ask-hist-a">{e.r.answer || e.r.error || ""}</span>
+                  <span className="ask-hist-meta faint">{e.at.toLocaleTimeString(lang === "hi" ? "hi-IN" : "en-IN", { hour: "2-digit", minute: "2-digit" })} · {a.rowsShort(e.r.row_count ?? e.r.rows?.length ?? 0)}</span>
+                  <span className="ask-hist-open">{a.historyOpen} ›</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }

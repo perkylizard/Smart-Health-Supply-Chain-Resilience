@@ -82,6 +82,25 @@ function RequestCard({ r, actions }: { r: StockRequest; actions?: React.ReactNod
 }
 
 /** District Health Officer side: open requests from the district's facilities, approve or decline with a reason. */
+/** Top-of-page notice on the district officer's Today screen: open facility requests, so they are never missed below the alerts. */
+export function RequestsWaiting({ unit, district }: { unit: string; district: string }) {
+  const { lang } = useApp(); const v = V[lang];
+  const q = useQuery({ queryKey: ["districtRequests", unit, district], staleTime: 0, refetchOnMount: "always", queryFn: () => api.districtRequests(unit, district, "requested"), refetchInterval: 15_000 });
+  const reqs = q.data?.requests ?? [];
+  if (!reqs.length) return null;
+  const names = [...new Set(reqs.map((r) => r.facility_name))];
+  const shown = names.length > 3 ? `${names.slice(0, 3).join(", ")} +${names.length - 3}` : names.join(", ");
+  const oldest = Math.min(...reqs.map((r) => r.received));
+  const go = () => { const el = document.getElementById("req-inbox"); if (!el) return; el.scrollIntoView({ behavior: "smooth", block: "start" }); el.focus({ preventScroll: true }); };
+  return (
+    <section className="card req-waiting" role="status">
+      <span className="req-waiting-n" aria-hidden>{reqs.length}</span>
+      <div className="req-waiting-t"><b>{v.waitingTitle(reqs.length)}</b><span className="faint">{v.waitingFrom(shown, ago(oldest, lang))}</span></div>
+      <button type="button" className="btn primary" onClick={go}>{v.review} ↓</button>
+    </section>
+  );
+}
+
 export function RequestsInbox({ unit, district }: { unit: string; district: string }) {
   const { lang } = useApp(); const s = S[lang]; const v = V[lang];
   const qc = useQueryClient();
@@ -98,7 +117,7 @@ export function RequestsInbox({ unit, district }: { unit: string; district: stri
     .map((items) => items.sort((a, b) => a.received - b.received)).sort((a, b) => a[0].received - b[0].received);
   const total = q.data?.requests.length ?? 0;
   return (
-    <div className="card req-inbox">
+    <div className="card req-inbox" id="req-inbox" tabIndex={-1}>
       <h2 style={{ fontSize: "var(--t-lg)" }}>{s.inbox} {total > 0 && <span className="chip amber" style={{ marginLeft: 8, minHeight: 24 }}>{total}</span>}</h2>
       <p className="faint" style={{ margin: "4px 0 12px", fontSize: "var(--t-xs)" }}>{s.inboxHint}{total > 0 ? ` ${v.fromN(groups.length)}` : ""}</p>
       {total > 3 && <input className="input" style={{ minHeight: 36, marginBottom: 12 }} placeholder={v.find} value={find} onChange={(e) => setFind(e.target.value)} aria-label={v.find} />}
@@ -130,10 +149,12 @@ export function RequestsInbox({ unit, district }: { unit: string; district: stri
 
 const V = {
   en: { fromN: (n: number) => `From ${n} ${n === 1 ? "facility" : "facilities"}, oldest first.`, find: "Find a facility or medicine", waitingFor: (a: string) => `waiting ${a}`, approveAll: (n: number) => `Approve all ${n}`, cancel: "Cancel", moreFac: (n: number) => `Show ${n} more facilities`,
+    waitingTitle: (n: number) => `${n} ${n === 1 ? "request" : "requests"} from facilities ${n === 1 ? "is" : "are"} waiting for your approval`, waitingFrom: (names: string, a: string) => `From ${names} · oldest waiting ${a}`, review: "Review requests",
     stateTitle: "Requests from facilities, statewide", stateHint: "Each district's health officer approves or declines. Shown here so the state can see where demand is building.", district: "District", waiting: "Waiting", approved: "Approved", declined: "Declined", moving: "On the way", delivered: "Delivered", latest: "Latest requests", none: "No facility has raised a request yet.",
     dmTitle: "Requests from facilities", dmHint: "Raised by PHC staff in this district; the District Health Officer decides.",
     countsTitle: "Stock counts from facilities", countsHint: "What PHC staff reported through the Report screen. Each count replaces that medicine's stock and recomputes its alerts.", countsState: "Stock counts from facilities, statewide", when: "When", facility: "Facility", medicine: "Medicine", qty: "Count", via: "Via", noCounts: "No facility has reported a count yet.", nFacilities: (n: number, c: number) => `${c} counts from ${n} facilities`, more: (n: number) => `Show ${n} more`, chat: "message", web: "form" },
   hi: { fromN: (n: number) => `${n} सुविधाओं से, सबसे पुराना पहले।`, find: "सुविधा या दवा खोजें", waitingFor: (a: string) => `${a} से प्रतीक्षा`, approveAll: (n: number) => `सभी ${n} स्वीकृत करें`, cancel: "रद्द करें", moreFac: (n: number) => `${n} और सुविधाएँ`,
+    waitingTitle: (n: number) => `सुविधाओं के ${n} अनुरोध आपकी स्वीकृति की प्रतीक्षा में हैं`, waitingFrom: (names: string, a: string) => `${names} से · सबसे पुराना ${a} से प्रतीक्षा में`, review: "अनुरोध देखें",
     stateTitle: "सुविधाओं के अनुरोध, पूरे राज्य में", stateHint: "हर ज़िले के स्वास्थ्य अधिकारी निर्णय लेते हैं। राज्य देख सके कि मांग कहाँ बढ़ रही है।", district: "ज़िला", waiting: "प्रतीक्षा", approved: "स्वीकृत", declined: "अस्वीकृत", moving: "रास्ते में", delivered: "पहुँचा", latest: "नवीनतम अनुरोध", none: "अभी किसी सुविधा ने अनुरोध नहीं किया।",
     dmTitle: "सुविधाओं के अनुरोध", dmHint: "इस ज़िले के PHC स्टाफ के अनुरोध; निर्णय ज़िला स्वास्थ्य अधिकारी का।",
     countsTitle: "सुविधाओं की स्टॉक गिनती", countsHint: "PHC स्टाफ ने रिपोर्ट स्क्रीन से जो बताया। हर गिनती उस दवा का स्टॉक बदलती है और अलर्ट फिर से गणना होते हैं।", countsState: "सुविधाओं की स्टॉक गिनती, पूरे राज्य में", when: "कब", facility: "सुविधा", medicine: "दवा", qty: "गिनती", via: "माध्यम", noCounts: "अभी किसी सुविधा ने गिनती नहीं भेजी।", nFacilities: (n: number, c: number) => `${n} सुविधाओं से ${c} गिनतियाँ`, more: (n: number) => `${n} और दिखाएँ`, chat: "संदेश", web: "फ़ॉर्म" },
