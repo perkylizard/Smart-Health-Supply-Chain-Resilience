@@ -23,3 +23,11 @@ test("chat parser handles hinglish and hindi", () => {
   expect(parseLocal("ORS ke 40 packet bache hain, zinc khatam")).toEqual([{ commodity_id: "ors", quantity: 40 }, { commodity_id: "zinc_20mg", quantity: 0 }]);
   expect(parseLocal("ओआरएस बीस और जिंक दस")).toEqual([{ commodity_id: "ors", quantity: 20 }, { commodity_id: "zinc_20mg", quantity: 10 }]);
 });
+
+test("the local parser knows every medicine in the facility's own list", () => {
+  const names = { amlodipine_5: "Amlodipine 5 mg tablet", metformin_500: "Metformin 500 mg tablet", ifa_adult: "Iron folic acid tablet (adult)", ors: "ORS sachet (WHO low-osmolarity)" };
+  expect(parseLocal("Amlodipine 5 mg tablet, khtm", names)).toEqual([{ commodity_id: "amlodipine_5", quantity: 0 }]);
+  expect(parseLocal("amlodipine 5 mg 40 bache hain", names)).toEqual([{ commodity_id: "amlodipine_5", quantity: 40 }]);
+  expect(parseLocal("metfor 120, ORS khatam", names)).toEqual([{ commodity_id: "metformin_500", quantity: 120 }, { commodity_id: "ors", quantity: 0 }]);
+  expect(parseLocal("amlodipine", names)).toEqual([]);  // no quantity, not a count
+});

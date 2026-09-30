@@ -94,9 +94,10 @@ def ask(body: AskIn, request: Request):
 
 class MediaIn(BaseModel):
     facility_id: str
-    kind: str = Field(pattern="^(photo|voice)$")
-    mime: str
-    data: str = Field(max_length=14_000_000)  # base64; about 10 MB of image or audio
+    kind: str = Field(pattern="^(photo|voice|text)$")
+    mime: str = ""
+    data: str = Field("", max_length=14_000_000)  # base64; about 10 MB of image or audio
+    text: str | None = Field(None, max_length=1000)  # a typed line the on-device parser could not read
     lang: str = "en"
 
 
@@ -112,23 +113,28 @@ def parse_media(body: MediaIn, request: Request):
     f = app.state.store.q("SELECT unit_id, district FROM facilities WHERE facility_id = ?", [body.facility_id])
     if f.empty:
         raise HTTPException(404, "unknown facility")
-    mime = body.mime.split(";")[0].strip().lower()
-    if mime not in MEDIA_TYPES[body.kind]:
-        raise HTTPException(415, f"{body.kind} must be one of {sorted(MEDIA_TYPES[body.kind])}")
-    try:
-        data = base64.b64decode(body.data, validate=True)
-    except Exception:
-        raise HTTPException(400, "data is not base64")
+    mime, data = "", b""
+    if body.kind == "text":
+        if not (body.text or "").strip():
+            raise HTTPException(400, "text is empty")
+    else:
+        mime = body.mime.split(";")[0].strip().lower()
+        if mime not in MEDIA_TYPES[body.kind]:
+            raise HTTPException(415, f"{body.kind} must be one of {sorted(MEDIA_TYPES[body.kind])}")
+        try:
+            data = base64.b64decode(body.data, validate=True)
+        except Exception:
+            raise HTTPException(400, "data is not base64")
     al = app.state.alerts_for(f.iloc[0]["unit_id"], f.iloc[0]["district"])
     mine = al[al["facility_id"] == body.facility_id]
     catalogue = list(dict.fromkeys(zip(mine["commodity_id"], mine["commodity_name"])))
     closing = dict(zip(mine["commodity_id"], mine["closing"]))
     try:
-        out = EN.run(_client(request), data, mime, body.kind, catalogue, body.lang)
+        out = EN.run(_client(request), data, mime, body.kind, catalogue, body.lang, text=body.text)
     except (GeminiUnavailable, CassetteMiss) as e:
         raise HTTPException(503, f"live AI is not available here ({type(e).__name__}); type the stock instead")
     except Exception as e:
         raise HTTPException(502, f"could not read the {body.kind}: {str(e)[:160]}")
     names = dict(catalogue)
     return {"items": [{**i.model_dump(), "commodity_name": names.get(i.commodity_id), "was": None if closing.get(i.commodity_id) is None else float(closing[i.commodity_id])} for i in out.items],
-            "transcript": out.transcript, "unclear": out.unclear, "model": _client(request).model_for("register" if body.kind == "photo" else "voice")}
+            "transcript": out.transcript, "unclear": out.unclear, "model": _client(request).model_for({"photo": "register", "voice": "voice"}.get(body.kind, "explain"))}

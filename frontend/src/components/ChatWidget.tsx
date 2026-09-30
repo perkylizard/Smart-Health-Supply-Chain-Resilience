@@ -12,33 +12,56 @@ type Status = "pending" | "saving" | "saved" | "error" | "edited" | "replaced";
 type Msg =
   | { id: number; kind: "me"; text: string }
   | { id: number; kind: "note"; text: string }
-  | { id: number; kind: "parsed"; source: string; rows: Row[]; status: Status; via?: "text" | "photo" | "voice"; transcript?: string };
+  | { id: number; kind: "parsed"; source: string; rows: Row[]; status: Status; via?: "text" | "photo" | "voice" | "ai"; transcript?: string };
 
 /** Photo of the register and voice notes are read by Gemini (/ai/entries/parse); typing uses the on-device parser. */
 const LIVE_MEDIA = true;
 const ALIASES: [RegExp, string][] = [[/ors|ओआरएस|ओ आर एस/i, "ors"], [/zinc|जिंक/i, "zinc_20mg"], [/paracetamol|पैरासिटामोल/i, "paracetamol_500"], [/ifa|iron|आयरन/i, "ifa_adult"], [/amox/i, "amoxicillin_500"]];
 const NUM: Record<string, number> = { ek: 1, do: 2, teen: 3, char: 4, paanch: 5, das: 10, bees: 20, tees: 30, chalis: 40, pachas: 50, sau: 100, एक: 1, दो: 2, दस: 10, बीस: 20, तीस: 30, चालीस: 40, पचास: 50, सौ: 100 };
 
-/** Local parser for the simulated thread; Gemini voice/photo parsing replaces it when the /ai/entries routes are live. */
-export function parseLocal(text: string): { commodity_id: string; quantity: number }[] {
+const ZERO = /\b(khatam|khatm|khtm|khatma|khatam ho gaya|finished|over|nil|none|out|zero|nahi|nahin|nhi)\b|खत्म|ख़त्म|समाप्त|नहीं|शून्य/i;
+const STOP = new Set(["tablet", "tablets", "capsule", "injection", "syrup", "solution", "vaccine", "sachet", "kits", "kit", "adult", "child", "blue", "pink", "red", "with", "and"]);
+
+/** Words that name a medicine: the first distinctive word of its catalogue name and of its id (amlodipine, metformin, ors). */
+function keysFor(id: string, name: string): string[] {
+  const words = `${name} ${id.replace(/_/g, " ")}`.toLowerCase().replace(/[()/,.-]/g, " ").split(/\s+/).filter((w) => w.length >= 3 && !STOP.has(w) && !/^\d/.test(w) && !/^\d*mg$|^ml$|^iu$/.test(w));
+  return [...new Set(words.slice(0, 2))];
+}
+
+/** On-device parser. Knows the common Hindi and English names, and every medicine in this facility's own list. */
+export function parseLocal(text: string, names: Record<string, string> = {}): { commodity_id: string; quantity: number }[] {
   const out: { commodity_id: string; quantity: number }[] = [];
-  for (const seg of text.split(/[,;।]| aur | और /i)) {
-    const c = ALIASES.find(([re]) => re.test(seg))?.[1];
+  const cat = Object.entries(names).map(([id, name]) => ({ id, keys: keysFor(id, name) }));
+  let waiting: string | undefined;  // "Amlodipine 5 mg tablet, khtm": a quantity after a comma belongs to the medicine before it
+  for (const seg of text.split(/[,;।\n]| aur | और | and /i)) {
+    let c = ALIASES.find(([re]) => re.test(seg))?.[1];
+    if (!c && cat.length) {
+      const low = seg.toLowerCase();
+      // a word of the segment that starts a medicine's key (typos after 5 letters are fine: "amlodip", "metfor")
+      const tokens = low.split(/[^a-z\u0900-\u097f]+/).filter((w) => w.length >= 3);
+      const hit = cat.find((m) => m.keys.some((k) => tokens.some((w) => (w.length >= 5 ? k.startsWith(w.slice(0, 5)) : w === k) || low.includes(k))));
+      c = hit?.id;
+    }
+    const named = !!c;
+    c = c ?? waiting;
     if (!c) continue;
-    const zero = /khatam|khatm|खत्म|zero|nil|nahi|नहीं/i.test(seg);
-    const n = seg.match(/\d+/)?.[0];
+    const zero = ZERO.test(seg);
+    const nums = seg.replace(/\d+\s*(mg|ml|iu|mcg)\b/gi, " ").match(/\d+/g);  // "Amlodipine 5 mg, 40 left" is 40, not 5
+    const n = nums?.[nums.length - 1];
     const word = Object.keys(NUM).find((k) => (/^[a-z]+$/i.test(k) ? new RegExp(`\\b${k}\\b`, "i") : new RegExp(k)).test(seg));
-    out.push({ commodity_id: c, quantity: zero ? 0 : n ? Number(n) : word ? NUM[word] : 0 });
+    if (!zero && !n && !word) { waiting = named ? c : waiting; continue; }  // a medicine without a quantity is not a count (yet)
+    out.push({ commodity_id: c, quantity: zero ? 0 : n ? Number(n) : NUM[word!] });
+    waiting = undefined;
   }
   return out;
 }
 
 const MW = {
-  en: { readingPhoto: "Reading the register photo…", listening: "Recording… tap Stop when done", stop: "Stop", readingVoice: "Listening to the voice note…",
+  en: { readingPhoto: "Reading the register photo…", listening: "Recording… tap Stop when done", stop: "Stop", readingVoice: "Listening to the voice note…", readingText: "Reading your message with Gemini…",
     heard: "Heard", saw: "Read from the photo", unclear: "Could not read", none: "No medicine from your list was found. Try a clearer photo, or type it.",
     failed: "Could not read that. Check the connection, or type the stock instead.", noMic: "Microphone not available. Allow it in the browser, or type instead.",
     now: "now", was: "was", asking: "Waiting for microphone permission… allow it in the browser prompt.", byAi: "Read by Gemini; check each line before saving", mediaNote: "Photo and voice are read by Gemini; you confirm before anything is saved." },
-  hi: { readingPhoto: "रजिस्टर की फ़ोटो पढ़ी जा रही है…", listening: "रिकॉर्ड हो रहा है… पूरा होने पर रोकें दबाएँ", stop: "रोकें", readingVoice: "वॉइस नोट सुना जा रहा है…",
+  hi: { readingPhoto: "रजिस्टर की फ़ोटो पढ़ी जा रही है…", listening: "रिकॉर्ड हो रहा है… पूरा होने पर रोकें दबाएँ", stop: "रोकें", readingVoice: "वॉइस नोट सुना जा रहा है…", readingText: "Gemini आपका संदेश पढ़ रहा है…",
     heard: "सुना", saw: "फ़ोटो से पढ़ा", unclear: "पढ़ा नहीं जा सका", none: "आपकी सूची की कोई दवा नहीं मिली। साफ़ फ़ोटो लें, या टाइप करें।",
     failed: "पढ़ा नहीं जा सका। कनेक्शन जाँचें, या स्टॉक टाइप करें।", noMic: "माइक्रोफ़ोन उपलब्ध नहीं। ब्राउज़र में अनुमति दें, या टाइप करें।",
     now: "अब", was: "पहले", asking: "माइक्रोफ़ोन अनुमति की प्रतीक्षा… ब्राउज़र में अनुमति दें।", byAi: "Gemini ने पढ़ा; सहेजने से पहले हर पंक्ति जाँचें", mediaNote: "फ़ोटो और आवाज़ Gemini पढ़ता है; सहेजने से पहले आप पुष्टि करते हैं।" },
@@ -57,7 +80,7 @@ export default function ChatWidget({ facilityId, names = {}, onHand = {}, withHe
   const thread = useRef<HTMLDivElement>(null);
   const label = (id: string) => names[id] ?? id.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase());
   const mw = MW[lang];
-  const [busy, setBusy] = useState<null | "photo" | "voice">(null);
+  const [busy, setBusy] = useState<null | "photo" | "voice" | "text">(null);
   const [recording, setRecording] = useState(false);
   const [asking, setAsking] = useState(false);
   const rec = useRef<MediaRecorder | null>(null);
@@ -102,16 +125,27 @@ export default function ChatWidget({ facilityId, names = {}, onHand = {}, withHe
 
   const send = () => {
     const tx = text.trim(); if (!tx) return;
-    const rows = parseLocal(tx);
+    const rows = parseLocal(tx, names);
     const me: Msg = { id: nextId.current++, kind: "me", text: tx };
-    const reply: Msg = rows.length ? { id: nextId.current++, kind: "parsed", source: tx, rows, status: "pending" } : { id: nextId.current++, kind: "note", text: t.notFound };
-    setMsgs((m) => [...m.map((x) => (x.kind === "parsed" && x.status === "pending" ? { ...x, status: "replaced" as Status } : x)), me, reply]);
     setText("");
+    if (rows.length) {
+      const reply: Msg = { id: nextId.current++, kind: "parsed", source: tx, rows, status: "pending" };
+      setMsgs((m) => [...m.map((x) => (x.kind === "parsed" && x.status === "pending" ? { ...x, status: "replaced" as Status } : x)), me, reply]);
+      return;
+    }
+    // the on-device parser found nothing: Gemini reads the line against this facility's medicines; still confirmed before saving
+    setMsgs((m) => [...m.map((x) => (x.kind === "parsed" && x.status === "pending" ? { ...x, status: "replaced" as Status } : x)), me]);
+    setBusy("text");
+    api.parseMedia({ facility_id: facilityId, kind: "text", text: tx, lang })
+      .then((r) => { const got = r.items.map((i) => ({ commodity_id: i.commodity_id, quantity: i.quantity }));
+        setMsgs((m) => [...m, got.length ? { id: nextId.current++, kind: "parsed", source: tx, rows: got, status: "pending", via: "ai" } as Msg : { id: nextId.current++, kind: "note", text: t.notFound }]); })
+      .catch(() => note(t.notFound))
+      .finally(() => setBusy(null));
   };
   const edit = (m: Extract<Msg, { kind: "parsed" }>) => { setText(m.source); setStatus(m.id, "edited"); input.current?.focus(); };
   const fill = (ex: string) => { setText(ex); input.current?.focus(); };
 
-  const live = parseLocal(text);
+  const live = parseLocal(text, names);
   const card = (
       <div className="report-card">
         {withHeader && <header className="report-head"><h2>{t.reportTitle}</h2><p className="muted">{t.reportHint}</p></header>}
@@ -122,7 +156,7 @@ export default function ChatWidget({ facilityId, names = {}, onHand = {}, withHe
               <div className="report-examples">{t.reportExamples.map((ex) => <button key={ex} type="button" className="chip" onClick={() => fill(ex)}>{ex}</button>)}</div>
             </div>
           )}
-          {busy && <div className="report-bubble faint" role="status"><span className="spin" aria-hidden /> {busy === "photo" ? mw.readingPhoto : mw.readingVoice}</div>}
+          {busy && <div className="report-bubble faint" role="status"><span className="spin" aria-hidden /> {busy === "photo" ? mw.readingPhoto : busy === "voice" ? mw.readingVoice : mw.readingText}</div>}
           {msgs.map((m) => {
             if (m.kind === "me") return <div key={m.id} className="report-bubble me">{m.text}</div>;
             if (m.kind === "note") return <div key={m.id} className="report-bubble">{m.text}</div>;
@@ -130,7 +164,7 @@ export default function ChatWidget({ facilityId, names = {}, onHand = {}, withHe
             return (
               <div key={m.id} className={`report-confirm${m.status === "edited" || m.status === "replaced" ? " is-closed" : ""}`}>
                 <p className="report-confirm-title">{t.readBack}</p>
-                {m.via && m.via !== "text" && m.transcript && <p className="faint report-heard">{m.via === "voice" ? mw.heard : mw.saw}: “{m.transcript}”</p>}
+                {m.via && m.via !== "text" && m.via !== "ai" && m.transcript && <p className="faint report-heard">{m.via === "voice" ? mw.heard : mw.saw}: “{m.transcript}”</p>}
                 <ul>{m.rows.map((r, i) => <li key={i}><span>{label(r.commodity_id)}</span><strong>{r.quantity.toLocaleString("en-IN")}{r.quantity === 0 && <span className="faint"> ({t.finished})</span>}{change(r.commodity_id, r.quantity)}</strong></li>)}</ul>
                 {(m.status === "pending" || m.status === "saving" || m.status === "error") && (
                   <div className="report-confirm-actions">
@@ -150,7 +184,7 @@ export default function ChatWidget({ facilityId, names = {}, onHand = {}, withHe
           <div className="report-compose-row">
             <label htmlFor={`report-input-${facilityId}`} className="sr-only-report">{t.reportField}</label>
             <input id={`report-input-${facilityId}`} ref={input} className="input" value={text} onChange={(e) => setText(e.target.value)} placeholder="ORS ke 40 packet bache hain, zinc khatam" autoComplete="off" />
-            <button className="btn primary" type="submit" disabled={!text.trim()}>{t.send}</button>
+            <button className="btn primary" type="submit" disabled={!text.trim() || !!busy}>{t.send}</button>
           </div>
           <div className="report-media">
             <span title={LIVE_MEDIA ? undefined : t.liveOnly}>

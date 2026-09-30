@@ -79,7 +79,7 @@ export const api = {
   reject: (id: string, reason: string) => post<{ status: string }>(`/transfers/${id}/reject`, { reason }),
   delivered: (id: string, quantity?: number) => post<{ status: string }>(`/transfers/${id}/delivered`, quantity ? { quantity } : undefined),
   pickedUp: (id: string) => post<{ status: string }>(`/transfers/${id}/picked_up`),
-  parseMedia: (b: { facility_id: string; kind: "photo" | "voice"; mime: string; data: string; lang: string }) => post<{ items: { commodity_id: string; commodity_name: string | null; quantity: number; heard: string; was: number | null }[]; transcript: string; unclear: string | null; model: string }>("/ai/entries/parse", b),
+  parseMedia: (b: { facility_id: string; kind: "photo" | "voice" | "text"; mime?: string; data?: string; text?: string; lang: string }) => post<{ items: { commodity_id: string; commodity_name: string | null; quantity: number; heard: string; was: number | null }[]; transcript: string; unclear: string | null; model: string }>("/ai/entries/parse", b),
   scenario: () => get<{ current: Scenario; available: { name: string; label: string; units: string[] | null }[] }>("/scenario"),
   setScenario: (name: string, intensity: number) => post<Scenario>("/scenario", { name, intensity }),
   briefing: (u: string, d: string, lang: string) => get<Briefing>(`/ai/briefing/${u}/${encodeURIComponent(d)}?lang=${lang}`),

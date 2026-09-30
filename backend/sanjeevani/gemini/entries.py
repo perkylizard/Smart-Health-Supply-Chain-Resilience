@@ -20,16 +20,20 @@ class EntriesOut(BaseModel):
 
 def build_prompt(kind: str, catalogue: list[tuple[str, str]], lang: str) -> str:
     listing = "\n".join(f"- {cid}: {name}" for cid, name in catalogue)
-    what = ("a photo of a primary health centre's stock register (handwritten or printed; columns are often medicine, opening, received, issued, balance)"
-            if kind == "photo" else "a voice note from primary health centre staff saying how much of each medicine is left (Hindi, English or a mix)")
+    what = {"photo": "a photo of a primary health centre's stock register (handwritten or printed; columns are often medicine, opening, received, issued, balance)",
+            "voice": "a voice note from primary health centre staff saying how much of each medicine is left (Hindi, English or a mix)"}.get(
+            kind, "a typed message from primary health centre staff saying how much of each medicine is left (Hindi, English or Hinglish, often with typos)")
     return (f"{lang_line(lang)}\nYou read {what}. For each medicine mentioned, report the quantity ON HAND NOW (for a register, the closing balance). "
             "Words such as khatam, nahi hai, finished or out mean 0. Hindi numbers (bees = 20, chalis = 40, sau = 100) are numbers. "
             "Use only medicines from this list, by id; skip anything not on it and mention it in 'unclear'. Never guess a quantity.\n\n"
             f"Medicines at this facility:\n{listing}")
 
 
-def run(client: GeminiClient, data: bytes, mime: str, kind: str, catalogue: list[tuple[str, str]], lang: str = "en") -> EntriesOut:
-    out = client.generate_json(build_prompt(kind, catalogue, lang), EntriesOut, media=[(data, mime)], service="register" if kind == "photo" else "voice")
+def run(client: GeminiClient, data: bytes, mime: str, kind: str, catalogue: list[tuple[str, str]], lang: str = "en", text: str | None = None) -> EntriesOut:
+    if kind == "text":
+        out = client.generate_json(build_prompt(kind, catalogue, lang) + f"\n\nMessage: {text}", EntriesOut, service="explain")
+    else:
+        out = client.generate_json(build_prompt(kind, catalogue, lang), EntriesOut, media=[(data, mime)], service="register" if kind == "photo" else "voice")
     ids = {c for c, _ in catalogue}
     out.items = [EntryLine(commodity_id=i.commodity_id, quantity=max(0.0, float(i.quantity)), heard=i.heard) for i in out.items if i.commodity_id in ids]
     return out
