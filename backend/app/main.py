@@ -341,6 +341,11 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
             seed(app)
         except Exception:
             pass
+        try:
+            from app.routes_federated import warm as warm_federated  # live federated rounds: build node ledgers once, now
+            warm_federated()
+        except Exception:
+            pass
     if warm:
         threading.Thread(target=_warm, daemon=True).start()
     return app

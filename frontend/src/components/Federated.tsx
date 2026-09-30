@@ -9,6 +9,18 @@ import { sA } from "../stringsA";
 const UF: Record<string, string> = {"AC": "Acre", "AL": "Alagoas", "AP": "Amapá", "AM": "Amazonas", "BA": "Bahia", "CE": "Ceará", "DF": "Distrito Federal", "ES": "Espírito Santo", "GO": "Goiás", "MA": "Maranhão", "MT": "Mato Grosso", "MS": "Mato Grosso do Sul", "MG": "Minas Gerais", "PA": "Pará", "PB": "Paraíba", "PR": "Paraná", "PE": "Pernambuco", "PI": "Piauí", "RJ": "Rio de Janeiro", "RN": "Rio Grande do Norte", "RS": "Rio Grande do Sul", "RO": "Rondônia", "RR": "Roraima", "SC": "Santa Catarina", "SP": "São Paulo", "SE": "Sergipe", "TO": "Tocantins"};
 const TIERS = ["districts_bihar_coldstart", "districts_bihar", "states_india", "states_brazil", "countries_brics"] as const;
 
+/** Say what actually went wrong with a live round instead of one catch-all line. */
+function runError(msg: string, lang: "en" | "hi") {
+  const code = Number(msg.split(" ")[0]);
+  const en = code === 429 ? "Another live round is running. Try again in a few seconds."
+    : code === 502 || code === 503 || code === 504 ? "The server took too long this time. It may still be preparing the data after a restart; try again in a minute."
+    : !code ? "Could not reach the server. Check the connection and try again." : "The live round failed. The replay above still shows the stored result.";
+  const hi = code === 429 ? "एक और लाइव राउंड चल रहा है। कुछ सेकंड बाद फिर कोशिश करें।"
+    : code === 502 || code === 503 || code === 504 ? "इस बार सर्वर को ज़्यादा समय लगा। रीस्टार्ट के बाद डेटा तैयार हो रहा हो सकता है; एक मिनट बाद फिर कोशिश करें।"
+    : !code ? "सर्वर तक नहीं पहुँच सके। कनेक्शन जाँचें और फिर कोशिश करें।" : "लाइव राउंड विफल रहा। ऊपर का रीप्ले संग्रहीत परिणाम दिखाता है।";
+  return lang === "hi" ? hi : en;
+}
+
 export default function Federated() {
   const { t, lang } = useApp();
   const replay = useQuery({ queryKey: ["fedReplay"], queryFn: api.fedReplay });
@@ -50,7 +62,8 @@ export default function Federated() {
         <button className="btn dark" disabled={live.isPending} onClick={() => { setMode("live"); live.mutate(); }}>{live.isPending ? <><span className="spin" aria-hidden />{a.running}</> : a.runLiveRound}</button>
         <button className={`btn${mode === "replay" ? " soft" : ""}`} onClick={() => setMode("replay")}>{a.replayLbl}</button>
         <Badge kind="computed" title={data.provenance ?? replay.data?.method} />
-        {live.isError && <span className="chip red">{t.comingSoon}</span>}
+        {live.isError && <span className="chip red" role="alert">{runError(String((live.error as Error)?.message ?? ""), lang)}</span>}
+        {mode === "live" && live.data && <span className="faint" style={{ fontSize: "var(--t-xs)" }}>{lang === "hi" ? `लाइव राउंड ${(live.data as FedTier & { seconds?: number }).seconds ?? ""} सेकंड में` : `Live round finished in ${(live.data as FedTier & { seconds?: number }).seconds ?? ""} s`}</span>}
       </div>
       <div className="fed-grid">
         <div>

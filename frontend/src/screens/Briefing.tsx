@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { api, type Alert } from "../api";
+import { api, type Alert, type FacilityDot } from "../api";
 import { useApp } from "../App";
 import Badge from "../components/Badge";
 import Explain from "../components/Explain";
@@ -17,9 +17,9 @@ type Tab = (typeof TABS)[number];
 const badgeTone: Partial<Record<Tab, string>> = { requests: "amber", alerts: "red" };
 const TL = {
   en: { tabsLabel: "District sections", tabs: { requests: "Requests", transfers: "Transfers", alerts: "Stock alerts", map: "Map", care: "Beds & staff", counts: "Stock counts" } as Record<Tab, string>,
-    openMoveStock: "Open Move stock", showMore: (n: number, left: number) => `Show ${n} more (${left} left)`, mapHint: "tap a dot to open the facility", ahead: "Before the next delivery", now: "Under two weeks now", more: "Read full briefing", less: "Show less" },
+    openMoveStock: "Open Move stock", showMore: (n: number, left: number) => `Show ${n} more (${left} left)`, mapHint: "tap a dot to open the facility", ahead: "Before the next delivery", now: "Under two weeks now", more: "Read full briefing", less: "Show less", facList: "Facilities", facListHint: "Worst first. Open one to see its stock, beds and staff.", findFac: "Find a facility", allFac: "All", noFac: "No facility matches.", nAlerts: (n: number) => `${n} ${n === 1 ? "alert" : "alerts"}` },
   hi: { tabsLabel: "ज़िले के खंड", tabs: { requests: "अनुरोध", transfers: "स्थानांतरण", alerts: "स्टॉक चेतावनियाँ", map: "नक्शा", care: "बिस्तर और स्टाफ़", counts: "स्टॉक गिनती" } as Record<Tab, string>,
-    openMoveStock: "स्टॉक भेजें खोलें", showMore: (n: number, left: number) => `${n} और देखें (${left} बाकी)`, mapHint: "सुविधा खोलने के लिए बिंदु पर टैप करें", ahead: "अगली डिलीवरी से पहले", now: "अभी दो हफ़्ते से कम", more: "पूरा ब्रीफ़िंग पढ़ें", less: "कम दिखाएँ" },
+    openMoveStock: "स्टॉक भेजें खोलें", showMore: (n: number, left: number) => `${n} और देखें (${left} बाकी)`, mapHint: "सुविधा खोलने के लिए बिंदु पर टैप करें", ahead: "अगली डिलीवरी से पहले", now: "अभी दो हफ़्ते से कम", more: "पूरा ब्रीफ़िंग पढ़ें", less: "कम दिखाएँ", facList: "सुविधाएँ", facListHint: "सबसे गंभीर पहले। स्टॉक, बिस्तर और स्टाफ़ देखने के लिए कोई सुविधा खोलें।", findFac: "सुविधा खोजें", allFac: "सभी", noFac: "कोई सुविधा मेल नहीं खाती।", nAlerts: (n: number) => `${n} चेतावनियाँ` },
 };
 
 export default function Briefing() {
@@ -171,16 +171,19 @@ export default function Briefing() {
         </>)}
 
         {tab === "map" && (
-          <section className="card map-card">
-            <div className="card-head"><div><h2>{t.q2}</h2><p className="faint">{dots.data ? `${dots.data.facilities.length} ${t.facilities} · ${L.mapHint}` : ""}</p></div></div>
-            {dots.data ? <MapView dots={dots.data.facilities} onSelect={(f) => nav(`/facility/${f.facility_id}`)} /> : <p className="skeleton map" />}
-            <div className="legend">
-              <span><i className="dot" style={{ background: "var(--red)" }} />{t.severity.red}</span>
-              <span><i className="dot" style={{ background: "var(--amber)" }} />{t.severity.amber}</span>
-              <span><i className="dot" style={{ background: "var(--green)" }} />{t.severity.ok}</span>
-              <span><i className="dot" style={{ background: "var(--blue)" }} />{t.severity.data_issue}</span>
-            </div>
-          </section>
+          <div className="map-split">
+            <section className="card map-card">
+              <div className="card-head"><div><h2>{t.q2}</h2><p className="faint">{dots.data ? `${dots.data.facilities.length} ${t.facilities} · ${L.mapHint}` : ""}</p></div></div>
+              {dots.data ? <MapView dots={dots.data.facilities} onSelect={(f) => nav(`/facility/${f.facility_id}`)} /> : <p className="skeleton map" />}
+              <div className="legend">
+                <span><i className="dot" style={{ background: "var(--red)" }} />{t.severity.red}</span>
+                <span><i className="dot" style={{ background: "var(--amber)" }} />{t.severity.amber}</span>
+                <span><i className="dot" style={{ background: "var(--green)" }} />{t.severity.ok}</span>
+                <span><i className="dot" style={{ background: "var(--blue)" }} />{t.severity.data_issue}</span>
+              </div>
+            </section>
+            <FacilityList dots={dots.data?.facilities} />
+          </div>
         )}
 
         {tab === "care" && (
@@ -201,6 +204,41 @@ export default function Briefing() {
         {tab === "counts" && <CountHistory unit={unit} district={district} />}
       </div>
     </div>
+  );
+}
+
+const SEV_ORDER: Record<string, number> = { red: 0, amber: 1, data_issue: 2, ok: 3 };
+/** Beside the map: every facility in the district, worst first, one tap to open it. */
+function FacilityList({ dots }: { dots?: FacilityDot[] }) {
+  const { t, lang } = useApp();
+  const L = TL[lang];
+  const [find, setFind] = useState("");
+  const [only, setOnly] = useState<"all" | "red" | "amber">("all");
+  const all = [...(dots ?? [])].sort((a, b) => (SEV_ORDER[a.worst_severity] ?? 9) - (SEV_ORDER[b.worst_severity] ?? 9) || (b.red + b.amber) - (a.red + a.amber) || a.worst_days - b.worst_days);
+  const rows = all.filter((d) => (only === "all" || d.worst_severity === only) && (!find || d.facility_name.toLowerCase().includes(find.toLowerCase())));
+  const n = (k: string) => all.filter((d) => d.worst_severity === k).length;
+  return (
+    <section className="card fac-list" aria-label={L.facList}>
+      <div className="card-head"><div><h2>{L.facList}</h2><p className="faint">{L.facListHint}</p></div></div>
+      <input className="input" placeholder={L.findFac} value={find} onChange={(e) => setFind(e.target.value)} aria-label={L.findFac} />
+      <div className="seg fl-seg" role="tablist" aria-label={L.facList}>
+        {(["all", "red", "amber"] as const).map((k) => <button key={k} type="button" role="tab" aria-selected={only === k} className={only === k ? "on" : ""} onClick={() => setOnly(k)}>{k === "all" ? L.allFac : t.severity[k]} <span className="seg-n">{k === "all" ? all.length : n(k)}</span></button>)}
+      </div>
+      {!dots && <p className="skeleton" style={{ height: 200 }}>…</p>}
+      {dots && rows.length === 0 && <p className="muted">{L.noFac}</p>}
+      <ul className="fl-items">
+        {rows.map((d) => (
+          <li key={d.facility_id}>
+            <Link to={`/facility/${d.facility_id}`} className="fl-item">
+              <i className={`dot fl-dot ${d.worst_severity}`} aria-hidden />
+              <span className="fl-main"><b>{d.facility_name}</b><span className="faint">{d.type}{d.worst_severity !== "ok" && d.worst_commodity ? ` · ${d.worst_commodity}, ${Math.max(0, Math.round(d.worst_days))} ${t.days}` : ""}</span></span>
+              {d.red + d.amber > 0 && <span className={`chip ${d.red > 0 ? "red" : "amber"} nowrap`}>{L.nAlerts(d.red + d.amber)}</span>}
+              <span className="fl-go" aria-hidden>›</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 

@@ -1,4 +1,5 @@
 """Federated learning routes: replay (stored), live run (seconds), node listing. India tiers plus a simulated Brazil node."""
+import functools
 import json
 import threading
 import time
@@ -35,6 +36,33 @@ def nodes():
     return {k: {"label": v["tier"], "nodes": v["nodes"]} for k, v in rep["tiers"].items()}
 
 
+@functools.lru_cache(maxsize=8)
+def _nodes(tier: str, rows: int | None) -> tuple[tuple, str | None]:
+    """Loading and sampling the node ledgers is the slow part (seconds; training itself is well under one), so each
+    tier is built once per server and reused. Training only reads these arrays, so sharing them between runs is safe."""
+    if tier == "states_india":
+        return tuple(N.state_nodes(sample_per_state=rows or 30000)), None
+    if tier == "states_brazil":
+        return tuple(N.brazil_uf_nodes(sample_per_uf=rows or 20000)), None
+    if tier == "countries_brics":
+        return tuple(_nodes("states_india", rows)[0] + _nodes("states_brazil", rows)[0]), "BRICS"
+    return tuple(N.district_nodes("bihar", sample_per_district=rows or (600 if tier.endswith("coldstart") else 12000))), None
+
+
+def load_nodes(tier: str, rows: int | None = None) -> tuple[list, str | None]:
+    ns, top = _nodes(tier, rows)
+    return list(ns), top
+
+
+def warm() -> None:
+    """Build every tier's nodes in the background at start, so the first live round answers in about a second."""
+    for tier in ("districts_bihar_coldstart", "districts_bihar", "countries_brics"):
+        try:
+            load_nodes(tier)
+        except Exception:
+            pass
+
+
 @router.post("/run")
 def run(body: RunIn):
     """Runs hierarchical FedAvg now, in-process, and returns per-round metrics. Takes 3 to 15 seconds."""
@@ -42,16 +70,7 @@ def run(body: RunIn):
         raise HTTPException(429, "a federated run is already in progress")
     try:
         t0 = time.time()
-        top_name = None
-        if body.tier == "states_india":
-            ns = N.state_nodes(sample_per_state=body.rows_per_node or 30000)
-        elif body.tier == "states_brazil":
-            ns = N.brazil_uf_nodes(sample_per_uf=body.rows_per_node or 20000)
-        elif body.tier == "countries_brics":
-            ns = N.state_nodes(sample_per_state=body.rows_per_node or 30000) + N.brazil_uf_nodes(sample_per_uf=body.rows_per_node or 20000)
-            top_name = "BRICS"
-        else:
-            ns = N.district_nodes("bihar", sample_per_district=body.rows_per_node or (600 if body.tier.endswith("coldstart") else 12000))
+        ns, top_name = load_nodes(body.tier, body.rows_per_node)
         if not ns:
             raise HTTPException(400, "no node has enough rows at that size")
         hist, summary = F.run(ns, rounds=body.rounds, local_epochs=2, seed=int(time.time()) % 1000, top_name=top_name)

@@ -363,7 +363,7 @@ textarea.input { min-height: 120px; padding: var(--s3); font-family: ui-monospac
 .sp-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
 .sp-grid > .card, .sp-grid > .req-inbox { margin-bottom: 0; }
 @media (max-width: 1100px) { .sp-grid { grid-template-columns: 1fr; } }
-.prop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 0 24px; }
+.prop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; margin-bottom: var(--s3); }
 @media (max-width: 599px) { .prop-grid { grid-template-columns: 1fr; } }
 .map-card .map { height: 560px; }
 @media (max-width: 904px) { .map-card .map { height: 380px; } }
@@ -373,3 +373,28 @@ textarea.input { min-height: 120px; padding: var(--s3); font-family: ui-monospac
 .lead.clamp2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .sp-switch { margin-bottom: var(--s4); }
 @media (min-width: 1100px) { .sp-wide .ra-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; } }
+
+/* Transfers and look-ahead alerts as real cards: bordered, padded, equal height, action row pinned to the bottom */
+.prop-grid .prop, .sp-wide .ra-item { display: flex; flex-direction: column; padding: 16px; background: var(--paper); border: 1px solid var(--rule); border-radius: 12px; transition: border-color .15s, box-shadow .15s; }
+.prop-grid .prop:last-child, .sp-wide .ra-item:last-child { border-bottom: 1px solid var(--rule); }
+.prop-grid .prop:hover, .sp-wide .ra-item:hover { border-color: #cbd5e1; box-shadow: var(--e1); }
+.prop-grid .prop-act, .sp-wide .ra-actions { margin-top: auto; padding-top: 12px; }
+.sp-wide .ra-item.critical { border-left: 4px solid var(--red); } .sp-wide .ra-item.warning { border-left: 4px solid var(--amber); } .sp-wide .ra-item.watch { border-left: 4px solid var(--blue); }
+@media (min-width: 1100px) { .sp-wide .ra-list { gap: 16px; } }
+@media (max-width: 1099px) { .sp-wide .ra-list { display: grid; gap: 12px; } }
+/* Map tab: map on the left, facility list on the right (stacks on narrow screens) */
+.map-split { display: grid; grid-template-columns: minmax(0, 8fr) minmax(300px, 4fr); gap: 24px; align-items: stretch; }
+.map-split > .card { margin-bottom: 0; }
+.fac-list { display: flex; flex-direction: column; max-height: 720px; min-height: 0; }
+.fac-list .input { min-height: 38px; margin-bottom: 10px; }
+.fl-seg { margin-bottom: 8px; align-self: flex-start; }
+.fl-items { list-style: none; margin: 0 -8px; padding: 0; overflow-y: auto; flex: 1; min-height: 0; }
+.fl-item { display: flex; align-items: center; gap: 10px; padding: 10px 8px; border-radius: 8px; color: inherit; text-decoration: none; min-height: 44px; }
+.fl-item:hover, .fl-item:focus-visible { background: var(--paper-2); }
+.fl-items li + li { border-top: 1px solid #f1f5f9; }
+.fl-main { flex: 1; min-width: 0; display: flex; flex-direction: column; font-size: 13px; }
+.fl-main .faint { font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fl-dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--green); }
+.fl-dot.red { background: var(--red); } .fl-dot.amber { background: var(--amber); } .fl-dot.data_issue { background: var(--blue); }
+.fl-go { color: var(--ink-3); font-size: 18px; }
+@media (max-width: 1100px) { .map-split { grid-template-columns: 1fr; } .fac-list { max-height: 520px; } }
