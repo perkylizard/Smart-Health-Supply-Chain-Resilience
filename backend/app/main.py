@@ -8,7 +8,7 @@ import pandas as pd
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.schemas import EntryIn, RejectIn, ScenarioIn
+from app.schemas import EntryIn, MoveIn, RejectIn, ScenarioIn
 from app.state import InMemoryState
 from sanjeevani.engines import alerts as A, forecast as F, forecast_bq as FB, redistribute as R, resilience as Rs, scenario as S
 from sanjeevani.engines.store import Store
@@ -253,17 +253,67 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
             if st: r["status"], r["decision_reason"] = st["status"], st.get("reason")
         return {"district": district, "transfers": recs, "scenario": state.get_scenario(), "provenance": PROVENANCE["transfers"]}
 
+    def _parts(transfer_id: str) -> tuple[str, str, str]:
+        """transfer ids are '<commodity>:<donor facility>-><recipient facility>'"""
+        try:
+            commodity, rest = transfer_id.split(":", 1)
+            donor, recipient = rest.split("->", 1)
+        except ValueError:
+            raise HTTPException(404, "unknown transfer")
+        return commodity, donor, recipient
+
+    def transfer_snapshot(transfer_id: str) -> dict | None:
+        """The approved transfer as proposed (names, quantity, distance), kept so both facilities can follow it to delivery
+        even after later stock changes re-plan the district."""
+        snap = next((e for e in state.entries() if e.get("kind") == "transfer" and e.get("transfer_id") == transfer_id), None)
+        if snap:
+            return snap
+        commodity, donor, recipient = _parts(transfer_id)
+        f = store.q("SELECT unit_id, district FROM facilities WHERE facility_id = ?", [recipient])
+        if f.empty:
+            return None
+        pr = proposals_for(f.iloc[0]["unit_id"], f.iloc[0]["district"])
+        hit = pr[pr["transfer_id"] == transfer_id] if pr is not None and not pr.empty else None
+        if hit is None or hit.empty:
+            return None
+        row = _clean(hit.head(1))[0]
+        return state.add_entry({**row, "kind": "transfer"})
+
+    app.state.transfer_snapshot = transfer_snapshot
+
     @app.post("/transfers/{transfer_id:path}/approve")
     def approve(transfer_id: str):
-        return state.set_transfer(transfer_id, "approved")
+        rec = state.set_transfer(transfer_id, "approved")
+        transfer_snapshot(transfer_id)
+        return rec
 
     @app.post("/transfers/{transfer_id:path}/reject")
     def reject(transfer_id: str, body: RejectIn):
         return state.set_transfer(transfer_id, "rejected", body.reason)
 
+    @app.post("/transfers/{transfer_id:path}/picked_up")
+    def picked_up(transfer_id: str):
+        """The giving facility hands the stock over (after the officer's approval)."""
+        cur = (state.transfer_status(transfer_id) or {}).get("status")
+        if cur != "approved":
+            raise HTTPException(409, f"a {cur or 'proposed'} transfer cannot be handed over")
+        return state.set_transfer(transfer_id, "picked_up")
+
     @app.post("/transfers/{transfer_id:path}/delivered")
-    def delivered(transfer_id: str):
-        return state.set_transfer(transfer_id, "delivered")
+    def delivered(transfer_id: str, body: MoveIn | None = None):
+        """The receiving facility confirms arrival: the quantity leaves the donor's stock and joins the recipient's, once."""
+        cur = (state.transfer_status(transfer_id) or {}).get("status")
+        if cur not in ("approved", "picked_up"):
+            raise HTTPException(409, f"a {cur or 'proposed'} transfer cannot be marked arrived")
+        rec = state.set_transfer(transfer_id, "delivered")
+        commodity, donor, recipient = _parts(transfer_id)
+        snap = transfer_snapshot(transfer_id)
+        q = body.quantity if body and body.quantity else (float(snap["quantity"]) if snap else None)
+        if q:
+            from app.routes_requests import credit_stock
+            credit_stock(app, donor, commodity, -q, transfer_id, channel="transfer out")
+            credit_stock(app, recipient, commodity, q, transfer_id, channel="transfer in")
+        return rec
 
     @app.get("/transfers/status")
     def transfer_status_all():

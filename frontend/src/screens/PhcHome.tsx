@@ -6,7 +6,7 @@ import { useApp } from "../App";
 import Badge from "../components/Badge";
 import ChatWidget from "../components/ChatWidget";
 import Scale from "../components/Scale";
-import { MyRequests, RequestDialog, RequestForm } from "../components/Requests";
+import { MyRequests, RequestDialog, RequestForm, refreshRequestViews } from "../components/Requests";
 import { sB } from "../stringsB";
 
 const PICK = {
@@ -58,12 +58,13 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
   const { facilityId, t, lang } = useApp();
   const b = sB[lang];
   const qc = useQueryClient();
-  const f = useQuery({ queryKey: ["facility", facilityId], queryFn: () => api.facility(facilityId!), enabled: !!facilityId });
-  const tr = useQuery({ queryKey: ["facilityTransfers", facilityId], queryFn: () => api.facilityTransfers(facilityId!), enabled: !!facilityId && tab !== "report" });
+  const f = useQuery({ queryKey: ["facility", facilityId], queryFn: () => api.facility(facilityId!), enabled: !!facilityId, refetchInterval: 30_000 });
+  const tr = useQuery({ queryKey: ["facilityTransfers", facilityId], queryFn: () => api.facilityTransfers(facilityId!), enabled: !!facilityId && tab !== "report", refetchInterval: 30_000 });
   const [done, setDone] = useState<Record<string, boolean>>({});
   const [cat, setCat] = useState("all");
   const [find, setFind] = useState("");
-  const delivered = useMutation({ mutationFn: (id: string) => api.delivered(id), onMutate: (id) => setDone((d) => ({ ...d, [id]: true })), onSettled: () => qc.invalidateQueries({ queryKey: ["facilityTransfers"] }) });
+  const delivered = useMutation({ mutationFn: ({ id, q }: { id: string; q: number }) => api.delivered(id, q), onMutate: ({ id }) => setDone((d) => ({ ...d, [id]: true })), onSettled: () => { qc.invalidateQueries({ queryKey: ["facilityTransfers"] }); refreshRequestViews(qc); } });
+  const handed = useMutation({ mutationFn: (id: string) => api.pickedUp(id), onSettled: () => { qc.invalidateQueries({ queryKey: ["facilityTransfers"] }); refreshRequestViews(qc); } });
   if (!facilityId) return <PhcPick />;
   if (f.isError) return <div className="quiet">{t.offline}</div>;
   if (!f.data) return <p className="skeleton" style={{ height: 120 }}>Loading your facility</p>;
@@ -171,7 +172,7 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
             {tr.data && tx.length > 0 && (<>
               <h3 className="sec-title">{b.activeTitle} <span className="count">{tx.length - nDone}</span></h3>
               {tx.filter((x) => !isDone(x)).length === 0 && <p className="muted">{b.activeEmpty}</p>}
-              {tx.filter((x) => !isDone(x)).map((x) => <DeliveryCard key={x.transfer_id} x={x} moving={isMoving(x)} done={false} onArrived={() => delivered.mutate(x.transfer_id)} />)}
+              {tx.filter((x) => !isDone(x)).map((x) => <DeliveryCard key={x.transfer_id} x={x} moving={isMoving(x)} done={false} onArrived={() => delivered.mutate({ id: x.transfer_id, q: x.quantity })} onHanded={() => handed.mutate(x.transfer_id)} />)}
               <h3 className="sec-title">{b.receivedTitle} <span className="count">{nDone}</span></h3>
               {nDone === 0 && <p className="muted">{b.receivedEmpty}</p>}
               {tx.filter(isDone).map((x) => <DeliveryCard key={x.transfer_id} x={x} moving={false} done onArrived={() => {}} />)}
@@ -180,15 +181,16 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
         </>)}
       </div>{Side}</div>}
       {tab === "report" && (
-        <section className="qsection report-section"><ChatWidget facilityId={facilityId} names={Object.fromEntries(stock.map((s) => [s.commodity_id, s.commodity_name]))} withHeader /></section>
+        <section className="qsection report-section"><ChatWidget facilityId={facilityId} names={Object.fromEntries(stock.map((s) => [s.commodity_id, s.commodity_name]))} onHand={Object.fromEntries(stock.map((s) => [s.commodity_id, s.closing]))} withHeader /></section>
       )}
     </div>
   );
 }
 
-function DeliveryCard({ x, moving, done, onArrived }: { x: { transfer_id: string; commodity_id: string; commodity_name?: string; quantity: number; direction: "incoming" | "outgoing"; km: number; eta_days: number; from_name: string; to_name: string }; moving: boolean; done: boolean; onArrived: () => void }) {
-  const { t } = useApp();
-  const status = done ? t.deliveredStatus : moving ? t.onTheWay : t.awaitingApproval;
+function DeliveryCard({ x, moving, done, onArrived, onHanded }: { x: { transfer_id: string; commodity_id: string; commodity_name?: string; quantity: number; direction: "incoming" | "outgoing"; km: number; eta_days: number; from_name: string; to_name: string; status?: string }; moving: boolean; done: boolean; onArrived: () => void; onHanded?: () => void }) {
+  const { t, lang } = useApp();
+  const approvedOnly = x.status === "approved";
+  const status = done ? t.deliveredStatus : x.direction === "outgoing" && approvedOnly ? (lang === "hi" ? "स्वीकृत, सौंपना बाकी" : "Approved, hand it over") : moving ? t.onTheWay : t.awaitingApproval;
   return (
     <div className="tcard" style={{ cursor: "default" }}>
       <div className="tc-head">
@@ -197,7 +199,8 @@ function DeliveryCard({ x, moving, done, onArrived }: { x: { transfer_id: string
       </div>
       <div className="tc-route"><span>{x.from_name}</span><span className="arrow" aria-hidden>→</span><strong>{x.to_name}</strong></div>
       <div className="tc-actions"><span className={`status-badge ${done ? "green" : moving ? "blue" : "amber"}`}>{status}</span>
-        {x.direction === "incoming" && moving && <button className="btn emerald" style={{ marginLeft: "auto" }} onClick={onArrived}>{t.confirmArrived}</button>}
+        {x.direction === "incoming" && moving && <button className="btn emerald" style={{ marginLeft: "auto" }} onClick={onArrived} title={lang === "hi" ? "मात्रा आपके स्टॉक में जुड़ेगी" : "The quantity is added to your stock"}>{t.confirmArrived}</button>}
+        {x.direction === "outgoing" && approvedOnly && !done && onHanded && <button className="btn primary" style={{ marginLeft: "auto" }} onClick={onHanded} title={lang === "hi" ? "स्टॉक प्राप्तकर्ता के पहुँचने पर आपके स्टॉक से घटेगा" : "Leaves your stock when the other facility confirms arrival"}>{lang === "hi" ? "सौंप दिया" : "Handed over"}</button>}
       </div>
     </div>
   );

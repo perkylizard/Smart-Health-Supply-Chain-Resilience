@@ -16,3 +16,8 @@ class EntryIn(BaseModel):
     quantity: float = Field(..., ge=0)
     channel: str = "web"
     note: str | None = None
+
+
+class MoveIn(BaseModel):
+    """The quantity a transfer moves, sent by the facility that confirms arrival."""
+    quantity: float | None = Field(None, gt=0, le=10_000_000)

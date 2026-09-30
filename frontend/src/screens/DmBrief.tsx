@@ -23,7 +23,7 @@ export default function DmBrief() {
   const { unit, district, lang, t } = useApp();
   const b = sB[lang];
   const q = useQuery({ queryKey: ["brief", unit, district, lang], queryFn: () => api.brief(unit, district, lang) });
-  const d = useQuery({ queryKey: ["districts", unit], queryFn: () => api.districts(unit) });
+  const d = useQuery({ queryKey: ["districts", unit], queryFn: () => api.districts(unit), refetchInterval: 30_000 });
   const [reason, setReason] = useState("");
   const esc = useMutation({ mutationFn: () => api.escalate(unit, district, reason) });
   if (q.isError) return <div className="quiet">{t.offline}</div>;

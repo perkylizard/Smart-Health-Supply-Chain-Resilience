@@ -81,7 +81,15 @@ def facility_transfers(facility_id: str, request: Request):
         st = state.transfer_status(r["transfer_id"])
         if st: r["status"], r["decision_reason"] = st["status"], st.get("reason")
         r["direction"] = "incoming" if r["to_id"] == facility_id else "outgoing"
-    # include approved/delivered decisions for this facility that came from the district board
+    # approved transfers are kept as snapshots, so both sides follow them to delivery (a donor has no alert of its own,
+    # and later stock changes re-plan the district)
+    seen = {r["transfer_id"] for r in recs}
+    for e in state.entries():
+        if e.get("kind") == "transfer" and facility_id in (e.get("from_id"), e.get("to_id")) and e["transfer_id"] not in seen:
+            st = state.transfer_status(e["transfer_id"]) or {}
+            recs.append({k: v for k, v in e.items() if k not in ("kind", "entry_id", "received")} | {"status": st.get("status", "approved"), "decision_reason": st.get("reason"),
+                         "direction": "incoming" if e.get("to_id") == facility_id else "outgoing"})
+            seen.add(e["transfer_id"])
     return {"facility_id": facility_id, "transfers": recs, "provenance": "OR-Tools proposals filtered to this facility"}
 
 

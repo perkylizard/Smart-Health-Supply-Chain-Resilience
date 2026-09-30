@@ -25,7 +25,7 @@ const S = {
   },
 };
 /** A request or a decision changes what every role sees: refresh them all, not just the screen that acted. */
-export const REQUEST_KEYS = ["myRequests", "districtRequests", "districtRequestsAll", "unitRequests", "indents", "counts", "summary", "resilience", "facility", "dots", "issues", "careTotals"];
+export const REQUEST_KEYS = ["myRequests", "districtRequests", "districtRequestsAll", "unitRequests", "indents", "counts", "summary", "resilience", "facility", "dots", "issues", "careTotals", "facilityTransfers", "transfers", "unitTransfers", "districts", "brief"];
 export function refreshRequestViews(qc: ReturnType<typeof useQueryClient>) { for (const k of REQUEST_KEYS) qc.invalidateQueries({ queryKey: [k] }); }
 
 const tone: Record<string, string> = { requested: "amber", approved: "teal", declined: "red", dispatched: "blue", delivered: "blue", received: "green", cancelled: "red", closed: "slate" };

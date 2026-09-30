@@ -40,10 +40,10 @@ def _enrich(request: Request, recs: list[dict]) -> list[dict]:
     return sorted(out, key=lambda x: -x["received"])
 
 
-def credit_stock(request: Request, facility_id: str, commodity_id: str, quantity: float, ref: str) -> dict:
+def credit_stock(request, facility_id: str, commodity_id: str, quantity: float, ref: str, channel: str = "delivery") -> dict:
     """A confirmed receipt adds the quantity to what the facility holds now (its latest count, else the ledger), recorded as
     a stock count so days of stock, alerts, the map and every role's view recompute exactly as for a count from the Report screen."""
-    app = request.app
+    app = getattr(request, "app", request)  # a Request, or the app itself
     f = app.state.store.q("SELECT unit_id, district FROM facilities WHERE facility_id = ?", [facility_id])
     now = 0.0
     if not f.empty:
@@ -51,8 +51,8 @@ def credit_stock(request: Request, facility_id: str, commodity_id: str, quantity
         row = al[(al["facility_id"] == facility_id) & (al["commodity_id"] == commodity_id)]
         if not row.empty:
             now = max(0.0, float(row.iloc[0]["closing"]))
-    return app.state.state.add_entry({"kind": "count", "facility_id": facility_id, "commodity_id": commodity_id, "quantity": float(round(now + float(quantity))),
-                                      "channel": "delivery", "added": float(quantity), "ref": ref})
+    return app.state.state.add_entry({"kind": "count", "facility_id": facility_id, "commodity_id": commodity_id, "quantity": float(max(0, round(now + float(quantity)))),
+                                      "channel": channel, "added": float(quantity), "ref": ref})
 
 
 def log_issue(request: Request, facility_id: str, commodity_id: str, quantity: float, ref: str) -> dict | None:

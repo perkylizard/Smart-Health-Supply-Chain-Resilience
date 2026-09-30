@@ -1,3 +1,4 @@
+import { refreshRequestViews } from "../components/Requests";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -19,7 +20,7 @@ export default function Dispatch() {
   const [sp] = useSearchParams();
   const commodity = sp.get("commodity") ?? undefined;
   const qc = useQueryClient();
-  const q = useQuery({ queryKey: ["transfers", unit, district, commodity], queryFn: () => api.transfers(unit, district, commodity) });
+  const q = useQuery({ queryKey: ["transfers", unit, district, commodity], queryFn: () => api.transfers(unit, district, commodity), refetchInterval: 30_000 });
   const summary = useQuery({ queryKey: ["summary", unit, district], queryFn: () => api.summary(unit, district) });
   const dots = useQuery({ queryKey: ["dots", unit, district], queryFn: () => api.facilities(unit, district) });
   const [local, setLocal] = useState<Record<string, string>>({});
@@ -47,7 +48,7 @@ export default function Dispatch() {
   const approveOne = (x: Transfer) => { approve.mutate(x.transfer_id); setToast(`${u.approved}: ${x.quantity.toLocaleString("en-IN")} ${x.commodity_name ?? x.commodity_id.replace(/_/g, " ")} → ${x.to_name}`); };
   const viewTransit = () => { setView("transit"); setToast(null); transitRef.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" }); };
   const reject = useMutation({ mutationFn: ({ id, reason }: { id: string; reason: string }) => api.reject(id, reason), onMutate: ({ id }) => setStatus(id, "rejected") });
-  const delivered = useMutation({ mutationFn: (id: string) => api.delivered(id), onMutate: (id) => setStatus(id, "delivered") });
+  const delivered = useMutation({ mutationFn: (id: string) => api.delivered(id), onMutate: (id) => setStatus(id, "delivered"), onSettled: () => refreshRequestViews(qc) });
   const transfers = useMemo(() => (q.data?.transfers ?? []).map((x) => ({ ...x, status: local[x.transfer_id] ?? x.status })), [q.data, local]);
   const proposed = transfers.filter((x) => x.status === "proposed");
   const transit = transfers.filter((x) => ["approved", "picked_up"].includes(x.status))

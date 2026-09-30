@@ -193,3 +193,20 @@ def test_a_fractional_count_does_not_break_the_district_view(client):
     client.post("/entries", json={"facility_id": a["facility_id"], "commodity_id": a["commodity_id"], "quantity": 502.2000000476837, "channel": "chat"})
     assert client.get("/districts/bihar/Araria/summary").status_code == 200
     assert client.get(f"/facilities/{a['facility_id']}").status_code == 200
+
+
+def test_transfer_handover_and_arrival_move_stock_between_facilities(client):
+    tr = next(t for t in client.get("/transfers/bihar/Araria").json()["transfers"] if t["status"] == "proposed")
+    tid, cid, q = tr["transfer_id"], tr["commodity_id"], tr["quantity"]
+    donor0, rec0 = _stock(client, tr["from_id"], cid), _stock(client, tr["to_id"], cid)
+    assert client.post(f"/transfers/{tid}/delivered").status_code == 409  # not before approval
+    client.post(f"/transfers/{tid}/approve")
+    out = client.get(f"/facilities/{tr['from_id']}/transfers").json()["transfers"]
+    assert any(t["transfer_id"] == tid and t["direction"] == "outgoing" for t in out)  # the donor sees it to hand over
+    assert client.post(f"/transfers/{tid}/picked_up").json()["status"] == "picked_up"
+    assert client.post(f"/transfers/{tid}/delivered", json={"quantity": q}).json()["status"] == "delivered"
+    assert _stock(client, tr["to_id"], cid) == round(rec0 + q)
+    assert _stock(client, tr["from_id"], cid) == max(0, round(donor0 - q))
+    assert client.post(f"/transfers/{tid}/delivered", json={"quantity": q}).status_code == 409  # moved once
+    inc = client.get(f"/facilities/{tr['to_id']}/transfers").json()["transfers"]
+    assert next(t for t in inc if t["transfer_id"] == tid)["status"] == "delivered"

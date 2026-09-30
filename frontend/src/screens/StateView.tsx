@@ -18,8 +18,8 @@ export default function StateView() {
   const { unit, t, lang } = useApp();
   const a = sA[lang];
   const qc = useQueryClient();
-  const d = useQuery({ queryKey: ["districts", unit], queryFn: () => api.districts(unit) });
-  const tr = useQuery({ queryKey: ["unitTransfers", unit], queryFn: () => api.unitTransfers(unit) });
+  const d = useQuery({ queryKey: ["districts", unit], queryFn: () => api.districts(unit), refetchInterval: 30_000 });
+  const tr = useQuery({ queryKey: ["unitTransfers", unit], queryFn: () => api.unitTransfers(unit), refetchInterval: 30_000 });
   const esc = useQuery({ queryKey: ["escalations", unit], queryFn: () => api.escalations(unit), refetchInterval: 15_000 });
   const units = useQuery({ queryKey: ["units"], queryFn: api.units });
   const care = useQuery({ queryKey: ["careState", unit], queryFn: () => fetch(`${(import.meta.env.VITE_API_URL as string | undefined) ?? "/api"}/care/${unit}`).then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); }) as Promise<{ totals: { beds: number; occupied: number; occupancy: number | null } }> });

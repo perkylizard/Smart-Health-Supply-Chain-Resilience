@@ -2,7 +2,7 @@
 import time
 
 from fastapi import APIRouter, HTTPException, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 import duckdb
 
@@ -90,3 +90,45 @@ def ask(body: AskIn, request: Request):
         out = {"mode": body.mode, "question": body.question, "answer": "", "rows": [], "error": f"AI error: {str(e)[:160]}", "status": "fallback"}
     out["model"] = client.model_for("ask_guided" if body.mode == "guided" else "ask_sql")
     return out
+
+
+class MediaIn(BaseModel):
+    facility_id: str
+    kind: str = Field(pattern="^(photo|voice)$")
+    mime: str
+    data: str = Field(max_length=14_000_000)  # base64; about 10 MB of image or audio
+    lang: str = "en"
+
+
+MEDIA_TYPES = {"photo": {"image/jpeg", "image/png", "image/webp", "image/heic"}, "voice": {"audio/wav", "audio/mpeg", "audio/mp3", "audio/ogg", "audio/aac", "audio/flac", "audio/webm", "audio/mp4"}}
+
+
+@router.post("/entries/parse")
+def parse_media(body: MediaIn, request: Request):
+    """A register photo or a voice note, read into stock lines for the facility to confirm. Nothing is saved here."""
+    import base64
+    from sanjeevani.gemini import entries as EN
+    app = request.app
+    f = app.state.store.q("SELECT unit_id, district FROM facilities WHERE facility_id = ?", [body.facility_id])
+    if f.empty:
+        raise HTTPException(404, "unknown facility")
+    mime = body.mime.split(";")[0].strip().lower()
+    if mime not in MEDIA_TYPES[body.kind]:
+        raise HTTPException(415, f"{body.kind} must be one of {sorted(MEDIA_TYPES[body.kind])}")
+    try:
+        data = base64.b64decode(body.data, validate=True)
+    except Exception:
+        raise HTTPException(400, "data is not base64")
+    al = app.state.alerts_for(f.iloc[0]["unit_id"], f.iloc[0]["district"])
+    mine = al[al["facility_id"] == body.facility_id]
+    catalogue = list(dict.fromkeys(zip(mine["commodity_id"], mine["commodity_name"])))
+    closing = dict(zip(mine["commodity_id"], mine["closing"]))
+    try:
+        out = EN.run(_client(request), data, mime, body.kind, catalogue, body.lang)
+    except (GeminiUnavailable, CassetteMiss) as e:
+        raise HTTPException(503, f"live AI is not available here ({type(e).__name__}); type the stock instead")
+    except Exception as e:
+        raise HTTPException(502, f"could not read the {body.kind}: {str(e)[:160]}")
+    names = dict(catalogue)
+    return {"items": [{**i.model_dump(), "commodity_name": names.get(i.commodity_id), "was": None if closing.get(i.commodity_id) is None else float(closing[i.commodity_id])} for i in out.items],
+            "transcript": out.transcript, "unclear": out.unclear, "model": _client(request).model_for("register" if body.kind == "photo" else "voice")}

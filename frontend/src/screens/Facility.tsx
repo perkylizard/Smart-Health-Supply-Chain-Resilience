@@ -81,7 +81,7 @@ export default function Facility({ id }: { id: string }) {
           </section>
         </div>
         <aside>
-          <section className="card"><div className="card-head"><h2>{t.chatTitle}</h2></div><ChatWidget facilityId={id} /></section>
+          <section className="card"><div className="card-head"><h2>{t.chatTitle}</h2></div><ChatWidget facilityId={id} names={Object.fromEntries(nameOf)} onHand={Object.fromEntries(q.data.stock.map((s) => [s.commodity_id, s.closing]))} /></section>
         </aside>
       </div>
     </div>

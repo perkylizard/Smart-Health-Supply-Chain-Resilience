@@ -39,7 +39,7 @@ const S = {
  *  after that), watch (fine now, demand rising). Each warning names the fix the optimiser already has, if any. */
 export default function ResilienceAlerts({ unit, district }: { unit: string; district: string }) {
   const { lang, base, t } = useApp(); const s = S[lang];
-  const q = useQuery({ queryKey: ["resilience", unit, district], queryFn: () => api.resilienceAlerts(unit, district) });
+  const q = useQuery({ queryKey: ["resilience", unit, district], queryFn: () => api.resilienceAlerts(unit, district), refetchInterval: 30_000 });
   const [tier, setTier] = useState<"all" | "critical" | "warning" | "watch">("all");
   const [shown, setShown] = useState(6);
   const rows = (q.data?.alerts ?? []).filter((a) => tier === "all" || a.tier === tier);

@@ -27,10 +27,10 @@ export default function Briefing() {
   const nav = useNavigate();
   const qc = useQueryClient();
   const summary = useQuery({ queryKey: ["summary", unit, district], queryFn: () => api.summary(unit, district), enabled: !!district,
-    refetchInterval: (q) => (q.state.data?.rank_pending ? 6000 : false) });
-  const dots = useQuery({ queryKey: ["dots", unit, district], queryFn: () => api.facilities(unit, district), enabled: !!district });
+    refetchInterval: (q) => (q.state.data?.rank_pending ? 6000 : 30_000) });
+  const dots = useQuery({ queryKey: ["dots", unit, district], queryFn: () => api.facilities(unit, district), enabled: !!district, refetchInterval: 30_000 });
   const brief = useQuery({ queryKey: ["briefing", unit, district, lang, summary.data?.scenario.updated], queryFn: () => api.briefing(unit, district, lang), enabled: !!summary.data });
-  const transfers = useQuery({ queryKey: ["transfers", unit, district, undefined], queryFn: () => api.transfers(unit, district), enabled: !!summary.data });
+  const transfers = useQuery({ queryKey: ["transfers", unit, district, undefined], queryFn: () => api.transfers(unit, district), enabled: !!summary.data, refetchInterval: 30_000 });
   const care = useQuery({ queryKey: ["careTotals", unit, district], queryFn: () => fetch(`${(import.meta.env.VITE_API_URL as string | undefined) ?? "/api"}/care/${unit}/${encodeURIComponent(district)}`).then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); }) as Promise<{ summary: { beds: number; occupied: number; occupancy: number | null; staff_alerts: number; vacancy_share: number | null; facilities: number } }> });
   const units = useQuery({ queryKey: ["units"], queryFn: api.units });
   const approve = useMutation({ mutationFn: (id: string) => api.approve(id), onSettled: () => { qc.invalidateQueries({ queryKey: ["transfers"] }); qc.invalidateQueries({ queryKey: ["resilience"] }); } });
