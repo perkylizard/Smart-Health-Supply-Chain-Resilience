@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { api, type Alert, type FacilityDot } from "../api";
@@ -215,7 +215,7 @@ function FacilityList({ dots }: { dots?: FacilityDot[] }) {
   const L = TL[lang];
   const [find, setFind] = useState("");
   const [only, setOnly] = useState<"all" | "red" | "amber">("all");
-  const all = [...(dots ?? [])].sort((a, b) => (SEV_ORDER[a.worst_severity] ?? 9) - (SEV_ORDER[b.worst_severity] ?? 9) || (b.red + b.amber) - (a.red + a.amber) || a.worst_days - b.worst_days);
+  const all = useMemo(() => [...(dots ?? [])].sort((a, b) => (SEV_ORDER[a.worst_severity] ?? 9) - (SEV_ORDER[b.worst_severity] ?? 9) || (b.red + b.amber) - (a.red + a.amber) || a.worst_days - b.worst_days), [dots]);
   const rows = all.filter((d) => (only === "all" || d.worst_severity === only) && (!find || d.facility_name.toLowerCase().includes(find.toLowerCase())));
   const n = (k: string) => all.filter((d) => d.worst_severity === k).length;
   return (

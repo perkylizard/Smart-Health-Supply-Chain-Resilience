@@ -1,21 +1,62 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, lazy, Suspense, useContext, useEffect, useMemo, useState } from "react";
 import { Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "./api";
 import { strings, type Lang } from "./i18n";
 import { homePath, type PersonaId } from "./personas";
 import Shell from "./components/Shell";
-import Briefing from "./screens/Briefing";
-import Dispatch from "./screens/Dispatch";
-import Ask from "./screens/Ask";
-import FederatedView from "./screens/FederatedView";
-import Facility from "./screens/Facility";
-import System from "./screens/System";
-import StateView, { DistrictsTable } from "./screens/StateView";
-import NationalView from "./screens/NationalView";
-import PhcHome, { PhcPick } from "./screens/PhcHome";
-import DmBrief, { DmCompare } from "./screens/DmBrief";
-import Warehouse, { WarehouseStock } from "./screens/Warehouse";
+
+// Screens load on demand so the app bar paints before any screen's code arrives; each import is kept as a
+// function so the same chunk can be warmed on idle (see Located) and by React.lazy without loading it twice.
+const loadBriefing = () => import("./screens/Briefing");
+const loadDispatch = () => import("./screens/Dispatch");
+const loadAsk = () => import("./screens/Ask");
+const loadFederatedView = () => import("./screens/FederatedView");
+const loadFacility = () => import("./screens/Facility");
+const loadSystem = () => import("./screens/System");
+const loadStateView = () => import("./screens/StateView");
+const loadNationalView = () => import("./screens/NationalView");
+const loadPhcHome = () => import("./screens/PhcHome");
+const loadDmBrief = () => import("./screens/DmBrief");
+const loadWarehouse = () => import("./screens/Warehouse");
+const Briefing = lazy(loadBriefing);
+const Dispatch = lazy(loadDispatch);
+const Ask = lazy(loadAsk);
+const FederatedView = lazy(loadFederatedView);
+const Facility = lazy(loadFacility);
+const System = lazy(loadSystem);
+const StateView = lazy(loadStateView);
+const DistrictsTable = lazy(() => loadStateView().then((m) => ({ default: m.DistrictsTable })));
+const NationalView = lazy(loadNationalView);
+const PhcHome = lazy(loadPhcHome);
+const PhcPick = lazy(() => loadPhcHome().then((m) => ({ default: m.PhcPick })));
+const DmBrief = lazy(loadDmBrief);
+const DmCompare = lazy(() => loadDmBrief().then((m) => ({ default: m.DmCompare })));
+const Warehouse = lazy(loadWarehouse);
+const WarehouseStock = lazy(() => loadWarehouse().then((m) => ({ default: m.WarehouseStock })));
+
+/** The other screens a role can reach from its app bar, warmed once the browser is idle after the first screen shows. */
+const SIBLINGS: Record<string, (() => Promise<unknown>)[]> = {
+  dho: [loadBriefing, loadDispatch, loadAsk, loadSystem, loadFacility],
+  state: [loadStateView, loadNationalView, loadFederatedView, loadAsk, loadSystem],
+  dm: [loadDmBrief, loadSystem],
+  warehouse: [loadWarehouse, loadSystem],
+  phc: [loadPhcHome],
+  "phc-pick": [loadPhcHome],
+  facility: [loadFacility, loadBriefing],
+};
+function warmSiblings(which: string) {
+  const run = () => { SIBLINGS[which]?.forEach((load) => { load().catch(() => { /* a failed warm-up is retried by the route itself */ }); }); };
+  // wait a few seconds first: while the first screen's data is still on its way the main thread is idle, and the
+  // warm-up must not share the network with that data
+  const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number; cancelIdleCallback?: (id: number) => void };
+  let idle: number | undefined;
+  const timer = window.setTimeout(() => { if (w.requestIdleCallback) idle = w.requestIdleCallback(run, { timeout: 4000 }); else run(); }, 3000);
+  return () => { window.clearTimeout(timer); if (idle !== undefined) w.cancelIdleCallback?.(idle); };
+}
+
+/** Shown in the content area while a screen's code is on its way; the same shimmer the screens use for their own data. */
+const ScreenFallback = () => <div aria-busy="true"><p className="skeleton" style={{ height: 40, marginBottom: 16 }}>…</p><p className="skeleton" style={{ height: 320 }}>…</p></div>;
 
 export type Basis = "real" | "simulated";
 export interface Ctx {
@@ -93,6 +134,7 @@ function Located({ lang, setLang, persona, setPersona, basis, setBasis, which }:
     setLocation: (u, d) => { if (!d) { nav(`/${u}`); return; } nav(effectivePersona === "phc" ? `/phc-pick/${u}/${encodeURIComponent(d)}` : homePath(effectivePersona, u, d)); },
   }), [lang, effectivePersona, unit, district, base, which, params.id, nav, setPersona, basis, setBasis]);
   const health = useQuery({ queryKey: ["health"], queryFn: api.health, refetchInterval: 30_000 });
+  useEffect(() => warmSiblings(which), [which]);
   let body: React.ReactNode;
   switch (which) {
     case "dho": body = <Routes><Route index element={<Briefing />} /><Route path="dispatch" element={<Dispatch />} /><Route path="ask" element={<Ask />} /><Route path="system" element={<System />} /></Routes>; break;
@@ -105,7 +147,7 @@ function Located({ lang, setLang, persona, setPersona, basis, setBasis, which }:
   }
   return (
     <AppCtx.Provider value={ctx}>
-      <Shell offline={health.isError}>{body}</Shell>
+      <Shell offline={health.isError}><Suspense fallback={<ScreenFallback />}>{body}</Suspense></Shell>
     </AppCtx.Provider>
   );
 }
