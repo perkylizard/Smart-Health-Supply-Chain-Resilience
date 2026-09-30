@@ -5,6 +5,25 @@ Built for the Hack2Skill x Google BRICS Hackathon, Track 3: Smart Health & Suppl
 
 **Live app: https://sanjeevani-grid.web.app** · **[User guide](docs/USER_GUIDE.md)**: how each role uses the app, step by step.
 
+## Try it as each role
+
+Switch roles any time with the **Role** menu at the top (on a phone, the round badge with initials such as DH). Or open a role directly; all links use Kaimur Bhabua district, Bihar:
+
+| Role | Open directly |
+|---|---|
+| District Health Officer | https://sanjeevani-grid.web.app/dho/bihar/Kaimur%20Bhabua |
+| Facility staff (CHC Kaimur Bhabua 1) | https://sanjeevani-grid.web.app/phc/bihar-kaimur-bhabua-chc-chc-kaimur-bhabua-1-807 |
+| District store | https://sanjeevani-grid.web.app/warehouse/bihar/Kaimur%20Bhabua |
+| District Magistrate | https://sanjeevani-grid.web.app/dm/bihar/Kaimur%20Bhabua |
+| State officer | https://sanjeevani-grid.web.app/state/bihar |
+
+**Follow one request through every role (about 3 minutes):**
+1. **Facility staff:** on *My stock*, tap **+ Request** on any medicine, enter a quantity, **Send request**.
+2. **District Health Officer:** *Today* → **Requests** tab → **Approve**.
+3. **District store:** *Indents* → **Mark dispatched** on that medicine.
+4. **Facility staff:** *Deliveries* → **Received**. The stock on *My stock* goes up by that quantity.
+5. Also try **− Give** on a medicine (the stock goes down at once), and **Report** with a line such as `ORS ke 40 packet bache hain`.
+
 See `docs/design/specs/` for the design and `DATA-SOURCES-VERIFIED.md` for every data source.
 
 ## Setup
