@@ -6,6 +6,7 @@ import ScenarioDial from "./ScenarioDial";
 import { PERSONAS, icons } from "../personas";
 import LocationPicker from "./LocationPicker";
 import RoleMenu from "./RoleMenu";
+import Tour from "./Tour";
 import WhatIf from "./WhatIf";
 import LoadErrorBanner from "./LoadErrorBanner";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -50,6 +51,7 @@ export default function Shell({ children, offline }: { children: React.ReactNode
   const basisLabel = realScreen ? (basis === "real" ? t.basisReal : t.basisSimulated) : t.basisFacility;
   return (
     <div className="shell" lang={lang}>
+      <Tour />
       <header className="hdr">
         <div className="hdr-bar">
           {/* zone 1: brand (start over) */}

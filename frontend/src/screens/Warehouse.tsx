@@ -188,7 +188,7 @@ function IssueRegister({ unit, district }: { unit: string; district: string }) {
   const by = q.data?.by_medicine ?? [];
   const latestTo = (cid: string) => q.data?.issues.find((i) => i.commodity_id === cid)?.facility_name ?? "";
   return (
-    <section className="card">
+    <section className="card" data-tour="issues">
       <div className="card-head"><div><h2>{l.title}</h2><p className="faint">{l.sub}</p></div>{q.data && q.data.total > 0 && <span className="chip teal nowrap">{l.total(Math.round(q.data.total).toLocaleString("en-IN"), q.data.issues.length)}</span>}</div>
       {q.data && by.length === 0 && <p className="muted">{l.none}</p>}
       {by.length > 0 && <div className="tbl-wrap"><table className="table">

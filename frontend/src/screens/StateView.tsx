@@ -42,7 +42,7 @@ export default function StateView() {
   return (
     <div className="pg st">
       <h1 className="sr-only">{t.stateTab}</h1>
-      <section className="card pg-hero">
+      <section className="card pg-hero" data-tour="st-hero">
         <div className="pg-hero-top">
           <div>
             <p className="eyebrow"><span className="eyebrow-accent">{stateName}</span><span aria-hidden> · </span>{a.stEyebrow}</p>
@@ -60,7 +60,7 @@ export default function StateView() {
       </section>
       <div className="pg-grid">
         <div>
-          <section className="card">
+          <section className="card" data-tour="st-map">
             <div className="card-head"><div><h2>{a.mapTitle2}</h2><p className="faint">{d.data ? `${rows.length} ${t.districtsTab.toLowerCase()}` : ""}</p></div></div>
             {d.isLoading && <p className="skeleton" style={{ height: 240 }}>…</p>}
             {dots.length > 0 && <MapView dots={dots} />}
@@ -69,7 +69,7 @@ export default function StateView() {
             </div>
             {worst.length > 0 && <p className="faint st-lowest">{a.lowest}: {worst.map((w) => <Link key={w.district} to={`/dho/${unit}/${encodeURIComponent(w.district)}`}>{w.district} <b>{Math.round(w.score ?? 0)}</b></Link>)}</p>}
           </section>
-          <section className="card">
+          <section className="card" data-tour="st-approvals">
             <div className="card-head"><div><h2>{a.approvalsTitle} <span className="faint">{pending}</span></h2><p className="faint">{a.approvalsSub}</p></div></div>
             {tr.isLoading && <p className="skeleton" style={{ height: 60 }}>{a.approvalsLoading}</p>}
             {tr.data && transfers.length === 0 && <p className="muted">{a.approvalsEmpty}</p>}
@@ -103,7 +103,7 @@ export default function StateView() {
             {esc.data && esc.data.escalations.length === 0 && <p className="muted">{a.escEmpty}</p>}
             {esc.data?.escalations.map((e, i) => <div key={i} className="st-esc"><strong>{e.district}</strong><p>{e.reason}</p><p className="faint">{new Date(e.received * 1000).toLocaleString("en-IN")}</p></div>)}
           </section>
-          <section className="card">
+          <section className="card" data-tour="st-league">
             <div className="card-head"><div><h2>{t.leagueTitle}</h2></div><Link to={`/state/${unit}/districts`}>{a.allDistricts} →</Link></div>
             {d.isLoading ? <p className="skeleton" style={{ height: 200 }}>…</p> : <LeagueTable rows={[...rows].sort((x, y) => (y.score ?? 0) - (x.score ?? 0)).slice(0, 12)} />}
           </section>

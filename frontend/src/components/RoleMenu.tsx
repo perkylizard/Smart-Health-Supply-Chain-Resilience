@@ -1,12 +1,13 @@
 import * as Menu from "@radix-ui/react-dropdown-menu";
 import { useApp } from "../App";
-import { PERSONAS, ROLE_ORDER, type PersonaId } from "../personas";
+import { ROLE_ORDER, type PersonaId } from "../personas";
+import { startTour } from "./Tour";
 
 const initials: Record<PersonaId, string> = { dho: "DH", state: "ST", phc: "PH", dm: "DM", warehouse: "WH" };
 
 /** Who you are: an avatar that opens the five roles with a one-line description each. */
 export default function RoleMenu() {
-  const { t, persona, setPersona } = useApp();
+  const { t, persona, setPersona, lang } = useApp();
   return (
     <Menu.Root modal={false}>
       <Menu.Trigger asChild>
@@ -23,6 +24,11 @@ export default function RoleMenu() {
               </Menu.RadioItem>
             ))}
           </Menu.RadioGroup>
+          <Menu.Separator className="menu-sep" />
+          <Menu.Item className="menu-item menu-tour" onSelect={() => setTimeout(startTour, 50)}>
+            <span className="avatar small" aria-hidden>?</span>
+            <span><span className="menu-title">{lang === "hi" ? "इस स्क्रीन का टूर" : "Take the tour"}</span><span className="menu-hint">{lang === "hi" ? "एक मिनट में समझें कि यहाँ क्या है" : "A one-minute walk through this role's screens"}</span></span>
+          </Menu.Item>
         </Menu.Content>
       </Menu.Portal>
     </Menu.Root>
