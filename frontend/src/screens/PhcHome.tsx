@@ -86,6 +86,7 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
   const cats = Array.from(new Set(stock.map((s) => s.category))).sort();
   const shown = stock.filter((s) => (cat === "all" || s.category === cat) && s.commodity_name.toLowerCase().includes(find.trim().toLowerCase()));
   const name = String(fac.name);
+  const firstGive = shown.find((s) => s.closing > 0)?.commodity_id; // the tour spotlights a row that can actually give
 
   const Side = (
     <aside className="phc-side">
@@ -158,7 +159,7 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
                     <td className="num">{Math.round(s.closing).toLocaleString("en-IN")}</td>
                     <td><Scale days={s.days_of_stock} severity={s.severity} label={t.days} /></td>
                     <td><span className={`status-badge ${tone}`}>{b[key] as string}</span></td>
-                    <td className="num"><div className="row-acts"><DispenseDialog facilityId={facilityId!} stock={stock} preset={s.commodity_id}><button className="btn quiet nowrap" disabled={s.closing <= 0} title={dispenseLabels[lang].give}>− {dispenseLabels[lang].giveRow}</button></DispenseDialog><RequestDialog facilityId={facilityId!} facilityName={name} options={options} preset={s.commodity_id}><button className="btn quiet nowrap">+ {b.requestRow}</button></RequestDialog></div></td>
+                    <td className="num"><div className="row-acts" data-tour={s.commodity_id === firstGive ? "give-row" : undefined}><DispenseDialog facilityId={facilityId!} stock={stock} preset={s.commodity_id}><button className="btn quiet nowrap" disabled={s.closing <= 0} title={dispenseLabels[lang].give}>− {dispenseLabels[lang].giveRow}</button></DispenseDialog><RequestDialog facilityId={facilityId!} facilityName={name} options={options} preset={s.commodity_id}><button className="btn quiet nowrap">+ {b.requestRow}</button></RequestDialog></div></td>
                   </tr>); })}</tbody>
               </table>
             </div>
