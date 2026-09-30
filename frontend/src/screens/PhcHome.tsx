@@ -108,11 +108,12 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
     <section className="card">
       <div className="pg-head">
         <div>
-          <p className="eyebrow"><span className="eyebrow-accent">{String(fac.type)} · {String(fac.district)}</span><span aria-hidden> · </span><Link to={`/phc-pick/${fac.unit_id}/${encodeURIComponent(String(fac.district))}`}>{t.facility}</Link></p>
+          <p className="eyebrow"><span className="eyebrow-accent">{String(fac.type)} · {String(fac.district)}</span></p>
           <h1>{tab === "deliveries" ? b.delivTitle(name) : tab === "report" ? name : b.phcTitle(name)}</h1>
           <p className="sub">{tab === "deliveries" ? b.delivSub : null}<Badge kind={fac.source === "osm" ? "osm" : "simulated"} /></p>
         </div>
         <div className="pg-actions">
+          <Link className="btn quiet" to={`/phc-pick/${fac.unit_id}/${encodeURIComponent(String(fac.district))}`}>⇄ {lang === "hi" ? "सुविधा बदलें" : "Change facility"}</Link>
           {tab !== "report" && <Link className="btn" to={`/phc/${facilityId}/report`}>{b.updateRegister}</Link>}
           <RequestDialog facilityId={facilityId!} facilityName={name} options={options}><button className="btn primary">+ {b.requestStock}</button></RequestDialog>
         </div>

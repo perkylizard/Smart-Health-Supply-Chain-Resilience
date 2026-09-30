@@ -71,7 +71,7 @@ function UnitRedirect({ persona }: { persona: PersonaId }) {
     if (!q.data) return;
     const scored = qc.getQueryData<{ districts: { district: string; red_alerts: number }[] }>(["districts", unit]);
     const worst = scored ? [...scored.districts].sort((a, b) => (b.red_alerts ?? 0) - (a.red_alerts ?? 0))[0] : q.data.districts[0];
-    nav(worst ? homePath(persona === "phc" ? "dho" : persona, unit!, worst.district) : "/", { replace: true });
+    nav(worst ? (persona === "phc" ? `/phc-pick/${unit}/${encodeURIComponent(worst.district)}` : homePath(persona, unit!, worst.district)) : "/", { replace: true });
   }, [q.data, unit, nav, persona, qc]);
   if (q.isError) return <p style={{ padding: 24 }}>Unknown state. <a href="/">Back</a></p>;
   return <p className="skeleton" style={{ margin: 24, height: 40 }}>Loading the district with the most alerts</p>;
@@ -90,7 +90,7 @@ function Located({ lang, setLang, persona, setPersona, basis, setBasis, which }:
   const ctx = useMemo<Ctx>(() => ({
     lang, setLang, t: strings[lang], persona: effectivePersona, unit, district, facilityId: which === "phc" ? params.id : undefined, base, basis, setBasis,
     setPersona: (p) => { setPersona(p); nav(homePath(p, unit, district, readLS("facility", "") || undefined)); },
-    setLocation: (u, d) => { if (!d) { nav(`/${u}`); return; } nav(homePath(effectivePersona === "phc" ? "dho" : effectivePersona, u, d)); },
+    setLocation: (u, d) => { if (!d) { nav(`/${u}`); return; } nav(effectivePersona === "phc" ? `/phc-pick/${u}/${encodeURIComponent(d)}` : homePath(effectivePersona, u, d)); },
   }), [lang, effectivePersona, unit, district, base, which, params.id, nav, setPersona, basis, setBasis]);
   const health = useQuery({ queryKey: ["health"], queryFn: api.health, refetchInterval: 30_000 });
   let body: React.ReactNode;
