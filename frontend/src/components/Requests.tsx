@@ -83,7 +83,7 @@ function RequestCard({ r, actions }: { r: StockRequest; actions?: React.ReactNod
 
 /** District Health Officer side: open requests from the district's facilities, approve or decline with a reason. */
 /** Top-of-page notice on the district officer's Today screen: open facility requests, so they are never missed below the alerts. */
-export function RequestsWaiting({ unit, district }: { unit: string; district: string }) {
+export function RequestsWaiting({ unit, district, onReview }: { unit: string; district: string; onReview?: () => void }) {
   const { lang } = useApp(); const v = V[lang];
   const q = useQuery({ queryKey: ["districtRequests", unit, district], staleTime: 0, refetchOnMount: "always", queryFn: () => api.districtRequests(unit, district, "requested"), refetchInterval: 15_000 });
   const reqs = q.data?.requests ?? [];
@@ -91,7 +91,7 @@ export function RequestsWaiting({ unit, district }: { unit: string; district: st
   const names = [...new Set(reqs.map((r) => r.facility_name))];
   const shown = names.length > 3 ? `${names.slice(0, 3).join(", ")} +${names.length - 3}` : names.join(", ");
   const oldest = Math.min(...reqs.map((r) => r.received));
-  const go = () => { const el = document.getElementById("req-inbox"); if (!el) return; el.scrollIntoView({ behavior: "smooth", block: "start" }); el.focus({ preventScroll: true }); };
+  const go = () => { if (onReview) { onReview(); return; } const el = document.getElementById("req-inbox"); if (!el) return; el.scrollIntoView({ behavior: "smooth", block: "start" }); el.focus({ preventScroll: true }); };
   return (
     <section className="card req-waiting" role="status">
       <span className="req-waiting-n" aria-hidden>{reqs.length}</span>

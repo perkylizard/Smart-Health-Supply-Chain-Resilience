@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { api, type Alert } from "../api";
 import { useApp } from "../App";
 import Badge from "../components/Badge";
@@ -11,6 +11,16 @@ import Sparkline from "../components/Sparkline";
 import CarePanel from "../components/CarePanel";
 import { CountHistory, RequestTracker, RequestsInbox, RequestsWaiting } from "../components/Requests";
 import ResilienceAlerts from "../components/ResilienceAlerts";
+
+const TABS = ["requests", "transfers", "alerts", "map", "care", "counts"] as const;
+type Tab = (typeof TABS)[number];
+const badgeTone: Partial<Record<Tab, string>> = { requests: "amber", alerts: "red" };
+const TL = {
+  en: { tabsLabel: "District sections", tabs: { requests: "Requests", transfers: "Transfers", alerts: "Stock alerts", map: "Map", care: "Beds & staff", counts: "Stock counts" } as Record<Tab, string>,
+    openMoveStock: "Open Move stock", showMore: (n: number, left: number) => `Show ${n} more (${left} left)`, mapHint: "tap a dot to open the facility", ahead: "Before the next delivery", now: "Under two weeks now", more: "Read full briefing", less: "Show less" },
+  hi: { tabsLabel: "ज़िले के खंड", tabs: { requests: "अनुरोध", transfers: "स्थानांतरण", alerts: "स्टॉक चेतावनियाँ", map: "नक्शा", care: "बिस्तर और स्टाफ़", counts: "स्टॉक गिनती" } as Record<Tab, string>,
+    openMoveStock: "स्टॉक भेजें खोलें", showMore: (n: number, left: number) => `${n} और देखें (${left} बाकी)`, mapHint: "सुविधा खोलने के लिए बिंदु पर टैप करें", ahead: "अगली डिलीवरी से पहले", now: "अभी दो हफ़्ते से कम", more: "पूरा ब्रीफ़िंग पढ़ें", less: "कम दिखाएँ" },
+};
 
 export default function Briefing() {
   const { unit, district, lang, t, base } = useApp();
@@ -25,6 +35,23 @@ export default function Briefing() {
   const units = useQuery({ queryKey: ["units"], queryFn: api.units });
   const approve = useMutation({ mutationFn: (id: string) => api.approve(id), onSettled: () => { qc.invalidateQueries({ queryKey: ["transfers"] }); qc.invalidateQueries({ queryKey: ["resilience"] }); } });
   const [showAll, setShowAll] = useState(false);
+  const [propShown, setPropShown] = useState(6);
+  const [alertView, setAlertView] = useState<"ahead" | "now">("ahead");
+  const [briefOpen, setBriefOpen] = useState(false);
+  const L = TL[lang];
+  const [sp, setSp] = useSearchParams();
+  const waiting = useQuery({ queryKey: ["districtRequests", unit, district], staleTime: 0, refetchOnMount: "always", queryFn: () => api.districtRequests(unit, district, "requested"), refetchInterval: 15_000 });
+  const counts = useQuery({ queryKey: ["counts", unit, district], staleTime: 0, refetchOnMount: "always", queryFn: () => api.districtCounts(unit, district), refetchInterval: 15_000 });
+  const nWaiting = waiting.data?.requests.length ?? 0;
+  const asked = sp.get("tab") as Tab | null;
+  const tab: Tab = asked && TABS.includes(asked) ? asked : nWaiting > 0 ? "requests" : "alerts";
+  const tabsRef = useRef<HTMLElement | null>(null);
+  const open = (k: Tab) => {
+    const next = new URLSearchParams(sp); next.set("tab", k); setSp(next, { replace: true });
+    // bring the tabs into view when they are off screen or low on it (from the tiles or the requests banner)
+    const top = tabsRef.current?.getBoundingClientRect().top;
+    if (top != null && (top < 0 || top > window.innerHeight * 0.6)) tabsRef.current!.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
   const s = summary.data;
   const perFacility: Record<string, number> = {};
   const alerts = (s?.alerts ?? []).filter((a) => a.alert).filter((a) => { perFacility[a.facility_id] = (perFacility[a.facility_id] ?? 0) + 1; return perFacility[a.facility_id] <= 3; });
@@ -33,9 +60,10 @@ export default function Briefing() {
   const stateName = units.data?.units.find((u) => u.unit_id === unit)?.state ?? "";
   const c = care.data?.summary;
   const opd = s?.sparklines.opd ?? [];
+  const badge: Partial<Record<Tab, number>> = { requests: nWaiting, transfers: proposed.length, alerts: s?.counts.red ?? 0, care: c?.staff_alerts ?? 0, counts: counts.data?.total ?? 0 };
   return (
     <div className="today">
-      <div className="rw-phone"><RequestsWaiting unit={unit} district={district} /></div>
+      <div className="rw-phone"><RequestsWaiting unit={unit} district={district} onReview={() => open("requests")} /></div>
       {whatIf && <p className="chip amber" style={{ marginBottom: 12 }}>{t.whatIf}: {s.scenario.name.replace(/_/g, " ")} {Math.round(s.scenario.intensity * 100)}%</p>}
 
       {/* hero: where you are, how the district stands, the four numbers that matter */}
@@ -56,23 +84,24 @@ export default function Briefing() {
           </div>
         </div>
         <div className="tiles">
-          <div className="tile"><div className="tile-h"><span>{t.tileShort}</span><i className="dot red" /></div><div className="tile-n">{s ? (s.counts.red ?? 0) + (s.counts.amber ?? 0) : "…"} <small className="red">({s?.counts.red ?? 0} {t.critical})</small></div><div className="tile-s">{t.tileShortSub}</div></div>
-          <div className="tile"><div className="tile-h"><span>{t.tileBeds}</span><Badge kind="simulated" /></div><div className="tile-n">{c?.occupancy != null ? `${(c.occupancy * 100).toFixed(1)}%` : "…"}</div><div className="tile-s">{c ? t.tileBedsSub(c.occupied, c.beds) : ""}</div></div>
-          <div className="tile"><div className="tile-h"><span>{t.tileStaff}</span><Badge kind="simulated" /></div><div className="tile-n">{c?.vacancy_share != null ? `${((1 - c.vacancy_share) * 100).toFixed(1)}%` : "…"}</div><div className="tile-s">{c ? t.tileStaffSub(c.staff_alerts) : ""}</div></div>
-          <div className="tile"><div className="tile-h"><span>{t.tileOpd}</span><Badge kind="real" /></div><div className="tile-n">{opd.length ? Math.round(opd[opd.length - 1]).toLocaleString("en-IN") : "…"}</div><div className="tile-s">{t.tileOpdSub}</div></div>
+          <button type="button" className="tile tile-btn" onClick={() => open("alerts")} aria-label={`${t.tileShort}: ${L.tabs.alerts}`}><div className="tile-h"><span>{t.tileShort}</span><i className="dot red" /></div><div className="tile-n">{s ? (s.counts.red ?? 0) + (s.counts.amber ?? 0) : "…"} <small className="red">({s?.counts.red ?? 0} {t.critical})</small></div><div className="tile-s">{t.tileShortSub}</div></button>
+          <button type="button" className="tile tile-btn" onClick={() => open("care")}><div className="tile-h"><span>{t.tileBeds}</span><Badge kind="simulated" /></div><div className="tile-n">{c?.occupancy != null ? `${(c.occupancy * 100).toFixed(1)}%` : "…"}</div><div className="tile-s">{c ? t.tileBedsSub(c.occupied, c.beds) : ""}</div></button>
+          <button type="button" className="tile tile-btn" onClick={() => open("care")}><div className="tile-h"><span>{t.tileStaff}</span><Badge kind="simulated" /></div><div className="tile-n">{c?.vacancy_share != null ? `${((1 - c.vacancy_share) * 100).toFixed(1)}%` : "…"}</div><div className="tile-s">{c ? t.tileStaffSub(c.staff_alerts) : ""}</div></button>
+          <button type="button" className="tile tile-btn" onClick={() => open("care")}><div className="tile-h"><span>{t.tileOpd}</span><Badge kind="real" /></div><div className="tile-n">{opd.length ? Math.round(opd[opd.length - 1]).toLocaleString("en-IN") : "…"}</div><div className="tile-s">{t.tileOpdSub}</div></button>
         </div>
       </section>
 
-      {/* open facility requests: surfaced first so the officer never has to scroll past the alerts to find them */}
-      <div className="rw-wide"><RequestsWaiting unit={unit} district={district} /></div>
+      {/* open facility requests: surfaced first; Review opens the Requests tab */}
+      <div className="rw-wide"><RequestsWaiting unit={unit} district={district} onReview={() => open("requests")} /></div>
 
       {/* the morning briefing (Gemini, or written from the numbers when Gemini is unreachable) */}
       <section className="card brief-card">
         {brief.data ? (<>
           <p className="eyebrow"><span className="eyebrow-accent">{t.briefLbl}</span></p>
           <h2 className="headline">{brief.data.headline}</h2>
-          <p className="lead">{brief.data.body.join(" ")}</p>
+          <p className={`lead${briefOpen ? "" : " clamp2"}`}>{brief.data.body.join(" ")}</p>
           <p style={{ marginTop: 8, display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+            <button type="button" className="btn quiet" style={{ paddingLeft: 0 }} aria-expanded={briefOpen} onClick={() => setBriefOpen((v) => !v)}>{briefOpen ? L.less : L.more}</button>
             {alerts[0] && <Explain kind="alert" item={alerts[0]}><button className="btn quiet" style={{ paddingLeft: 0 }}>{t.whyLink}</button></Explain>}
             <Badge kind={brief.data.status.startsWith("fallback") ? "computed" : "ai"} title={brief.data.status.startsWith("fallback") ? "Written from the alert numbers; Gemini was not reachable" : `${brief.data.model} · ${brief.data.status}`} />
           </p>
@@ -82,43 +111,69 @@ export default function Briefing() {
         </>)}
       </section>
 
-      <div className="today-grid">
-        <div className="today-main">
-          {/* narrow screens: the proactive warnings come right after the briefing, not below every other card */}
-          <div className="narrow-only"><ResilienceAlerts unit={unit} district={district} /></div>
-          {/* rebalancing proposals: the decision, first */}
+      {/* secondary tabs: one job per tab, counts on each so the officer knows where work is waiting */}
+      <nav className="subtabs" ref={tabsRef} role="tablist" aria-label={L.tabsLabel}>
+        {TABS.map((k) => (
+          <button key={k} type="button" role="tab" id={`tab-${k}`} aria-controls={`panel-${k}`} aria-selected={tab === k} className={tab === k ? "on" : ""} onClick={() => open(k)}>
+            <span>{L.tabs[k]}</span>{badge[k] != null && badge[k]! > 0 && <span className={`subtab-n ${badgeTone[k] ?? ""}`}>{badge[k]!.toLocaleString("en-IN")}</span>}
+          </button>
+        ))}
+      </nav>
+
+      <div className="subpanel" role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`}>
+        {tab === "requests" && (
+          <div className="sp-grid">
+            <RequestsInbox unit={unit} district={district} />
+            <RequestTracker unit={unit} district={district} />
+          </div>
+        )}
+
+        {tab === "transfers" && (
           <section className="card proposals">
             <div className="card-head">
               <div><h2>{t.proposalsTitle}</h2><p className="faint">{t.proposalsSub}</p></div>
-              {proposed.length > 0 && <Link className="btn soft" to={`${base}/dispatch`}>{t.reviewAll(proposed.length)}</Link>}
+              <Link className="btn soft" to={`${base}/dispatch`}>{L.openMoveStock} →</Link>
             </div>
             {!transfers.data && <p className="skeleton" style={{ height: 96 }}>…</p>}
             {transfers.data && proposed.length === 0 && <p className="muted empty">{t.noneReady}</p>}
-            {proposed.slice(0, 3).map((x) => (
-              <div key={x.transfer_id} className="prop">
-                <div className="prop-top"><div><b>{x.commodity_name ?? x.commodity_id.replace(/_/g, " ")}</b> <span className="qty-pill">+{x.quantity.toLocaleString("en-IN")}</span></div><span className="faint">{x.km} km · {x.eta_days} d</span></div>
-                <div className="flow"><div><span className="lbl">{t.donorLbl}</span><b>{x.from_name}</b></div><span className="arrow" aria-hidden>→</span><div><span className="lbl red">{t.recipientLbl}</span><b>{x.to_name}</b></div></div>
-                <div className="prop-act">
-                  <Explain kind="transfer" item={x}><button className="btn quiet" style={{ paddingLeft: 0 }}>{t.whyTransfer}</button></Explain>
-                  <button className="btn primary" disabled={approve.isPending} onClick={() => approve.mutate(x.transfer_id)}>{t.approve}</button>
-                </div>
-              </div>))}
-          </section>
-
-          {/* every current alert, as a table */}
-          <section className="card">
-            <div className="card-head"><div><h2>{t.q1}</h2><p className="faint">{s ? `${s.counts.red ?? 0} ${t.severity.red}, ${s.counts.amber ?? 0} ${t.severity.amber}` : ""}</p></div></div>
-            {s && alerts.length === 0 && <div className="quiet">{t.noAlerts}</div>}
-            <div className="list flat">
-              {alerts.length > 0 && <div className="list-head" aria-hidden><span>{t.stockHead}</span><span>{t.medHead}</span><span>{t.daysHead}</span><span>{t.actionHead}</span></div>}
-              {alerts.slice(0, showAll ? 60 : 8).map((a) => <AlertRow key={a.facility_id + a.commodity_id} a={a} base={base} />)}
+            <div className="prop-grid">
+              {proposed.slice(0, propShown).map((x) => (
+                <div key={x.transfer_id} className="prop">
+                  <div className="prop-top"><div><b>{x.commodity_name ?? x.commodity_id.replace(/_/g, " ")}</b> <span className="qty-pill">+{x.quantity.toLocaleString("en-IN")}</span></div><span className="faint">{x.km} km · {x.eta_days} d</span></div>
+                  <div className="flow"><div><span className="lbl">{t.donorLbl}</span><b>{x.from_name}</b></div><span className="arrow" aria-hidden>→</span><div><span className="lbl red">{t.recipientLbl}</span><b>{x.to_name}</b></div></div>
+                  <div className="prop-act">
+                    <Explain kind="transfer" item={x}><button className="btn quiet" style={{ paddingLeft: 0 }}>{t.whyTransfer}</button></Explain>
+                    <button className="btn primary" disabled={approve.isPending} onClick={() => approve.mutate(x.transfer_id)}>{t.approve}</button>
+                  </div>
+                </div>))}
             </div>
-            {alerts.length > 8 && <button className="btn quiet" onClick={() => setShowAll((v) => !v)}>{showAll ? t.showFewer : `${t.showAll} (${alerts.length})`}</button>}
+            {proposed.length > propShown && <button className="btn quiet" onClick={() => setPropShown((n) => n + 6)}>{L.showMore(Math.min(6, proposed.length - propShown), proposed.length - propShown)}</button>}
           </section>
+        )}
 
-          <section className="card">
-            <div className="card-head"><div><h2>{t.q2}</h2><p className="faint">{dots.data ? `${dots.data.facilities.length} ${t.facilities}` : ""}</p></div></div>
-            {dots.data && <MapView dots={dots.data.facilities} onSelect={(f) => nav(`/facility/${f.facility_id}`)} />}
+        {tab === "alerts" && (<>
+          {/* two ways to read the same shortages: ahead of the next delivery, or everything under two weeks right now */}
+          <div className="seg sp-switch" role="tablist" aria-label={L.tabs.alerts}>
+            <button type="button" role="tab" aria-selected={alertView === "ahead"} className={alertView === "ahead" ? "on" : ""} onClick={() => setAlertView("ahead")}>{L.ahead}</button>
+            <button type="button" role="tab" aria-selected={alertView === "now"} className={alertView === "now" ? "on" : ""} onClick={() => setAlertView("now")}>{L.now} {s && <span className="seg-n">{(s.counts.red ?? 0) + (s.counts.amber ?? 0)}</span>}</button>
+          </div>
+          {alertView === "ahead" ? <div className="sp-wide"><ResilienceAlerts unit={unit} district={district} /></div> : (
+            <section className="card">
+              <div className="card-head"><div><h2>{t.q1}</h2><p className="faint">{s ? `${s.counts.red ?? 0} ${t.severity.red}, ${s.counts.amber ?? 0} ${t.severity.amber}` : ""}</p></div></div>
+              {s && alerts.length === 0 && <div className="quiet">{t.noAlerts}</div>}
+              <div className="list flat">
+                {alerts.length > 0 && <div className="list-head" aria-hidden><span>{t.stockHead}</span><span>{t.medHead}</span><span>{t.daysHead}</span><span>{t.actionHead}</span></div>}
+                {alerts.slice(0, showAll ? 60 : 12).map((a) => <AlertRow key={a.facility_id + a.commodity_id} a={a} base={base} />)}
+              </div>
+              {alerts.length > 12 && <button className="btn quiet" onClick={() => setShowAll((v) => !v)}>{showAll ? t.showFewer : `${t.showAll} (${alerts.length})`}</button>}
+            </section>
+          )}
+        </>)}
+
+        {tab === "map" && (
+          <section className="card map-card">
+            <div className="card-head"><div><h2>{t.q2}</h2><p className="faint">{dots.data ? `${dots.data.facilities.length} ${t.facilities} · ${L.mapHint}` : ""}</p></div></div>
+            {dots.data ? <MapView dots={dots.data.facilities} onSelect={(f) => nav(`/facility/${f.facility_id}`)} /> : <p className="skeleton map" />}
             <div className="legend">
               <span><i className="dot" style={{ background: "var(--red)" }} />{t.severity.red}</span>
               <span><i className="dot" style={{ background: "var(--amber)" }} />{t.severity.amber}</span>
@@ -126,23 +181,24 @@ export default function Briefing() {
               <span><i className="dot" style={{ background: "var(--blue)" }} />{t.severity.data_issue}</span>
             </div>
           </section>
-        </div>
-        <aside className="today-side">
-          <RequestsInbox unit={unit} district={district} />
-          <RequestTracker unit={unit} district={district} />
-          <div className="wide-only"><ResilienceAlerts unit={unit} district={district} /></div>
-          <CountHistory unit={unit} district={district} />
-          <div style={{ marginBottom: "var(--s6)" }}><CarePanel unit={unit} district={district} /></div>
-          <section className="card">
-            <h2>{t.trend}</h2>
-            {s && (<>
-              <Sparkline values={s.sparklines.opd} label={t.opd} delta={s.sparkline_deltas.opd} badge={<Badge kind="real" />} />
-              <Sparkline values={s.sparklines.diarrhoea_u5} label={t.diarrhoea} delta={s.sparkline_deltas.diarrhoea_u5} badge={<Badge kind="real" />} />
-              <Sparkline values={s.sparklines.stockouts} label={t.stockouts} delta={s.sparkline_deltas.stockouts} badge={<Badge kind="simulated" />} />
-            </>)}
-            {s?.score && <p className="faint" style={{ fontSize: "var(--t-xs)", marginTop: 12 }}>{t.scoreParts(Math.round(s.score.median_days_of_stock), Math.round(s.score.share_under_14d * 100), Math.round(s.score.staffing_gap * 100))} <Badge kind="computed" /></p>}
-          </section>
-        </aside>
+        )}
+
+        {tab === "care" && (
+          <div className="sp-grid">
+            <CarePanel unit={unit} district={district} />
+            <section className="card">
+              <h2>{t.trend}</h2>
+              {s && (<>
+                <Sparkline values={s.sparklines.opd} label={t.opd} delta={s.sparkline_deltas.opd} badge={<Badge kind="real" />} />
+                <Sparkline values={s.sparklines.diarrhoea_u5} label={t.diarrhoea} delta={s.sparkline_deltas.diarrhoea_u5} badge={<Badge kind="real" />} />
+                <Sparkline values={s.sparklines.stockouts} label={t.stockouts} delta={s.sparkline_deltas.stockouts} badge={<Badge kind="simulated" />} />
+              </>)}
+              {s?.score && <p className="faint" style={{ fontSize: "var(--t-xs)", marginTop: 12 }}>{t.scoreParts(Math.round(s.score.median_days_of_stock), Math.round(s.score.share_under_14d * 100), Math.round(s.score.staffing_gap * 100))} <Badge kind="computed" /></p>}
+            </section>
+          </div>
+        )}
+
+        {tab === "counts" && <CountHistory unit={unit} district={district} />}
       </div>
     </div>
   );

@@ -345,3 +345,31 @@ textarea.input { min-height: 120px; padding: var(--s3); font-family: ui-monospac
 @media (max-width: 599px) { .req-waiting { flex-wrap: wrap; } .req-waiting .btn { width: 100%; } .req-waiting-t .faint { white-space: normal; } }
 .req-inbox .tcard { box-shadow: none; border: 1px solid var(--rule); }
 .req-inbox .tc-actions { flex-wrap: wrap; }
+
+/* District officer Today: secondary tabs. Sticky under the app bar on desktop, a scrollable strip on phones. */
+.subtabs { display: flex; gap: 4px; margin: 0 0 var(--s4); padding: 0 var(--s2); background: var(--paper, #fff); border: 1px solid rgba(226,232,240,.8); border-radius: var(--r2); box-shadow: var(--e1); overflow-x: auto; scrollbar-width: none; scroll-margin-top: 80px; }
+.subtabs::-webkit-scrollbar { display: none; }
+.subtabs button { position: relative; flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 16px; background: none; border: 0; font: inherit; font-size: 14px; font-weight: 600; color: var(--ink-2); cursor: pointer; white-space: nowrap; }
+.subtabs button::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: transparent; transition: background .15s; }
+.subtabs button:hover { color: var(--ink); background: var(--paper-2); }
+.subtabs button.on { color: var(--teal-2, #115e59); }
+.subtabs button.on::after { background: var(--teal-2, #115e59); }
+.subtabs button:focus-visible { outline: 2px solid var(--teal); outline-offset: -2px; border-radius: 8px; }
+.subtab-n { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 11px; font-size: 12px; font-weight: 700; background: var(--paper-2); color: var(--ink-2); }
+.subtab-n.amber { background: var(--amber-soft); color: var(--amber); }
+.subtab-n.red { background: var(--red-soft); color: var(--red); }
+@media (min-width: 905px) { .subtabs { position: sticky; top: 72px; z-index: 5; } }
+.subpanel { min-height: 420px; }
+.sp-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.sp-grid > .card, .sp-grid > .req-inbox { margin-bottom: 0; }
+@media (max-width: 1100px) { .sp-grid { grid-template-columns: 1fr; } }
+.prop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 0 24px; }
+@media (max-width: 599px) { .prop-grid { grid-template-columns: 1fr; } }
+.map-card .map { height: 560px; }
+@media (max-width: 904px) { .map-card .map { height: 380px; } }
+.tile-btn { text-align: left; font: inherit; color: inherit; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.tile-btn:hover { border-color: var(--teal, #0f766e); box-shadow: var(--e1); }
+.tile-btn:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.lead.clamp2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sp-switch { margin-bottom: var(--s4); }
+@media (min-width: 1100px) { .sp-wide .ra-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; } }
