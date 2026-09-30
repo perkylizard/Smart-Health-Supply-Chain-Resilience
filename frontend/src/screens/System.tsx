@@ -4,7 +4,6 @@ import { api } from "../api";
 import { useApp } from "../App";
 import { PERSONAS, ROLE_ORDER, type PersonaId } from "../personas";
 import ScenarioDial from "../components/ScenarioDial";
-import Federated from "../components/Federated";
 import Badge from "../components/Badge";
 import { sA } from "../stringsA";
 
@@ -66,12 +65,11 @@ export default function System() {
               <p className="faint se-note" style={{ marginTop: 0 }}>{t.scenarioHint}</p>
               <ScenarioDial variant="cards" />
             </Sec>
-            <Sec n={4} title={a.secFed}><Federated /></Sec>
           </div>
         </div>
         <aside>
           <section className="card">
-            <h2 className="se-side-h"><span className="se-n">5</span>{a.secHealth}</h2>
+            <h2 className="se-side-h"><span className="se-n">4</span>{a.secHealth}</h2>
             <dl className="kv">
               <dt>{t.facilitiesIn} {unitName}</dt><dd>{districts.data ? fac.toLocaleString("en-IN") : "…"}</dd>
               <dt>{t.districtsLbl}</dt><dd>{districts.data?.districts.length ?? "…"}</dd>
@@ -79,7 +77,7 @@ export default function System() {
             </dl>
           </section>
           <section className="card">
-            <h2 className="se-side-h"><span className="se-n">6</span>{a.secProv}</h2>
+            <h2 className="se-side-h"><span className="se-n">5</span>{a.secProv}</h2>
             {prov.isLoading && <p className="skeleton" style={{ height: 120 }}>…</p>}
             <dl className="prov">{prov.data && Object.entries(prov.data).map(([k, v]) => <div key={k}><dt>{k.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase())}</dt><dd>{v}</dd></div>)}</dl>
           </section>

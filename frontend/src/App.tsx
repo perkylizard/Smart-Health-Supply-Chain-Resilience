@@ -8,6 +8,7 @@ import Shell from "./components/Shell";
 import Briefing from "./screens/Briefing";
 import Dispatch from "./screens/Dispatch";
 import Ask from "./screens/Ask";
+import FederatedView from "./screens/FederatedView";
 import Facility from "./screens/Facility";
 import System from "./screens/System";
 import StateView, { DistrictsTable } from "./screens/StateView";
@@ -95,7 +96,7 @@ function Located({ lang, setLang, persona, setPersona, basis, setBasis, which }:
   let body: React.ReactNode;
   switch (which) {
     case "dho": body = <Routes><Route index element={<Briefing />} /><Route path="dispatch" element={<Dispatch />} /><Route path="ask" element={<Ask />} /><Route path="system" element={<System />} /></Routes>; break;
-    case "state": body = <Routes><Route index element={<StateView />} /><Route path="districts" element={<DistrictsTable />} /><Route path="india" element={<NationalView />} /><Route path="ask" element={<Ask />} /><Route path="system" element={<System />} /></Routes>; break;
+    case "state": body = <Routes><Route index element={<StateView />} /><Route path="districts" element={<DistrictsTable />} /><Route path="india" element={<NationalView />} /><Route path="federated" element={<FederatedView />} /><Route path="ask" element={<Ask />} /><Route path="system" element={<System />} /></Routes>; break;
     case "dm": body = <Routes><Route index element={<DmBrief />} /><Route path="compare" element={<DmCompare />} /><Route path="system" element={<System />} /></Routes>; break;
     case "warehouse": body = <Routes><Route index element={<Warehouse />} /><Route path="stock" element={<WarehouseStock />} /><Route path="system" element={<System />} /></Routes>; break;
     case "phc-pick": body = <PhcPick />; break;
