@@ -14,7 +14,7 @@ data:
 # --- deploy: API on Cloud Run, web on Firebase Hosting (project sanjeevani-grid, region asia-south1) ---
 deploy-api:
 	gcloud run deploy sanjeevani-api --source . --region asia-south1 --project sanjeevani-grid \
-	  --allow-unauthenticated --memory 4Gi --cpu 2 --concurrency 8 --timeout 300 --cpu-boost --min-instances 0 --max-instances 3 \
+	  --allow-unauthenticated --memory 4Gi --cpu 2 --concurrency 20 --timeout 300 --cpu-boost --min-instances 1 --max-instances 1 \
 	  --set-secrets GEMINI_API_KEY=gemini-api-key:latest --set-env-vars GEMINI_MODE=live,GCP_PROJECT_ID=sanjeevani-grid,BQ_DATASET=sanjeevani
 deploy-web:
 	cd frontend && npm ci && npm run build

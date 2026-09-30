@@ -55,6 +55,24 @@ def _clean(df: pd.DataFrame) -> list[dict]:
 def create_app(store: Store | None = None, state: InMemoryState | None = None, gemini=None, warm: bool = True) -> FastAPI:
     app = FastAPI(title="Sanjeevani Grid API", version="0.1.0")
     app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+
+    # one gate for every district-scoped route: an unknown state or district is "not found", never a server error
+    from urllib.parse import unquote
+    from starlette.responses import JSONResponse
+    _known: dict = {}
+
+    @app.middleware("http")
+    async def known_district(request, call_next):
+        parts = [unquote(x) for x in request.url.path.split("/") if x]
+        if parts and parts[0] == "api":
+            parts = parts[1:]
+        if len(parts) >= 3 and parts[0] in ("districts", "transfers") and request.method == "GET":
+            unit_id, district = parts[1], parts[2]
+            if unit_id not in _known:
+                _known[unit_id] = set(store.districts(unit_id)) if unit_id in set(store.units()["unit_id"]) else set()
+            if district not in _known[unit_id]:
+                return JSONResponse({"detail": f"unknown district {district} in {unit_id}"}, status_code=404)
+        return await call_next(request)
     app.add_middleware(StripPrefix, prefix="/api")
     store = store or Store()
     state = state or InMemoryState()
@@ -288,6 +306,10 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
 
     @app.post("/entries")
     def add_entry(body: EntryIn):
+        if store.q("SELECT 1 FROM facilities WHERE facility_id = ?", [body.facility_id]).empty:
+            raise HTTPException(404, "unknown facility")
+        if body.commodity_id not in set(store.commodities()["commodity_id"]):
+            raise HTTPException(400, "unknown medicine")
         # a stock count from the facility: it replaces that medicine's closing stock and recomputes its alert (see alerts_for)
         return state.add_entry({**body.model_dump(), "kind": "count"})
 

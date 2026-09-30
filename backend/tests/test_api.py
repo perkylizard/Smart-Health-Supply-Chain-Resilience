@@ -64,7 +64,7 @@ def test_forecast_and_real_ledger(client):
 
 
 def test_entry(client):
-    r = client.post("/entries", json={"facility_id": "x", "commodity_id": "ors", "quantity": 40, "channel": "voice"})
+    r = client.post("/entries", json={"facility_id": client.get("/districts/bihar/Araria/facilities").json()["facilities"][0]["facility_id"], "commodity_id": "ors", "quantity": 40, "channel": "voice"})
     assert r.status_code == 200 and r.json()["entry_id"].startswith("e")
 
 

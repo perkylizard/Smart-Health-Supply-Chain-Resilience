@@ -89,3 +89,18 @@ def test_state_sees_requests_by_district_and_count_history(client):
     # escalations are entries too, but never show up as counts
     client.post("/escalations", json={"unit_id": "bihar", "district": "Araria", "reason": "x"})
     assert all("commodity_id" in c for c in client.get("/units/bihar/counts").json()["counts"])
+
+
+def test_unknown_district_is_404_everywhere_not_a_crash(client):
+    for p in ["summary", "facilities", "resilience-alerts", "indents", "brief", "counts", "requests"]:
+        assert client.get(f"/districts/bihar/Nowhere/{p}").status_code == 404, p
+    assert client.get("/transfers/bihar/Nowhere").status_code == 404
+    assert client.get("/districts/nowhere/Araria/summary").status_code == 404
+    assert client.get("/districts/bihar/Araria/summary").status_code == 200
+
+
+def test_counts_only_for_real_facilities_and_medicines(client):
+    f = "bihar-araria-chc-aadharbhut-community-health-center-13"
+    assert client.post("/entries", json={"facility_id": "nope", "commodity_id": "ors", "quantity": 5}).status_code == 404
+    assert client.post("/entries", json={"facility_id": f, "commodity_id": "nope", "quantity": 5}).status_code == 400
+    assert client.post("/entries", json={"facility_id": f, "commodity_id": "ors", "quantity": 5}).status_code == 200
