@@ -1,3 +1,4 @@
+import { refreshRequestViews } from "./Requests";
 import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
@@ -49,7 +50,7 @@ export default function ChatWidget({ facilityId, names = {}, withHeader = false 
   const save = useMutation({
     mutationFn: ({ rows }: { id: number; rows: Row[] }) => Promise.all(rows.map((r) => api.entry({ facility_id: facilityId, commodity_id: r.commodity_id, quantity: r.quantity, channel: "chat" }))),
     onMutate: ({ id }) => setStatus(id, "saving"),
-    onSuccess: (_d, { id, rows }) => { setStatus(id, "saved"); setLastSaved(rows.length); qc.invalidateQueries({ queryKey: ["facility", facilityId] }); qc.invalidateQueries({ queryKey: ["resilience"] }); },
+    onSuccess: (_d, { id, rows }) => { setStatus(id, "saved"); setLastSaved(rows.length); refreshRequestViews(qc); qc.invalidateQueries({ queryKey: ["facility", facilityId] }); qc.invalidateQueries({ queryKey: ["resilience"] }); },
     onError: (_e, { id }) => setStatus(id, "error"),
   });
 

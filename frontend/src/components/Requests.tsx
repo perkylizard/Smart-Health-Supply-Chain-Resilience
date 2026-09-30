@@ -24,6 +24,10 @@ const S = {
     status: { requested: "ज़िला स्वीकृति की प्रतीक्षा", approved: "स्वीकृत, ज़िला भंडार की प्रतीक्षा", declined: "अस्वीकृत", dispatched: "रास्ते में", delivered: "पहुँच गया" } as Record<string, string>,
   },
 };
+/** A request or a decision changes what every role sees: refresh them all, not just the screen that acted. */
+export const REQUEST_KEYS = ["myRequests", "districtRequests", "districtRequestsAll", "unitRequests", "indents", "counts", "summary", "resilience"];
+export function refreshRequestViews(qc: ReturnType<typeof useQueryClient>) { for (const k of REQUEST_KEYS) qc.invalidateQueries({ queryKey: [k] }); }
+
 const tone: Record<string, string> = { requested: "amber", approved: "teal", declined: "red", dispatched: "blue", delivered: "green" };
 
 /** PHC side: raise a request for a medicine. `options` are the facility's own medicines, most urgent first. */
@@ -34,7 +38,7 @@ export function RequestForm({ facilityId, options, preset, hideHint = false }: {
   const [qty, setQty] = useState("");
   const [note, setNote] = useState("");
   const m = useMutation({ mutationFn: () => api.createRequest({ facility_id: facilityId, commodity_id: cid, quantity: Number(qty), note: note || undefined }),
-    onSuccess: () => { setQty(""); setNote(""); qc.invalidateQueries({ queryKey: ["myRequests", facilityId] }); } });
+    onSuccess: () => { setQty(""); setNote(""); refreshRequestViews(qc); } });
   const ok = cid && Number(qty) > 0;
   return (
     <form className="req-form" onSubmit={(e) => { e.preventDefault(); if (ok) m.mutate(); }}>
@@ -51,7 +55,7 @@ export function RequestForm({ facilityId, options, preset, hideHint = false }: {
 /** PHC side: the facility's requests and where each one is. */
 export function MyRequests({ facilityId }: { facilityId: string }) {
   const { lang } = useApp(); const s = S[lang];
-  const q = useQuery({ queryKey: ["myRequests", facilityId], queryFn: () => api.facilityRequests(facilityId), refetchInterval: 15_000 });
+  const q = useQuery({ queryKey: ["myRequests", facilityId], staleTime: 0, refetchOnMount: "always", queryFn: () => api.facilityRequests(facilityId), refetchInterval: 15_000 });
   const rows = q.data?.requests ?? [];
   return (
     <section className="card">
@@ -81,11 +85,11 @@ function RequestCard({ r, actions }: { r: StockRequest; actions?: React.ReactNod
 export function RequestsInbox({ unit, district }: { unit: string; district: string }) {
   const { lang } = useApp(); const s = S[lang]; const v = V[lang];
   const qc = useQueryClient();
-  const q = useQuery({ queryKey: ["districtRequests", unit, district], queryFn: () => api.districtRequests(unit, district, "requested"), refetchInterval: 15_000 });
+  const q = useQuery({ queryKey: ["districtRequests", unit, district], staleTime: 0, refetchOnMount: "always", queryFn: () => api.districtRequests(unit, district, "requested"), refetchInterval: 15_000 });
   const [asking, setAsking] = useState<string | null>(null);
   const [groupsShown, setGroupsShown] = useState(4);
   const [find, setFind] = useState("");
-  const done = () => { setAsking(null); qc.invalidateQueries({ queryKey: ["districtRequests"] }); qc.invalidateQueries({ queryKey: ["indents"] }); qc.invalidateQueries({ queryKey: ["unitRequests"] }); };
+  const done = () => { setAsking(null); refreshRequestViews(qc); };
   const m = useMutation({ mutationFn: ({ id, st, reason }: { id: string; st: "approved" | "declined"; reason?: string }) => api.moveRequest(id, st, reason), onSuccess: done });
   const bulk = useMutation({ mutationFn: async (ids: string[]) => { for (const id of ids) await api.moveRequest(id, "approved"); }, onSettled: done });
   const rows = (q.data?.requests ?? []).filter((r) => !find || `${r.facility_name} ${r.commodity_name}`.toLowerCase().includes(find.toLowerCase()));
@@ -146,7 +150,7 @@ function ago(ts: number, lang: "en" | "hi") {
 /** State officer: every request in the state by district, read-only (the district's health officer decides). */
 export function StateRequests({ unit }: { unit: string }) {
   const { lang } = useApp(); const v = V[lang]; const s = S[lang];
-  const q = useQuery({ queryKey: ["unitRequests", unit], queryFn: () => api.unitRequests(unit), refetchInterval: 15_000 });
+  const q = useQuery({ queryKey: ["unitRequests", unit], staleTime: 0, refetchOnMount: "always", queryFn: () => api.unitRequests(unit), refetchInterval: 15_000 });
   const d = q.data;
   return (
     <div className="card req-inbox">
@@ -165,7 +169,7 @@ export function StateRequests({ unit }: { unit: string }) {
 /** District Magistrate: the district's requests and where each stands, read-only. */
 export function DistrictRequestsView({ unit, district }: { unit: string; district: string }) {
   const { lang } = useApp(); const v = V[lang]; const s = S[lang];
-  const q = useQuery({ queryKey: ["districtRequestsAll", unit, district], queryFn: () => api.districtRequests(unit, district), refetchInterval: 15_000 });
+  const q = useQuery({ queryKey: ["districtRequestsAll", unit, district], staleTime: 0, refetchOnMount: "always", queryFn: () => api.districtRequests(unit, district), refetchInterval: 15_000 });
   const rows = q.data?.requests ?? [];
   const n = (st: string) => rows.filter((r) => r.status === st).length;
   return (
@@ -192,7 +196,7 @@ function StatusLine({ r, s, lang, showDistrict }: { r: StockRequest; s: typeof S
 export function CountHistory({ unit, district }: { unit: string; district?: string }) {
   const { lang } = useApp(); const v = V[lang];
   type Counts = { counts: StockCount[]; total: number; facilities?: number; by_district?: { district: string; counts: number; facilities: number; latest: number }[] };
-  const q = useQuery<Counts>({ queryKey: ["counts", unit, district ?? "*"], queryFn: () => (district ? api.districtCounts(unit, district) : api.unitCounts(unit)) as Promise<Counts>, refetchInterval: 15_000 });
+  const q = useQuery<Counts>({ queryKey: ["counts", unit, district ?? "*"], staleTime: 0, refetchOnMount: "always", queryFn: () => (district ? api.districtCounts(unit, district) : api.unitCounts(unit)) as Promise<Counts>, refetchInterval: 15_000 });
   const [shown, setShown] = useState(8);
   const rows = q.data?.counts ?? [];
   const byD = q.data?.by_district;

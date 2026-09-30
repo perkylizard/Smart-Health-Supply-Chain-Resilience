@@ -1,3 +1,4 @@
+import { refreshRequestViews } from "../components/Requests";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -18,7 +19,7 @@ export default function Warehouse() {
   const [local, setLocal] = useState<Record<string, string>>({});
   const [lane, setLane] = useState<Lane>("pending");
   const [nShown, setNShown] = useState(12);
-  const set = useMutation({ mutationFn: ({ id, status }: { id: string; status: string }) => api.indentStatus(id, status), onMutate: ({ id, status }) => setLocal((l) => ({ ...l, [id]: status })), onSettled: () => qc.invalidateQueries({ queryKey: ["indents"] }) });
+  const set = useMutation({ mutationFn: ({ id, status }: { id: string; status: string }) => api.indentStatus(id, status), onMutate: ({ id, status }) => setLocal((l) => ({ ...l, [id]: status })), onSettled: () => refreshRequestViews(qc) });
   const rows = (q.data?.indents ?? []).map((x) => ({ ...x, status: local[x.indent_id] ?? x.status }));
   const count = (l: Lane) => rows.filter((r) => r.status === l).length;
   const inLane = rows.filter((r) => r.status === lane);
