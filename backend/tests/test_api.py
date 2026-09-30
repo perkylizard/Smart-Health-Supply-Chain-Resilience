@@ -9,7 +9,7 @@ pytestmark = pytest.mark.skipif(not (paths.DATA / "demo.duckdb").exists(), reaso
 @pytest.fixture(scope="module")
 def client():
     from app.main import create_app
-    return TestClient(create_app())
+    return TestClient(create_app(warm=False))  # no startup warm-up or sample activity: tests start from a clean state
 
 
 def test_health_and_units(client):
