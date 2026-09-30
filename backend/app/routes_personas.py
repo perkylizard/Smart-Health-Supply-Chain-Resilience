@@ -295,7 +295,8 @@ def weekly_brief(unit_id: str, district: str, request: Request, lang: str = "en"
     approved = sum(1 for v in tr.values() if v["status"] == "approved"); delivered = sum(1 for v in tr.values() if v["status"] == "delivered")
     data_issues = int(al["data_issue"].sum())
     top = al[al["alert"]].sort_values("days_of_stock").head(5)
-    risks = [f"{r.facility_name}: {r.commodity_name}, {r.days_of_stock:.0f} days ({r.cause.replace('_', ' ')})" for r in top.itertuples()]
+    from sanjeevani import labels as L
+    risks = [f"{r.facility_name}: {r.commodity_name}, {r.days_of_stock:.0f} days" + (f" ({L.cause(r.cause)})" if L.cause(r.cause) else "") for r in top.itertuples()]
     staff = app.state.store.staff_latest(unit_id, district)
     gap = 1 - staff["in_position"].sum() / max(1, staff["sanctioned"].sum()) if len(staff) else None
     facts = {"district": district, "score": summary["score"], "rank": summary["rank_in_unit"], "of": summary["of"], "counts": summary["counts"],

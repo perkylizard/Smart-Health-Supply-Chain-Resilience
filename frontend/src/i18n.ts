@@ -23,7 +23,7 @@ const en = {
   saving: "Saving", savedN: "Saved {n} entries for this facility", saveFailed: "Could not save. Check the connection and try again.",
   finished: "finished", editing: "Moved back to the message box to edit", replaced: "Not saved: a newer message replaced it",
   notFound: "No medicine name found. Try: ORS ke 40 packet bache hain, zinc khatam", localParser: "Read by the on-device parser (no AI used)",
-  confirm: "Reply 1 to confirm, 2 to correct", causes: { cases_up: "cases up", supply_missed: "supply missed", written_off: "written off", data_issue: "data issue", none: "" } as Record<string, string>,
+  confirm: "Reply 1 to confirm, 2 to correct", causes: { cases_up: "cases rising", supply_missed: "supply missed", written_off: "stock written off", data_issue: "reporting error", none: "" } as Record<string, string>,
   severity: { red: "under 7 days", amber: "under 14 days", watch: "under 30 days", ok: "ok", data_issue: "reporting error" } as Record<string, string>,
   scenarioOff: "No scenario", intensity: "Intensity", whatIf: "What-if scenario active",
   persona: "I am", personas: { dho: "District Health Officer", state: "State officer", phc: "Facility staff", dm: "District Magistrate", warehouse: "District warehouse" } as Record<string, string>,

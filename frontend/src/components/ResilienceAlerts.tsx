@@ -70,6 +70,7 @@ export default function ResilienceAlerts({ unit, district }: { unit: string; dis
 }
 
 function Row({ a, s, base }: { a: ResilienceAlert; s: typeof S.en; base: string }) {
+  const { t } = useApp();
   const days = Math.round(a.runs_out_in_days * 10) / 10;
   const line = a.tier === "watch" ? s.rising(Math.round(days)) : days <= 0 ? s.outNow(Math.round(a.resupply_in_days)) : a.short_by_days > 0 ? s.before(Math.round(a.short_by_days), Math.round(a.resupply_in_days)) : s.after(Math.round(days), Math.round(a.resupply_in_days));
   return (
@@ -81,7 +82,7 @@ function Row({ a, s, base }: { a: ResilienceAlert; s: typeof S.en; base: string 
         </div>
         <span className={`ra-days ${a.tier}`}>{days <= 0 ? s.out : s.left(days)}</span>
       </div>
-      <div className="ra-facts"><span>{s.onHand}: <b>{Math.round(a.closing).toLocaleString("en-IN")}</b></span><span>{s.cause}: <b>{a.cause.replace(/_/g, " ")}</b></span></div>
+      <div className="ra-facts"><span>{s.onHand}: <b>{Math.round(a.closing).toLocaleString("en-IN")}</b></span><span>{s.cause}: <b>{t.causes[a.cause] || a.cause.replace(/_/g, " ")}</b></span></div>
       <p className="ra-line">{line}</p>
       <p className={`ra-fix${a.fix_from ? "" : " none"}`}>{a.fix_from ? s.fix(Math.round(a.fix_quantity ?? 0).toLocaleString("en-IN"), a.fix_from, Math.round(a.fix_km ?? 0)) : s.noFix}</p>
       <div className="ra-actions">

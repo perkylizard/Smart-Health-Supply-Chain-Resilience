@@ -65,7 +65,7 @@ export default function Briefing() {
   return (
     <div className="today">
       <div className="rw-phone"><RequestsWaiting unit={unit} district={district} onReview={() => open("requests")} /></div>
-      {whatIf && <p className="chip amber" style={{ marginBottom: 12 }}>{t.whatIf}: {s.scenario.name.replace(/_/g, " ")} {Math.round(s.scenario.intensity * 100)}%</p>}
+      {whatIf && <p className="chip amber" style={{ marginBottom: 12 }}>{t.whatIf}: {s.scenario.name.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase())} {Math.round(s.scenario.intensity * 100)}%</p>}
 
       {/* hero: where you are, how the district stands, the four numbers that matter */}
       <section className="card hero">

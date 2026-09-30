@@ -15,16 +15,19 @@ class ExplainOut(BaseModel):
 
 KEEP_ALERT = ["facility_name", "type", "district", "commodity_name", "closing", "demand", "weekly_demand_p90", "days_of_stock", "lead_days",
               "severity", "cause", "cause_detail", "data_issue", "scenario", "source"]
-KEEP_TRANSFER = ["from_name", "from_district", "to_name", "to_district", "commodity_id", "quantity", "km", "eta_days", "donor_days_after",
+KEEP_TRANSFER = ["from_name", "from_district", "to_name", "to_district", "commodity_name", "quantity", "km", "eta_days", "donor_days_after",
                  "recipient_days_after", "cross_district", "reason", "note", "source"]
 
 
 def build_prompt(item: dict, kind: str, lang: str) -> str:
     keep = KEEP_ALERT if kind == "alert" else KEEP_TRANSFER
     slim = {k: item.get(k) for k in keep if k in item}
+    if "cause" in slim:  # a readable cause, never the code (cases_up)
+        from sanjeevani import labels as L
+        slim["cause"] = L.cause(slim["cause"]) or None
     what = "a stock alert for one PHC and one commodity" if kind == "alert" else "a proposed stock transfer between two facilities"
     return (f"{lang_line(lang)}\nExplain {what} to the District Health Officer. State what is happening, why (use the cause fields), "
-            f"and what happens if nothing is done. Cite the numbers. If data_issue is true, say the figures look like a reporting error, not a stock-out.\n\n{json.dumps(slim, ensure_ascii=False)}")
+            f"and what happens if nothing is done. Cite the numbers. Name medicines and facilities as written; never write a field name, an id or any word with an underscore. If data_issue is true, say the figures look like a reporting error, not a stock-out.\n\n{json.dumps(slim, ensure_ascii=False)}")
 
 
 def run(client: GeminiClient, item: dict, kind: str = "alert", lang: str = "en", case: str | None = None) -> ExplainOut:

@@ -5,6 +5,7 @@ import { api, type AskResult } from "../api";
 import { useApp } from "../App";
 import Badge from "../components/Badge";
 import { sA } from "../stringsA";
+import { cellLabel, colLabel } from "../labels";
 
 export default function Ask() {
   const { unit, district, lang, t } = useApp();
@@ -87,7 +88,7 @@ function Result({ r }: { r: AskResult }) {
   const [showSql, setShowSql] = useState(false);
   const [copied, setCopied] = useState(false);
   const cols = r.rows?.length ? Object.keys(r.rows[0]) : [];
-  const csv = () => { const lines = [cols.join(","), ...r.rows.map((row) => cols.map((c) => JSON.stringify(row[c] ?? "")).join(","))]; const el = document.createElement("a"); el.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/csv" })); el.download = "answer.csv"; el.click(); };
+  const csv = () => { const lines = [cols.map((c) => colLabel(c, lang)).join(","), ...r.rows.map((row) => cols.map((c) => JSON.stringify(row[c] ?? "")).join(","))]; const el = document.createElement("a"); el.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/csv" })); el.download = "answer.csv"; el.click(); };
   const sqlText = r.sql_checked ?? r.sql ?? "";
   const copy = () => { navigator.clipboard?.writeText(sqlText).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500); }).catch(() => {}); };
   const n = r.row_count ?? r.rows?.length ?? 0;
@@ -95,7 +96,7 @@ function Result({ r }: { r: AskResult }) {
     <div className="pg-grid ask-result">
       <section className="card">
         <div className="card-head">
-          <div><h2>{a.answerTitle}</h2><p className="faint">{r.question}{r.shape ? ` · ${r.shape}` : ""}{r.status !== "ok" ? ` · ${r.status}` : ""}</p></div>
+          <div><h2>{a.answerTitle}</h2><p className="faint">{r.question}</p></div>
           <Badge kind="ai" />
         </div>
         <div className="ask-answer">{r.answer || r.error || "No answer."}</div>
@@ -116,8 +117,8 @@ function Result({ r }: { r: AskResult }) {
         </div>
         {r.rows?.length > 0 ? (
           <div className="tbl-wrap">
-            <table className="table"><thead><tr>{cols.map((c) => <th key={c} className={typeof r.rows[0][c] === "number" ? "num" : ""}>{c}</th>)}</tr></thead>
-              <tbody>{r.rows.slice(0, 25).map((row, i) => <tr key={i}>{cols.map((c) => <td key={c} className={typeof row[c] === "number" ? "num" : ""}>{fmt(row[c])}</td>)}</tr>)}</tbody></table>
+            <table className="table"><thead><tr>{cols.map((c) => <th key={c} className={typeof r.rows[0][c] === "number" ? "num" : ""}>{colLabel(c, lang)}</th>)}</tr></thead>
+              <tbody>{r.rows.slice(0, 25).map((row, i) => <tr key={i}>{cols.map((c) => <td key={c} className={typeof row[c] === "number" ? "num" : ""}>{cellLabel(c, row[c], lang) ?? fmt(row[c])}</td>)}</tr>)}</tbody></table>
           </div>
         ) : <p className="muted">{a.noRecords}</p>}
       </section>
@@ -132,12 +133,12 @@ function Chart({ rows, x, y, kind }: { rows: Record<string, unknown>[], x: strin
   const w = 640, h = 160, pad = 24, max = Math.max(...data.map((d) => d.y), 1);
   if (kind === "line") {
     const pts = data.map((d, i) => `${pad + (i / Math.max(1, data.length - 1)) * (w - 2 * pad)},${h - pad - (d.y / max) * (h - 2 * pad)}`).join(" ");
-    return <svg viewBox={`0 0 ${w} ${h}`} style={{ width: "100%", maxWidth: w, marginTop: 8 }} role="img" aria-label={`${y} by ${x}`}><polyline fill="none" stroke="var(--teal)" strokeWidth="2.5" points={pts} /></svg>;
+    return <svg viewBox={`0 0 ${w} ${h}`} style={{ width: "100%", maxWidth: w, marginTop: 8 }} role="img" aria-label={`${y.replace(/_/g, " ")} by ${x.replace(/_/g, " ")}`}><polyline fill="none" stroke="var(--teal)" strokeWidth="2.5" points={pts} /></svg>;
   }
   // comparisons: horizontal labelled bars with the value in figures, top 12
   const top = data.slice(0, 12);
   return (
-    <ul className="hbars" role="img" aria-label={`${y} by ${x}`}>
+    <ul className="hbars" role="img" aria-label={`${y.replace(/_/g, " ")} by ${x.replace(/_/g, " ")}`}>
       {top.map((d, i) => <li key={i}><span className="hb-l" title={d.x}>{d.x}</span><span className="hb-t"><i style={{ width: `${Math.max(2, (d.y / max) * 100)}%` }} /></span><span className="hb-v">{fmt(d.y)}</span></li>)}
     </ul>
   );

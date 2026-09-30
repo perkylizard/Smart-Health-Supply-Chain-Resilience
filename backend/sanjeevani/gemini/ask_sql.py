@@ -143,7 +143,7 @@ def run(client: GeminiClient, question: str, unit_id: str, district: str | None,
     if err is None and len(rows):
         sample = rows.head(30).to_dict(orient="records")
         try:
-            a = client.generate_json(f"{lang_line(lang)}\nAnswer the question in one or two sentences from these rows, citing numbers.\nQuestion: {question}\nRows: {json.dumps(sample, default=str)[:6000]}",
+            a = client.generate_json(f"{lang_line(lang)}\nAnswer the question in one or two sentences from these rows, citing numbers. Write medicine and facility names as people say them; never a column name, an id or a word with an underscore.\nQuestion: {question}\nRows: {json.dumps(sample, default=str)[:6000]}",
                                      SqlAnswerOut, service="ask_sql", case=f"{case}_answer" if case else None)
             answer = a.answer
         except (CassetteMiss, GeminiUnavailable):
