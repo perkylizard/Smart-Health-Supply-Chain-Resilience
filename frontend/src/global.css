@@ -452,3 +452,14 @@ textarea.input { min-height: 120px; padding: var(--s3); font-family: ui-monospac
 @media (prefers-reduced-motion: reduce) { .loading-note, .loading-note.out, .ln-text, .ln-dots i, .skeleton, .content .card, .content .pg-hero, .content .tile, .content .digest { animation: none; } }
 .report-which { display: flex; flex-direction: column; gap: 4px; flex: 1; font-size: 13px; font-weight: 600; color: var(--amber); }
 .report-which .select { min-height: 36px; font-weight: 500; color: var(--ink); }
+.disp-form { display: flex; flex-direction: column; gap: 12px; }
+.disp-form .field { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.disp-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+.disp-row .field { flex: 1; min-width: 140px; }
+.disp-quick { display: flex; gap: 6px; }
+.disp-quick .chip { min-width: 44px; min-height: 40px; justify-content: center; }
+.disp-now { display: flex; gap: 24px; margin: 0; font-size: 14px; color: var(--ink-2); }
+.disp-now b { color: var(--ink); } .disp-now b.red { color: var(--red); }
+.disp-warn { margin: 0; padding: 8px 12px; border-radius: 8px; background: var(--red-soft); color: var(--red); font-size: 13px; font-weight: 600; }
+.given-today .req-line:first-of-type { border-top: 0; }
+.disp-quick .chip[aria-pressed="true"], .disp-quick .chip[aria-pressed="true"]:hover, .disp-quick .chip[aria-pressed="true"]:focus-visible { background: var(--teal-2, #134e4a); border-color: var(--teal-2, #134e4a); color: #fff; }

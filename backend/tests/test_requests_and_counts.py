@@ -210,3 +210,17 @@ def test_transfer_handover_and_arrival_move_stock_between_facilities(client):
     assert client.post(f"/transfers/{tid}/delivered", json={"quantity": q}).status_code == 409  # moved once
     inc = client.get(f"/facilities/{tr['to_id']}/transfers").json()["transfers"]
     assert next(t for t in inc if t["transfer_id"] == tid)["status"] == "delivered"
+
+
+def test_giving_medicine_to_a_patient_lowers_the_stock_and_cannot_exceed_it(client):
+    fid = client.get("/districts/bihar/Araria/facilities").json()["facilities"][5]["facility_id"]
+    client.post("/entries", json={"facility_id": fid, "commodity_id": "ors", "quantity": 50, "channel": "chat"})  # 50 on the shelf
+    r = client.post(f"/facilities/{fid}/dispense", json={"commodity_id": "ors", "quantity": 4, "slip": "OPD-117"}).json()
+    assert r["given"] == 4 and r["on_hand"] == 46
+    assert _stock(client, fid, "ors") == 46
+    assert client.post(f"/facilities/{fid}/dispense", json={"commodity_id": "ors", "quantity": 47}).status_code == 409  # more than on hand
+    assert client.post(f"/facilities/{fid}/dispense", json={"commodity_id": "nope", "quantity": 1}).status_code == 400
+    d = client.get(f"/facilities/{fid}/dispensed").json()
+    assert d["items"][0]["given"] == 4 and d["by_medicine"][0]["commodity_id"] == "ors"
+    counts = client.get(f"/facilities/{fid}/counts").json()["counts"]
+    assert all(c["channel"] != "dispensed" for c in counts)  # the count history shows what people counted, not the counter's giving

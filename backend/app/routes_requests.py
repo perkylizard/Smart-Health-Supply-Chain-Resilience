@@ -128,7 +128,8 @@ def _counts(request: Request, keep) -> list[dict]:
     """Stock counts confirmed by PHC staff (Report screen), newest first, with the facility and medicine named."""
     store = request.app.state.store
     names = store.commodities().set_index("commodity_id")["name"].to_dict()
-    ents = [e for e in request.app.state.state.entries() if e.get("kind") in (None, "count") and "commodity_id" in e and "quantity" in e]
+    auto = {"delivery", "transfer in", "transfer out", "dispensed"}  # stock changes the app made itself; the history shows counts people reported
+    ents = [e for e in request.app.state.state.entries() if e.get("kind") in (None, "count") and "commodity_id" in e and "quantity" in e and e.get("channel") not in auto]
     if not ents:
         return []
     ids = sorted({e["facility_id"] for e in ents})
@@ -181,3 +182,45 @@ def issues(unit_id: str, district: str, request: Request):
         t = by.setdefault(e["commodity_id"], {"commodity_id": e["commodity_id"], "commodity_name": e["commodity_name"], "quantity": 0.0, "dispatches": 0, "latest": 0})
         t["quantity"] += e["quantity"]; t["dispatches"] += 1; t["latest"] = max(t["latest"], e["received"])
     return {"issues": rows, "by_medicine": sorted(by.values(), key=lambda t: -t["quantity"]), "total": sum(e["quantity"] for e in rows)}
+
+
+class DispenseIn(BaseModel):
+    commodity_id: str
+    quantity: float = Field(..., gt=0, le=100_000)
+    slip: str | None = Field(None, max_length=40)  # an OPD slip number, never a patient's name
+
+
+@router.post("/facilities/{facility_id}/dispense")
+def dispense(facility_id: str, body: DispenseIn, request: Request):
+    """Medicine given to a patient at the counter: it leaves the facility's stock at once, so days left, alerts and every
+    role's view follow. A facility cannot give out more than it holds."""
+    app = request.app
+    f = app.state.store.q("SELECT unit_id, district FROM facilities WHERE facility_id = ?", [facility_id])
+    if f.empty:
+        raise HTTPException(404, "unknown facility")
+    al = app.state.alerts_for(f.iloc[0]["unit_id"], f.iloc[0]["district"])
+    row = al[(al["facility_id"] == facility_id) & (al["commodity_id"] == body.commodity_id)]
+    if row.empty:
+        raise HTTPException(400, "this facility does not stock that medicine")
+    on_hand = max(0.0, float(row.iloc[0]["closing"]))
+    if body.quantity > on_hand + 1e-6:
+        raise HTTPException(409, f"only {int(on_hand)} on hand")
+    rec = credit_stock(request, facility_id, body.commodity_id, -body.quantity, f"dispense:{int(time.time() * 1000)}", channel="dispensed")
+    rec = {**rec, "slip": body.slip}
+    names = app.state.store.commodities().set_index("commodity_id")["name"].to_dict()
+    return {"commodity_id": body.commodity_id, "commodity_name": names.get(body.commodity_id, body.commodity_id), "given": body.quantity, "on_hand": rec["quantity"]}
+
+
+@router.get("/facilities/{facility_id}/dispensed")
+def dispensed(facility_id: str, request: Request, hours: int = 24):
+    """What this facility gave to patients recently, newest first, with the total per medicine."""
+    names = request.app.state.store.commodities().set_index("commodity_id")["name"].to_dict()
+    since = time.time() - hours * 3600
+    rows = sorted([e for e in request.app.state.state.entries() if e.get("facility_id") == facility_id and e.get("channel") == "dispensed" and e.get("received", 0) >= since],
+                  key=lambda e: -e["received"])
+    items = [{"commodity_id": e["commodity_id"], "commodity_name": names.get(e["commodity_id"], e["commodity_id"]), "given": -float(e.get("added", 0)), "received": e["received"]} for e in rows]
+    by: dict = {}
+    for i in items:
+        t = by.setdefault(i["commodity_id"], {"commodity_id": i["commodity_id"], "commodity_name": i["commodity_name"], "given": 0.0, "times": 0})
+        t["given"] += i["given"]; t["times"] += 1
+    return {"items": items, "by_medicine": sorted(by.values(), key=lambda t: -t["given"])}

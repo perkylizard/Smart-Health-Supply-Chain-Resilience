@@ -7,6 +7,7 @@ import Badge from "../components/Badge";
 import ChatWidget from "../components/ChatWidget";
 import Scale from "../components/Scale";
 import { MyRequests, RequestDialog, RequestForm, refreshRequestViews } from "../components/Requests";
+import { DispenseDialog, GivenToday, dispenseLabels } from "../components/Dispense";
 import { sB } from "../stringsB";
 
 const PICK = {
@@ -88,6 +89,7 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
 
   const Side = (
     <aside className="phc-side">
+      <GivenToday facilityId={facilityId!} stock={stock} />
       <div className="card"><h3>{t.phcThisMonth}</h3>
         {beds && <div style={{ marginBottom: 12 }}><span className="big">{beds.occupied}</span><span className="faint"> / {beds.beds}</span><div className="faint" style={{ fontSize: "var(--t-xs)" }}>{t.phcBeds}</div></div>}
         {mo && (mo.in_position === 0
@@ -114,6 +116,7 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
           <p className="sub">{tab === "deliveries" ? b.delivSub : null}<Badge kind={fac.source === "osm" ? "osm" : "simulated"} /></p>
         </div>
         <div className="pg-actions">
+          <DispenseDialog facilityId={facilityId!} stock={stock}><button className="btn">− {dispenseLabels[lang].give}</button></DispenseDialog>
           <Link className="btn quiet" to={`/phc-pick/${fac.unit_id}/${encodeURIComponent(String(fac.district))}`}>⇄ {lang === "hi" ? "सुविधा बदलें" : "Change facility"}</Link>
           {tab !== "report" && <Link className="btn" to={`/phc/${facilityId}/report`}>{b.updateRegister}</Link>}
           <RequestDialog facilityId={facilityId!} facilityName={name} options={options}><button className="btn primary">+ {b.requestStock}</button></RequestDialog>
@@ -155,7 +158,7 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
                     <td className="num">{Math.round(s.closing).toLocaleString("en-IN")}</td>
                     <td><Scale days={s.days_of_stock} severity={s.severity} label={t.days} /></td>
                     <td><span className={`status-badge ${tone}`}>{b[key] as string}</span></td>
-                    <td className="num"><RequestDialog facilityId={facilityId!} facilityName={name} options={options} preset={s.commodity_id}><button className="btn quiet nowrap">+ {b.requestRow}</button></RequestDialog></td>
+                    <td className="num"><div className="row-acts"><DispenseDialog facilityId={facilityId!} stock={stock} preset={s.commodity_id}><button className="btn quiet nowrap" disabled={s.closing <= 0} title={dispenseLabels[lang].give}>− {dispenseLabels[lang].giveRow}</button></DispenseDialog><RequestDialog facilityId={facilityId!} facilityName={name} options={options} preset={s.commodity_id}><button className="btn quiet nowrap">+ {b.requestRow}</button></RequestDialog></div></td>
                   </tr>); })}</tbody>
               </table>
             </div>
