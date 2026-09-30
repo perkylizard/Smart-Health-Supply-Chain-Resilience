@@ -52,9 +52,16 @@ export default function LoadingNote() {
   // first loads only: a query that is fetching and has never had data
   useEffect(() => {
     const cache = qc.getQueryCache();
-    const read = () => setKeys(cache.getAll().filter((q) => q.state.fetchStatus === "fetching" && q.state.data === undefined).map((q) => String(q.queryKey[0])));
+    let alive = true, queued = false;
+    const read = () => {
+      const next = cache.getAll().filter((q) => q.state.fetchStatus === "fetching" && q.state.data === undefined).map((q) => String(q.queryKey[0]));
+      setKeys((old) => (old.length === next.length && old.every((k, i) => k === next[i]) ? old : next));
+    };
+    // the cache announces new queries while another screen is rendering: read it just after, never during
+    const later = () => { if (queued) return; queued = true; queueMicrotask(() => { queued = false; if (alive) read(); }); };
     read();
-    return cache.subscribe(read);
+    const off = cache.subscribe(later);
+    return () => { alive = false; off(); };
   }, [qc]);
 
   const busy = keys.length > 0;

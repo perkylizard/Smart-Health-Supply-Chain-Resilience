@@ -238,3 +238,24 @@ def test_patient_details_stay_with_the_facility_and_answers_are_never_cached(cli
     # names never reach district or state views
     for u in ["/districts/bihar/Araria/summary", "/districts/bihar/Araria/counts", "/units/bihar/counts", "/districts/bihar/Araria/requests"]:
         assert "Sita Devi" not in client.get(u).text
+
+
+def test_opd_slip_number_comes_automatically_and_counts_patients(client):
+    fid = client.get("/districts/bihar/Araria/facilities").json()["facilities"][7]["facility_id"]
+    client.post("/entries", json={"facility_id": fid, "commodity_id": "ors", "quantity": 40, "channel": "chat"})
+    assert client.get(f"/facilities/{fid}/dispensed").json()["next_slip"] == "1"  # first patient of the day
+    assert client.post(f"/facilities/{fid}/dispense", json={"commodity_id": "ors", "quantity": 2}).json()["slip"] == "1"  # none typed: numbered anyway
+    assert client.post(f"/facilities/{fid}/dispense", json={"commodity_id": "ors", "quantity": 1, "slip": "1"}).json()["slip"] == "1"  # same patient, second medicine
+    client.post(f"/facilities/{fid}/dispense", json={"commodity_id": "ors", "quantity": 1, "slip": "OPD-119"})  # a slip the patient brought
+    d = client.get(f"/facilities/{fid}/dispensed").json()
+    assert d["next_slip"] == "120" and d["patients_today"] == 2
+
+
+def test_store_book_falls_back_to_real_when_a_district_has_no_simulated_series(client):
+    r = client.get("/districts/bihar/Kaimur Bhabua/warehouse?basis=simulated")
+    assert r.status_code == 200 and r.json()["basis"] == "real" and r.json()["fallback"] is True and r.json()["rows"]
+
+
+def test_a_not_found_answer_is_readable_by_the_browser(client):
+    r = client.get("/districts/bihar/Nowhere/summary", headers={"Origin": "http://localhost:5175"})
+    assert r.status_code == 404 and r.headers.get("access-control-allow-origin") == "*"

@@ -130,7 +130,7 @@ export function WarehouseStock() {
       <IssueRegister unit={unit} district={district} />
       <section className="card">
         <div className="toolbar">
-          <p className="muted" style={{ margin: 0, fontSize: 12, flex: 1, minWidth: 220 }}>{q.data.provenance} <Badge kind={basis === "simulated" ? "simulated" : "real"} /></p>
+          <p className="muted" style={{ margin: 0, fontSize: 12, flex: 1, minWidth: 220 }}>{q.data.provenance} <Badge kind={q.data.basis === "simulated" ? "simulated" : "real"} /></p>
           <input className="input" type="search" value={find} onChange={(e) => setFind(e.target.value)} placeholder={b.findMed} aria-label={b.findMed} />
         </div>
         <div className="dtable-wrap">

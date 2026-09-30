@@ -264,8 +264,10 @@ def warehouse_stock(unit_id: str, district: str, request: Request, basis: str = 
             raise HTTPException(404, "synthetic continuation not built")
         led = pd.read_parquet(src, filters=[("state", "==", st), ("district", "==", district)])
         led = led.drop(columns=["t", "demand", "stockout", "source", "basis_fy", "basis_month"], errors="ignore").assign(provisional=False)
-    else:
+    fallback = basis == "simulated" and led.empty  # some districts have no simulated continuation: show their real book, said so
+    if basis == "real" or fallback:
         led = store.real_ledger(st, district)
+        basis = "real"
     if led.empty:
         raise HTTPException(404, "no ledger for this district")
     order = {4: 0, 5: 1, 6: 2, 7: 3, 8: 4, 9: 5, 10: 6, 11: 7, 12: 8, 1: 9, 2: 10, 3: 11}
@@ -288,7 +290,9 @@ def warehouse_stock(unit_id: str, district: str, request: Request, basis: str = 
     prov = ("Simulated continuation of this district's real HMIS series to March 2026 (scripts/synth_hmis_extend.py); not actual stock" if basis == "simulated"
             else "HMIS sections M17/M19/M20, real district monthly stock ledger (MoHFW, GODL), not simulated; each commodity at its latest reported month"
                  + (" ; FY 2020-21 figures are labelled provisional by MoHFW" if provisional else ""))
-    return {"district": district, "state": st, "fy": latest_fy, "month": latest_month, "provisional": provisional, "basis": basis,
+    if fallback:
+        prov = "No simulated continuation for this district yet, so this is its real ledger. " + prov
+    return {"district": district, "state": st, "fy": latest_fy, "month": latest_month, "provisional": provisional, "basis": basis, "fallback": fallback,
             "rows": _clean(out.assign(months_of_stock=out["months_of_stock"].where(~out["reporting_error"]))[["item_code", "item_name", "fy", "month", "stale", "opening", "received", "unusable", "distributed", "closing", "months_of_stock", "reporting_error", "history"]].sort_values(["reporting_error", "months_of_stock"], na_position="last")),
             "provenance": prov}
 

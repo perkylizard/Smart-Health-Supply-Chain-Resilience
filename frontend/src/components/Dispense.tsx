@@ -1,19 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
 import { useApp } from "../App";
 import { refreshRequestViews } from "./Requests";
 
-/** Medicine given to a patient at the counter. It leaves the facility's stock at once; no patient name is ever asked for. */
+/** Medicine given to a patient at the counter. It leaves the facility's stock at once. The OPD slip number fills itself in;
+ * patient details are optional and stay with this facility. */
 const S = {
   en: { give: "Give to patient", giveRow: "Give", title: "Give medicine to a patient", hint: "Record what you hand over at the counter. Your stock goes down straight away.",
-    medicine: "Medicine", qty: "Quantity given", slip: "OPD slip (optional)", slipPh: "OPD-117", patient: "Patient (optional)", pname: "Name", page: "Age", pplace: "Village or ward", pplacePh: "for example Bhabua, ward 4",
+    medicine: "Medicine", qty: "Quantity given", slip: "OPD slip no.", slipAuto: "Filled in automatically. Change it if the patient has a slip.", nextPatient: "Next patient", samePatient: "Same patient: pick the next medicine, or tap Next patient.", patientsToday: (n: number) => `${n} ${n === 1 ? "patient" : "patients"} today`, patient: "Patient (optional)", pname: "Name", page: "Age", pplace: "Village or ward", pplacePh: "for example Bhabua, ward 4",
     privacy: "Seen only by this facility's staff. Never shown to other roles, sent to Gemini or used in federated learning.", onHand: "On hand", after: "After this", save: "Record", saving: "Recording",
     done: (q: string, n: string, left: string) => `Given ${q} ${n}. ${left} left.`, tooMany: (n: number) => `Only ${n} on hand. Record what you actually gave.`, failed: "That did not save. Check the connection and try again.",
     todayTitle: "Given out today", todaySub: "Medicine handed to patients at the counter, per medicine.", none: "Nothing given out yet today. Use Give on any medicine.", times: (n: number) => `${n} ${n === 1 ? "time" : "times"}`, close: "Close", another: "Record another", noneOnHand: "none on hand", recent: "Latest", yrs: "yrs", noPatient: "no patient details" },
   hi: { give: "मरीज़ को दें", giveRow: "दें", title: "मरीज़ को दवा दें", hint: "काउंटर पर जो दिया उसे दर्ज करें। आपका स्टॉक तुरंत घट जाता है।",
-    medicine: "दवा", qty: "दी गई मात्रा", slip: "OPD पर्ची (वैकल्पिक)", slipPh: "OPD-117", patient: "मरीज़ (वैकल्पिक)", pname: "नाम", page: "उम्र", pplace: "गाँव या वार्ड", pplacePh: "उदाहरण भभुआ, वार्ड 4",
+    medicine: "दवा", qty: "दी गई मात्रा", slip: "OPD पर्ची नं.", slipAuto: "अपने आप भरा जाता है। मरीज़ के पास पर्ची हो तो बदलें।", nextPatient: "अगला मरीज़", samePatient: "वही मरीज़: अगली दवा चुनें, या अगला मरीज़ दबाएँ।", patientsToday: (n: number) => `आज ${n} मरीज़`, patient: "मरीज़ (वैकल्पिक)", pname: "नाम", page: "उम्र", pplace: "गाँव या वार्ड", pplacePh: "उदाहरण भभुआ, वार्ड 4",
     privacy: "केवल इस सुविधा का स्टाफ़ देखता है। अन्य भूमिकाओं, Gemini या फ़ेडरेटेड लर्निंग को कभी नहीं भेजा जाता।", onHand: "मौजूद", after: "इसके बाद", save: "दर्ज करें", saving: "दर्ज हो रहा है",
     done: (q: string, n: string, left: string) => `${n} ${q} दिया। ${left} बचा।`, tooMany: (n: number) => `केवल ${n} मौजूद है। जितना सच में दिया वही दर्ज करें।`, failed: "सहेजा नहीं गया। कनेक्शन जाँचें और फिर कोशिश करें।",
     todayTitle: "आज दिया गया", todaySub: "काउंटर पर मरीज़ों को दी गई दवा, दवा के अनुसार।", none: "आज अभी कुछ नहीं दिया। किसी भी दवा पर दें दबाएँ।", times: (n: number) => `${n} बार`, close: "बंद करें", another: "एक और दर्ज करें", noneOnHand: "मौजूद नहीं", recent: "हाल के", yrs: "वर्ष", noPatient: "मरीज़ का विवरण नहीं" },
@@ -31,6 +32,12 @@ export function DispenseDialog({ facilityId, stock: all, preset, children }: { f
   const [slip, setSlip] = useState("");
   const [pname, setPname] = useState(""); const [page, setPage] = useState(""); const [pplace, setPplace] = useState("");
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [open, setOpen] = useState(false);
+  const [edited, setEdited] = useState(false); // staff typed their own slip number
+  const today = useQuery({ queryKey: ["dispensed", facilityId], queryFn: () => api.dispensed(facilityId), enabled: open });
+  const nextSlip = today.data?.next_slip ?? "";
+  useEffect(() => { if (open && !edited && !slip && nextSlip) setSlip(nextSlip); }, [open, edited, slip, nextSlip]);
+  const newPatient = () => { setSlip(""); setEdited(false); setPname(""); setPage(""); setPplace(""); setMsg(null); qc.invalidateQueries({ queryKey: ["dispensed", facilityId] }); };
   const m = stock.find((x) => x.commodity_id === med);
   const onHand = Math.max(0, Math.round(m?.closing ?? 0));
   const q = Math.max(0, Math.floor(Number(qty) || 0));
@@ -39,7 +46,8 @@ export function DispenseDialog({ facilityId, stock: all, preset, children }: { f
       patient_age: page ? Number(page) : undefined, patient_place: pplace.trim() || undefined }),
     onSuccess: (r) => {
       setMsg({ ok: true, text: s.done(r.given.toLocaleString("en-IN"), r.commodity_name, Math.round(r.on_hand).toLocaleString("en-IN")) });
-      setQty("1"); setSlip(""); setPname(""); setPage(""); setPplace("");
+      // the same patient often gets several medicines: keep their slip and details until Next patient
+      setQty("1"); setSlip(r.slip ?? slip); setEdited(true);
       // show the new stock at once, before the refresh lands
       qc.setQueryData(["facility", facilityId], (old: unknown) => {
         const o = old as { stock?: Med[] } | undefined;
@@ -51,7 +59,7 @@ export function DispenseDialog({ facilityId, stock: all, preset, children }: { f
   });
   const over = q > onHand;
   return (
-    <Dialog.Root onOpenChange={(o) => { if (o) { setMed(preset ?? first); setMsg(null); setQty("1"); } }}>
+    <Dialog.Root onOpenChange={(o) => { setOpen(o); if (o) { setMed(preset ?? first); setQty("1"); newPatient(); } }}>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="dialog-overlay" />
@@ -74,13 +82,14 @@ export function DispenseDialog({ facilityId, stock: all, preset, children }: { f
               </div>
               <div className="disp-row">
                 <label className="field" style={{ flex: 2 }}><span>{s.pplace}</span><input className="input" value={pplace} maxLength={80} placeholder={s.pplacePh} onChange={(e) => setPplace(e.target.value)} /></label>
-                <label className="field"><span>{s.slip}</span><input className="input" value={slip} maxLength={40} placeholder={s.slipPh} onChange={(e) => setSlip(e.target.value)} /></label>
+                <label className="field"><span>{s.slip}</span><input className="input" value={slip} maxLength={40} onChange={(e) => { setSlip(e.target.value); setEdited(true); }} aria-describedby="slip-auto" /></label>
               </div>
-              <p className="faint disp-privacy">{s.privacy}</p>
+              <p className="faint disp-privacy" id="slip-auto">{s.slipAuto} {s.privacy}</p>
             </fieldset>
-            {msg && <p className={msg.ok ? "saved-banner" : "disp-warn"} role="status">{msg.ok ? "✓ " : ""}{msg.text}</p>}
+            {msg && <p className={msg.ok ? "saved-banner" : "disp-warn"} role="status">{msg.ok ? "✓ " : ""}{msg.text}{msg.ok ? ` ${s.samePatient}` : ""}</p>}
             <div className="mdl-foot" style={{ padding: 0, border: 0 }}>
               <Dialog.Close asChild><button type="button" className="btn">{s.close}</button></Dialog.Close>
+              {msg?.ok && <button type="button" className="btn" onClick={newPatient}>{s.nextPatient}</button>}
               <button type="submit" className="btn primary" disabled={!med || q <= 0 || over || Number(page) > 120 || give.isPending}>{give.isPending ? s.saving : msg?.ok ? s.another : s.save}</button>
             </div>
           </form>
@@ -96,7 +105,8 @@ export function GivenToday({ facilityId, stock }: { facilityId: string; stock: M
   const rows = q.data?.by_medicine ?? [];
   return (
     <div className="card given-today">
-      <div className="card-head" style={{ marginBottom: 8 }}><div><h3 style={{ margin: 0 }}>{s.todayTitle}</h3><p className="faint" style={{ fontSize: "var(--t-xs)", margin: "4px 0 0" }}>{s.todaySub}</p></div></div>
+      <div className="card-head" style={{ marginBottom: 8 }}><div><h3 style={{ margin: 0 }}>{s.todayTitle}</h3><p className="faint" style={{ fontSize: "var(--t-xs)", margin: "4px 0 0" }}>{s.todaySub}</p></div>
+        {(q.data?.patients_today ?? 0) > 0 && <span className="chip teal">{s.patientsToday(q.data?.patients_today ?? 0)}</span>}</div>
       {q.data && rows.length === 0 && <p className="muted" style={{ margin: 0, fontSize: "var(--t-xs)" }}>{s.none}</p>}
       {rows.map((r) => <div key={r.commodity_id} className="req-line"><div><b>{r.commodity_name}</b><div className="faint" style={{ fontSize: 12 }}>{s.times(r.times)}</div></div><span className="qty-pill">−{r.given.toLocaleString("en-IN")}</span></div>)}
       {(q.data?.items.length ?? 0) > 0 && <><p className="gt-sub">{s.recent}</p>

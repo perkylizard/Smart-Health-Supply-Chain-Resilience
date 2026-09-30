@@ -3,6 +3,7 @@
 Flow (mirrors how indents move in Indian district supply chains): the facility requests a medicine and quantity ->
 the District Health Officer approves or declines -> the district warehouse dispatches -> the facility confirms delivery.
 Statuses live in the same state store as transfer decisions, keyed by request_id."""
+import re
 import time
 
 from fastapi import APIRouter, HTTPException, Request
@@ -194,6 +195,21 @@ class DispenseIn(BaseModel):
     patient_place: str | None = Field(None, max_length=80)
 
 
+IST = 5.5 * 3600
+
+
+def _today_dispensed(request: Request, facility_id: str) -> list[dict]:
+    """This facility's counter entries since midnight, India time."""
+    start = (time.time() + IST) // 86400 * 86400 - IST
+    return [e for e in request.app.state.state.entries() if e.get("facility_id") == facility_id and e.get("channel") == "dispensed" and e.get("received", 0) >= start]
+
+
+def next_slip(request: Request, facility_id: str) -> str:
+    """The OPD slip number the counter gives next: one more than today's highest, starting at 1 each morning."""
+    nums = [int(m.group()) for e in _today_dispensed(request, facility_id) if (m := re.search(r"\d+", str(e.get("slip", ""))))]
+    return str(max(nums, default=0) + 1)
+
+
 @router.post("/facilities/{facility_id}/dispense")
 def dispense(facility_id: str, body: DispenseIn, request: Request):
     """Medicine given to a patient at the counter: it leaves the facility's stock at once, so days left, alerts and every
@@ -211,9 +227,10 @@ def dispense(facility_id: str, body: DispenseIn, request: Request):
         raise HTTPException(409, f"only {int(on_hand)} on hand")
     patient = {k: v for k, v in {"slip": body.slip, "patient_name": (body.patient_name or "").strip() or None, "patient_age": body.patient_age,
                                  "patient_place": (body.patient_place or "").strip() or None}.items() if v not in (None, "")}
+    patient.setdefault("slip", next_slip(request, facility_id))  # every visit gets a slip number, typed or not
     rec = credit_stock(request, facility_id, body.commodity_id, -body.quantity, f"dispense:{int(time.time() * 1000)}", channel="dispensed", **patient)
     names = app.state.store.commodities().set_index("commodity_id")["name"].to_dict()
-    return {"commodity_id": body.commodity_id, "commodity_name": names.get(body.commodity_id, body.commodity_id), "given": body.quantity, "on_hand": rec["quantity"]}
+    return {"commodity_id": body.commodity_id, "commodity_name": names.get(body.commodity_id, body.commodity_id), "given": body.quantity, "on_hand": rec["quantity"], "slip": patient["slip"]}
 
 
 @router.get("/facilities/{facility_id}/dispensed")
@@ -229,4 +246,5 @@ def dispensed(facility_id: str, request: Request, hours: int = 24):
     for i in items:
         t = by.setdefault(i["commodity_id"], {"commodity_id": i["commodity_id"], "commodity_name": i["commodity_name"], "given": 0.0, "times": 0})
         t["given"] += i["given"]; t["times"] += 1
-    return {"items": items, "by_medicine": sorted(by.values(), key=lambda t: -t["given"])}
+    today = {str(e["slip"]) for e in _today_dispensed(request, facility_id) if e.get("slip")}
+    return {"items": items, "by_medicine": sorted(by.values(), key=lambda t: -t["given"]), "next_slip": next_slip(request, facility_id), "patients_today": len(today)}

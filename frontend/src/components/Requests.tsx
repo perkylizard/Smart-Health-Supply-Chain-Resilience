@@ -192,8 +192,8 @@ export function StateRequests({ unit }: { unit: string }) {
       <p className="faint" style={{ margin: "4px 0 12px", fontSize: "var(--t-xs)" }}>{v.stateHint}</p>
       {d && d.requests.length === 0 && <p className="muted" style={{ margin: 0 }}>{v.none}</p>}
       {d && d.by_district.length > 0 && (
-        <table className="table" style={{ marginBottom: 12 }}><thead><tr><th>{v.district}</th><th className="num">{v.waiting}</th><th className="num">{v.approved}</th><th className="num">{v.moving}</th><th className="num">{v.delivered}</th><th className="num">{v.declined}</th></tr></thead>
-          <tbody>{d.by_district.slice(0, 10).map((x) => <tr key={x.district}><td>{x.district}</td><td className="num" style={x.requested ? { color: "var(--amber)", fontWeight: 600 } : undefined}>{x.requested}</td><td className="num">{x.approved}</td><td className="num">{x.dispatched}</td><td className="num">{x.delivered}</td><td className="num">{x.declined}</td></tr>)}</tbody></table>
+        <div style={{ overflowX: "auto", marginBottom: 12 }}><table className="table"><thead><tr><th>{v.district}</th><th className="num">{v.waiting}</th><th className="num">{v.approved}</th><th className="num">{v.moving}</th><th className="num">{v.delivered}</th><th className="num">{v.declined}</th></tr></thead>
+          <tbody>{d.by_district.slice(0, 10).map((x) => <tr key={x.district}><td>{x.district}</td><td className="num" style={x.requested ? { color: "var(--amber)", fontWeight: 600 } : undefined}>{x.requested}</td><td className="num">{x.approved}</td><td className="num">{x.dispatched}</td><td className="num">{x.delivered}</td><td className="num">{x.declined}</td></tr>)}</tbody></table></div>
       )}
       {d && d.requests.length > 0 && <><h3 className="req-sub">{v.latest}</h3>{d.requests.slice(0, 5).map((r) => <StatusLine key={r.request_id} r={r} s={s} lang={lang} showDistrict />)}</>}
     </div>

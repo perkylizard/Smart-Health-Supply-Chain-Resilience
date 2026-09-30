@@ -1,5 +1,5 @@
 import { createContext, lazy, Suspense, useContext, useEffect, useMemo, useState } from "react";
-import { Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
+import { Link, Navigate, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "./api";
 import { strings, type Lang } from "./i18n";
@@ -102,6 +102,22 @@ export default function App() {
   );
 }
 
+function NotFound({ lang, kind, persona, bad }: { lang: Lang; kind: "facility" | "place"; persona: PersonaId; bad?: string }) {
+  // the last place that worked, unless that is the broken one
+  const [u, d] = kind === "place" && readLS("district", "") === bad ? ["bihar", "Araria"] : [readLS("unit", "bihar"), readLS("district", "Araria")];
+  const hi = lang === "hi";
+  const title = kind === "facility" ? (hi ? "यह सुविधा नहीं मिली" : "We could not find this facility") : (hi ? "यह ज़िला नहीं मिला" : "We could not find this district");
+  const body = hi ? "लिंक में गलती हो सकती है या यह पुराना हो सकता है। नीचे से सही जगह चुनें।" : "The link may be mistyped or out of date. Pick the right place below.";
+  const to = persona === "phc" ? `/phc-pick/${u}/${encodeURIComponent(d)}` : homePath(persona, u, d);
+  return (
+    <section className="card" role="alert" style={{ maxWidth: 560, margin: "32px auto" }}>
+      <h2 style={{ marginTop: 0 }}>{title}</h2>
+      <p className="muted">{body}</p>
+      <Link className="btn primary" to={to}>{persona === "phc" ? (hi ? "सुविधा चुनें" : "Choose a facility") : (hi ? `${d} खोलें` : `Open ${d}`)}</Link>
+    </section>
+  );
+}
+
 function LegacyRedirect() {
   const { unit, district } = useParams();
   return <Navigate to={`/dho/${unit}/${encodeURIComponent(district!)}`} replace />;
@@ -131,7 +147,12 @@ function Located({ lang, setLang, persona, setPersona, basis, setBasis, which }:
   const fac = facility.data?.facility as Record<string, string> | undefined;
   const unit = params.unit ?? fac?.unit_id ?? readLS("unit", "bihar");
   const district = params.district ?? fac?.district ?? readLS("district", "Araria");
-  useEffect(() => { if (unit) writeLS("unit", unit); if (district) writeLS("district", district); if (which === "phc" && params.id) writeLS("facility", params.id); }, [unit, district, which, params.id]);
+  // a mistyped or stale link: say so plainly instead of loading forever, and never remember it as the user's place
+  const names = useQuery({ queryKey: ["districtNames", unit], queryFn: () => api.districtNames(unit), enabled: !!unit && which !== "facility" && which !== "phc", staleTime: Infinity });
+  const badFacility = (which === "phc" || which === "facility") && facility.isError;
+  const badPlace = !!params.unit && (names.isError || (!!params.district && !!names.data && !names.data.districts.some((d) => d.district === params.district)));
+  const known = which === "phc" || which === "facility" ? !!fac : !params.district || !!names.data?.districts.some((d) => d.district === params.district);
+  useEffect(() => { if (!known) return; if (unit) writeLS("unit", unit); if (district) writeLS("district", district); if (which === "phc" && params.id) writeLS("facility", params.id); }, [known, unit, district, which, params.id]);
   const effectivePersona: PersonaId = which === "phc" || which === "phc-pick" ? "phc" : which === "facility" ? persona : (which as PersonaId);
   const base = which === "phc" ? `/phc/${params.id}` : homePath(effectivePersona, unit, district);
   const ctx = useMemo<Ctx>(() => ({
@@ -151,6 +172,7 @@ function Located({ lang, setLang, persona, setPersona, basis, setBasis, which }:
     case "phc": body = <Routes><Route index element={<PhcHome tab="stock" />} /><Route path="report" element={<PhcHome tab="report" />} /><Route path="deliveries" element={<PhcHome tab="deliveries" />} /></Routes>; break;
     default: body = <Facility id={params.id!} />;
   }
+  if (badFacility || badPlace) body = <NotFound lang={lang} kind={badFacility ? "facility" : "place"} persona={effectivePersona} bad={params.district} />;
   return (
     <AppCtx.Provider value={ctx}>
       <Shell offline={health.isError}><Suspense fallback={<ScreenFallback />}>{body}</Suspense></Shell>

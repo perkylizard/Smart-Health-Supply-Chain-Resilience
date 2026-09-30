@@ -196,7 +196,7 @@ textarea.input { min-height: 120px; padding: var(--s3); font-family: ui-monospac
   .appbar .brand { margin-right: 0; font-size: var(--t-md); }
   .appbar .role .role-text { display: none; } .appbar .role { padding: 0 2px; }
   .appbar .lang { min-height: 32px; padding: 0 8px; font-size: var(--t-xs); }
-  .desktop-only { display: none !important; } .phone-only { display: inline-flex !important; } .phone-controls.phone-only { display: flex !important; }
+  .desktop-only { display: none !important; } .phone-only { display: inline-flex !important; } .phone-controls.phone-only, .hdr-tabs-m.phone-only { display: flex !important; }
   .loclist { grid-template-columns: 1fr; } .loclist ul { max-height: 30vh; }
   .tabs { order: 3; position: sticky; bottom: 0; padding: 0; border-top: 1px solid var(--rule); box-shadow: var(--e8); }
   .tabs .inner { justify-content: space-around; }

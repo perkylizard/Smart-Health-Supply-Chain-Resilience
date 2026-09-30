@@ -71,7 +71,6 @@ def _clean(df: pd.DataFrame) -> list[dict]:
 
 def create_app(store: Store | None = None, state: InMemoryState | None = None, gemini=None, warm: bool = True) -> FastAPI:
     app = FastAPI(title="Sanjeevani Grid API", version="0.1.0")
-    app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
     # one gate for every district-scoped route: an unknown state or district is "not found", never a server error
     from urllib.parse import unquote
@@ -98,6 +97,7 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
     app.add_middleware(GZipMiddleware, minimum_size=1000)
     app.add_middleware(StripPrefix, prefix="/api")
     app.add_middleware(NoStore)
+    app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])  # outermost: every answer, even a 404 from the district gate, can be read
     app.state.store, app.state.state = store, state
     from sanjeevani.gemini.client import GeminiClient
     app.state.gemini = gemini or GeminiClient()
