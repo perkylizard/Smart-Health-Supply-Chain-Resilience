@@ -61,13 +61,14 @@ export default function LocationPicker({ variant = "bar" }: { variant?: "bar" | 
                 </div>
                 <ul className="loc-tiles" aria-label={t.chooseDistrict}>
                   {!districts.data && <li className="faint">{t.loading}</li>}
+                  {districts.data && scored.isFetching && !scored.data && <li className="faint loc-wait">{lang === "hi" ? "इस राज्य के अलर्ट और स्कोर गिने जा रहे हैं…" : "Working out alert counts and scores for this state…"}</li>}
                   {rows.map((d) => (
                     <li key={d.district}>
                       <button className={`loc-tile${pick === unit && d.district === district ? " on" : ""}`} onClick={() => { setLocation(pick, d.district); setOpen(false); }}>
                         <span>{d.district}</span>
                         <span className="meta">
-                          {d.red_alerts > 0 ? <span className="loc-red">{d.red_alerts} {t.severity.red}</span> : null}
-                          {d.score != null ? <span className="score-pill">{Math.round(d.score)}</span> : null}
+                          {d.red_alerts > 0 ? <span className="loc-red" title={lang === "hi" ? "7 दिन से कम स्टॉक वाली सुविधा-दवा जोड़ियाँ" : "Facility and medicine pairs with under 7 days of stock"}>{d.red_alerts} {t.severity.red}</span> : null}
+                          {d.score != null ? <span className="score-pill" title={lang === "hi" ? "सुदृढ़ता स्कोर, 100 में से" : "Resilience score out of 100"}>{Math.round(d.score)}</span> : null}
                         </span>
                       </button>
                     </li>

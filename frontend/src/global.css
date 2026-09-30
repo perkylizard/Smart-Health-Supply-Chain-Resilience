@@ -398,3 +398,17 @@ textarea.input { min-height: 120px; padding: var(--s3); font-family: ui-monospac
 .fl-dot.red { background: var(--red); } .fl-dot.amber { background: var(--amber); } .fl-dot.data_issue { background: var(--blue); }
 .fl-go { color: var(--ink-3); font-size: 18px; }
 @media (max-width: 1100px) { .map-split { grid-template-columns: 1fr; } .fac-list { max-height: 520px; } }
+
+/* Federated learning: plain-words headline, AUC in words, gains chart, what travels */
+.fed-headline { margin: 16px 0 4px; padding: 14px 16px; background: var(--teal-soft); border-left: 4px solid var(--teal); border-radius: 8px; font-size: 15px; line-height: 1.5; color: var(--ink); font-weight: 500; }
+.fed-words { margin-top: 4px; color: var(--ink-2); }
+.fed-catch { margin: 8px 0 0; font-size: var(--t-xs); }
+.fed-more { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--rule); }
+.ft-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ft-col { padding: 12px 14px; border-radius: 10px; border: 1px solid var(--rule); font-size: 13px; }
+.ft-col ul { margin: 6px 0 0; padding-left: 18px; color: var(--ink-2); } .ft-col li { margin-bottom: 4px; }
+.ft-col.go { background: var(--blue-soft); } .ft-col.go b { color: var(--blue); }
+.ft-col.home { background: var(--green-soft); } .ft-col.home b { color: var(--green); }
+@media (max-width: 599px) { .ft-cols { grid-template-columns: 1fr; } }
+.fed-legend { display: flex; gap: 16px; margin: 0 0 4px; font-size: 12px; color: var(--ink-2); } .fed-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+@media (min-width: 1100px) { .pick-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 32px; } }

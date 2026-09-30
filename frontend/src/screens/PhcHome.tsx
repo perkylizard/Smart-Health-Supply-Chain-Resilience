@@ -9,21 +9,42 @@ import Scale from "../components/Scale";
 import { MyRequests, RequestDialog, RequestForm } from "../components/Requests";
 import { sB } from "../stringsB";
 
+const PICK = {
+  en: { all: "All", hint: "Community Health Centre (CHC): block-level referral unit with specialists and about 30 beds. Primary Health Centre (PHC): first point of care. Both order medicines from the district store.",
+    types: { DH: "District Hospital", CHC: "Community Health Centre", PHC: "Primary Health Centre" } as Record<string, string>, alerts: (n: number) => `${n} ${n === 1 ? "alert" : "alerts"}`, none: "No facility matches." },
+  hi: { all: "सभी", hint: "सामुदायिक स्वास्थ्य केंद्र (CHC): विशेषज्ञों और लगभग 30 बिस्तरों वाली ब्लॉक-स्तरीय रेफ़रल इकाई। प्राथमिक स्वास्थ्य केंद्र (PHC): देखभाल का पहला केंद्र। दोनों ज़िला भंडार से दवा मँगाते हैं।",
+    types: { DH: "ज़िला अस्पताल", CHC: "सामुदायिक स्वास्थ्य केंद्र", PHC: "प्राथमिक स्वास्थ्य केंद्र" } as Record<string, string>, alerts: (n: number) => `${n} चेतावनियाँ`, none: "कोई सुविधा मेल नहीं खाती।" },
+};
+const TYPE_ORDER = ["DH", "CHC", "PHC"];
+
+/** Facility staff: choose your facility. One list for the district, filtered by type (DH / CHC / PHC), not a separate step. */
 export function PhcPick() {
-  const { unit, district, t } = useApp();
+  const { unit, district, t, lang } = useApp();
+  const p = PICK[lang];
   const nav = useNavigate();
   const [q, setQ] = useState("");
+  const [type, setType] = useState<string>("all");
   const f = useQuery({ queryKey: ["dots", unit, district], queryFn: () => api.facilities(unit, district) });
-  const list = (f.data?.facilities ?? []).filter((x) => x.facility_name.toLowerCase().includes(q.toLowerCase())).slice(0, 40);
+  const all = [...(f.data?.facilities ?? [])].sort((a, b) => TYPE_ORDER.indexOf(a.type) - TYPE_ORDER.indexOf(b.type) || a.facility_name.localeCompare(b.facility_name, undefined, { numeric: true }));
+  const types = TYPE_ORDER.filter((k) => all.some((x) => x.type === k));
+  const list = all.filter((x) => (type === "all" || x.type === type) && x.facility_name.toLowerCase().includes(q.toLowerCase()));
   return (
-    <div className="pg" style={{ maxWidth: 640 }}>
+    <div className="pg">
       <section className="card">
         <p className="eyebrow"><span className="eyebrow-accent">{district}</span></p>
-        <h1 style={{ margin: "4px 0 12px" }}>{t.pickFacility}</h1>
+        <h1 style={{ margin: "4px 0 6px" }}>{t.pickFacility}</h1>
+        <p className="faint" style={{ margin: "0 0 12px", fontSize: "var(--t-xs)" }}>{p.hint}</p>
         <input className="input" value={q} onChange={(e) => setQ(e.target.value)} placeholder={`${t.facility} · ${district}`} aria-label={t.facility} autoFocus />
+        {all.length > 0 && (
+          <div className="seg" role="tablist" aria-label={t.facility} style={{ marginTop: 12 }}>
+            <button type="button" role="tab" aria-selected={type === "all"} className={type === "all" ? "on" : ""} onClick={() => setType("all")}>{p.all} <span className="seg-n">{all.length}</span></button>
+            {types.map((k) => <button key={k} type="button" role="tab" aria-selected={type === k} className={type === k ? "on" : ""} onClick={() => setType(k)} title={p.types[k]}>{k} <span className="seg-n">{all.filter((x) => x.type === k).length}</span></button>)}
+          </div>
+        )}
         {f.isLoading && <p className="skeleton" style={{ height: 120, marginTop: 12 }}>…</p>}
-        <div className="list flat pick-list" style={{ marginTop: 12 }}>
-          {list.map((x) => <div key={x.facility_id} className="row" style={{ gridTemplateColumns: "1fr auto" }}><div><span className="name">{x.facility_name}</span><div className="sub">{x.type} · <Badge kind={x.source === "osm" ? "osm" : "simulated"} /></div></div><button className="btn primary" onClick={() => nav(`/phc/${x.facility_id}`)}>{t.myStock}</button></div>)}
+        {f.data && list.length === 0 && <p className="muted" style={{ marginTop: 12 }}>{p.none}</p>}
+        <div className="list flat pick-list pick-grid" style={{ marginTop: 12 }}>
+          {list.map((x) => <div key={x.facility_id} className="row" style={{ gridTemplateColumns: "1fr auto" }}><div><span className="name">{x.facility_name}</span><div className="sub"><span title={p.types[x.type]}>{p.types[x.type] ?? x.type}</span>{x.red + x.amber > 0 && <span className={`chip ${x.red > 0 ? "red" : "amber"}`} style={{ minHeight: 20 }}>{p.alerts(x.red + x.amber)}</span>}<Badge kind={x.source === "osm" ? "osm" : "simulated"} /></div></div><button className="btn primary" onClick={() => nav(`/phc/${x.facility_id}`)}>{t.myStock}</button></div>)}
         </div>
       </section>
     </div>

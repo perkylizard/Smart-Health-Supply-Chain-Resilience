@@ -346,6 +346,13 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
             warm_federated()
         except Exception:
             pass
+        # every other state's district scores too (Uttar Pradesh takes over a minute cold), so the location picker
+        # shows red counts and scores for every state instead of bare names on the first open
+        for u in store.units()["unit_id"].tolist()[1:]:
+            try:
+                alerts_for(u)
+            except Exception:
+                pass
     if warm:
         threading.Thread(target=_warm, daemon=True).start()
     return app
