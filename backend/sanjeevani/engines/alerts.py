@@ -83,6 +83,10 @@ def apply_reports(df: pd.DataFrame, reports: list[dict]) -> pd.DataFrame:
     if "reported" not in out.columns:
         out["reported"] = False
     idx = out.index[hit]
+    # the ledger stores float32; a reported count (e.g. 2.2 on hand + 500 received) need not be float32-exact, so widen first
+    for c in ("closing", "days_of_stock"):
+        if c in out.columns:
+            out[c] = out[c].astype("float64")
     q = np.array([float(latest[keys[i]]["quantity"]) for i in np.nonzero(hit)[0]])
     daily = np.maximum(out.loc[idx, "weekly_demand_p90"].to_numpy(float) / 7.0, 1e-6)
     days = np.minimum(q / daily, 365.0).round(1)

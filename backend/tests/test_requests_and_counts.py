@@ -120,3 +120,76 @@ def test_sample_activity_fills_every_stage(client):
     ind = c.get("/districts/bihar/Araria/indents").json()["indents"]
     assert {"dispatched", "delivered"} <= {x["status"] for x in ind} and any(x["source"] == "request" for x in ind)
     assert seed(app) == {"skipped": "already seeded"}
+
+
+def _stock(client, fid, cid):
+    return next(x for x in client.get(f"/facilities/{fid}").json()["stock"] if x["commodity_id"] == cid)["closing"]
+
+
+def test_dispatch_logs_a_store_issue_and_facility_receipt_adds_stock(client):
+    a = _alerting(client)
+    fid, cid = a["facility_id"], a["commodity_id"]
+    before = _stock(client, fid, cid)
+    rid = client.post("/requests", json={"facility_id": fid, "commodity_id": cid, "quantity": 5000}).json()["request_id"]
+    assert client.post(f"/requests/{rid}/received").status_code == 409  # nothing to receive before approval and dispatch
+    client.post(f"/requests/{rid}/approved")
+    # the district store dispatches from its queue: the issue is logged against the store, the facility's stock is unchanged
+    assert client.post(f"/indents/{rid}/dispatched").json()["status"] == "dispatched"
+    issues = client.get("/districts/bihar/Araria/issues").json()
+    assert any(i["ref"] == rid and i["quantity"] == 5000 for i in issues["issues"])
+    assert next(t for t in issues["by_medicine"] if t["commodity_id"] == cid)["quantity"] >= 5000
+    assert _stock(client, fid, cid) == before
+    # the store records the handover, then the facility confirms receipt: now the stock goes up by the quantity
+    assert client.post(f"/indents/{rid}/delivered").json()["status"] == "delivered"
+    assert _stock(client, fid, cid) == before
+    assert client.post(f"/requests/{rid}/received").json()["status"] == "received"
+    assert _stock(client, fid, cid) == before + 5000
+    assert client.post(f"/indents/{rid}/dispatched").status_code == 409  # a received request never moves back
+    assert client.post(f"/requests/{rid}/received").status_code == 409  # and is credited once
+    assert _stock(client, fid, cid) == before + 5000
+    lane = {x["indent_id"]: x["status"] for x in client.get("/districts/bihar/Araria/indents").json()["indents"]}
+    assert lane[rid] == "delivered"  # done, from the store's side
+
+
+def test_facility_can_confirm_receipt_straight_after_dispatch(client):
+    fid = client.get("/districts/bihar/Araria/facilities").json()["facilities"][2]["facility_id"]
+    before = _stock(client, fid, "ors")
+    rid = client.post("/requests", json={"facility_id": fid, "commodity_id": "ors", "quantity": 120}).json()["request_id"]
+    client.post(f"/requests/{rid}/approved")
+    client.post(f"/indents/{rid}/dispatched")
+    assert client.post(f"/requests/{rid}/received").json()["status"] == "received"
+    assert _stock(client, fid, "ors") == before + 120
+
+
+def test_store_can_say_it_cannot_supply_an_approved_request(client):
+    fid = client.get("/districts/bihar/Araria/facilities").json()["facilities"][3]["facility_id"]
+    rid = client.post("/requests", json={"facility_id": fid, "commodity_id": "ors", "quantity": 50}).json()["request_id"]
+    assert client.post(f"/indents/{rid}/cancelled", json={"reason": "Out of stock at the store"}).status_code == 409  # not approved yet
+    client.post(f"/requests/{rid}/approved")
+    row = next(x for x in client.get("/districts/bihar/Araria/indents").json()["indents"] if x["indent_id"] == rid)
+    assert row["days_of_stock"] is not None  # the store sees the requesting facility's stock
+    assert client.post(f"/indents/{rid}/cancelled", json={"reason": "Out of stock at the store"}).json()["status"] == "cancelled"
+    mine = next(x for x in client.get(f"/facilities/{fid}/requests").json()["requests"] if x["request_id"] == rid)
+    assert mine["status"] == "cancelled" and mine["decision_reason"] == "Out of stock at the store"
+    assert rid not in {x["indent_id"] for x in client.get("/districts/bihar/Araria/indents").json()["indents"]}
+
+
+def test_not_supplied_goes_back_to_the_officer_who_resends_or_closes(client):
+    fid = client.get("/districts/bihar/Araria/facilities").json()["facilities"][4]["facility_id"]
+    rid = client.post("/requests", json={"facility_id": fid, "commodity_id": "ors", "quantity": 40}).json()["request_id"]
+    client.post(f"/requests/{rid}/approved")
+    client.post(f"/indents/{rid}/cancelled", json={"reason": "Out of stock at the store"})
+    back = client.get("/districts/bihar/Araria/requests?status=cancelled").json()["requests"]
+    assert any(x["request_id"] == rid and x["decision_reason"] == "Out of stock at the store" for x in back)
+    assert client.post(f"/requests/{rid}/approved").json()["status"] == "approved"  # sent to the store again
+    assert rid in {x["indent_id"] for x in client.get("/districts/bihar/Araria/indents").json()["indents"]}
+    client.post(f"/indents/{rid}/cancelled", json={"reason": "Out of stock at the store"})
+    assert client.post(f"/requests/{rid}/closed").json()["status"] == "closed"
+    assert client.post(f"/requests/{rid}/approved").status_code == 409  # closed is final
+
+
+def test_a_fractional_count_does_not_break_the_district_view(client):
+    a = _alerting(client)
+    client.post("/entries", json={"facility_id": a["facility_id"], "commodity_id": a["commodity_id"], "quantity": 502.2000000476837, "channel": "chat"})
+    assert client.get("/districts/bihar/Araria/summary").status_code == 200
+    assert client.get(f"/facilities/{a['facility_id']}").status_code == 200

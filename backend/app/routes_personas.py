@@ -3,6 +3,7 @@ import time
 
 import numpy as np
 import pandas as pd
+from pydantic import BaseModel, Field
 from fastapi import APIRouter, HTTPException, Request
 
 from sanjeevani.engines import redistribute as R
@@ -189,22 +190,55 @@ def indents(unit_id: str, district: str, request: Request):
         r["source"] = "alert"
     # facility requests approved by the District Health Officer join the queue first; the warehouse dispatches them
     from app.routes_requests import _all, _enrich
-    lane = {"approved": "pending", "dispatched": "dispatched", "delivered": "delivered"}
+    lane = {"approved": "pending", "dispatched": "dispatched", "delivered": "delivered", "received": "delivered"}
     upc = app.state.store.commodities().set_index("commodity_id")["units_per_case"].to_dict()
+    dos = {(f, c): (None if pd.isna(d) else float(d)) for f, c, d in zip(al["facility_id"], al["commodity_id"], al["days_of_stock"])}  # the requesting facility's stock now
     reqs = [x for x in _enrich(request, [r for r in _all(request) if r["unit_id"] == unit_id and r["district"] == district]) if x["status"] in lane]
     recs = [{"indent_id": x["request_id"], "facility_id": x["facility_id"], "facility_name": x["facility_name"], "type": x["type"],
              "commodity_id": x["commodity_id"], "commodity_name": x["commodity_name"], "quantity": x["quantity"], "units_per_case": max(1.0, float(upc.get(x["commodity_id"], 1) or 1)),
-             "cases": int(-(-x["quantity"] // max(1.0, float(upc.get(x["commodity_id"], 1) or 1)))), "days_of_stock": None, "cause": "requested", "lead_days": None,
+             "cases": int(-(-x["quantity"] // max(1.0, float(upc.get(x["commodity_id"], 1) or 1)))), "days_of_stock": dos.get((x["facility_id"], x["commodity_id"])), "cause": "requested", "lead_days": None,
              "note": x.get("note"), "status": lane[x["status"]], "source": "request"} for x in reqs] + recs
     return {"district": district, "indents": recs, "scenario": state.get_scenario(),
             "provenance": "Quantity = stock to reach 60 days of P90 forecast demand, each facility's demand capped at 3x the district median for that medicine; facilities and stock are simulated, forecast from BigQuery TimesFM where cached"}
 
 
+class IndentMove(BaseModel):
+    """Sent with an alert-raised indent (a facility request carries its own): what leaves the store, for whom.
+    reason: why the store cannot supply an approved request."""
+    reason: str | None = Field(None, max_length=300)
+    facility_id: str | None = None
+    commodity_id: str | None = None
+    quantity: float | None = Field(None, gt=0, le=10_000_000)
+
+
 @router.post("/indents/{indent_id:path}/{status}")
-def indent_status(indent_id: str, status: str, request: Request):
+def indent_status(indent_id: str, status: str, request: Request, body: IndentMove | None = None):
     if status not in ("dispatched", "delivered", "cancelled"):
         raise HTTPException(400, "status must be dispatched, delivered or cancelled")
-    return request.app.state.state.set_transfer(indent_id, status)
+    from app.routes_requests import _all, credit_stock, log_issue
+    state = request.app.state.state
+    cur = (state.transfer_status(indent_id) or {}).get("status")
+    req = next((r for r in _all(request) if r["request_id"] == indent_id), None)
+    if req is not None:
+        # a facility request: the store moves it approved -> dispatched -> delivered; the facility confirms receipt itself
+        allowed = {"approved": {"dispatched", "cancelled"}, "dispatched": {"delivered"}}.get(cur or "requested", set())
+        if status not in allowed:
+            raise HTTPException(409, f"a {cur or 'requested'} request cannot become {status} from the store")
+        # "cancelled" on a request = the store cannot supply it; the reason reaches the facility and the district officer
+        rec = state.set_transfer(indent_id, status, body.reason if body and status == "cancelled" else None)
+        if status == "dispatched":
+            log_issue(request, req["facility_id"], req["commodity_id"], req["quantity"], indent_id)
+        return rec
+    if cur == status or (cur == "delivered" and status == "dispatched"):
+        raise HTTPException(409, f"this indent is already {cur}")
+    rec = state.set_transfer(indent_id, status)
+    # an alert-raised indent has no facility-side request to confirm, so the store's delivery is the receipt
+    if body and body.facility_id and body.commodity_id and body.quantity:
+        if status == "dispatched":
+            log_issue(request, body.facility_id, body.commodity_id, body.quantity, indent_id)
+        elif status == "delivered":
+            credit_stock(request, body.facility_id, body.commodity_id, body.quantity, indent_id)
+    return rec
 
 
 @router.get("/districts/{unit_id}/{district}/warehouse")

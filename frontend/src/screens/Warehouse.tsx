@@ -9,6 +9,11 @@ import Badge from "../components/Badge";
 import Scale from "../components/Scale";
 
 type Lane = "pending" | "dispatched" | "delivered";
+/** An approved facility request the store cannot fill: it says why, and the facility and the District Health Officer see the reason. */
+const NS = {
+  en: { cant: "Can't supply", hint: "Tell the facility and the District Health Officer why this cannot be sent", reasons: ["Out of stock at the store", "Sent from another facility", "Quantity too high"] },
+  hi: { cant: "नहीं भेज सकते", hint: "सुविधा और ज़िला स्वास्थ्य अधिकारी को कारण बताएँ", reasons: ["भंडार में स्टॉक नहीं", "दूसरी सुविधा से भेजा", "मात्रा बहुत अधिक"] },
+};
 const priorityOf = (d: number | null): ["red" | "amber" | "slate", "prEmergency" | "prHigh" | "prRoutine"] => d == null ? ["amber", "prHigh"] : d < 1 ? ["red", "prEmergency"] : d < 7 ? ["amber", "prHigh"] : ["slate", "prRoutine"];
 
 export default function Warehouse() {
@@ -19,7 +24,8 @@ export default function Warehouse() {
   const [local, setLocal] = useState<Record<string, string>>({});
   const [lane, setLane] = useState<Lane>("pending");
   const [nShown, setNShown] = useState(12);
-  const set = useMutation({ mutationFn: ({ id, status }: { id: string; status: string }) => api.indentStatus(id, status), onMutate: ({ id, status }) => setLocal((l) => ({ ...l, [id]: status })), onSettled: () => refreshRequestViews(qc) });
+  const [noSupply, setNoSupply] = useState<string | null>(null);
+  const set = useMutation({ mutationFn: ({ id, status, reason }: { id: string; status: string; reason?: string }) => { const x = q.data?.indents.find((r) => r.indent_id === id); return api.indentStatus(id, status, x && x.source !== "request" ? { facility_id: x.facility_id, commodity_id: x.commodity_id, quantity: x.quantity } : reason ? { reason } : undefined); }, onMutate: ({ id, status }) => setLocal((l) => ({ ...l, [id]: status })), onSettled: () => refreshRequestViews(qc) });
   const rows = (q.data?.indents ?? []).map((x) => ({ ...x, status: local[x.indent_id] ?? x.status }));
   const count = (l: Lane) => rows.filter((r) => r.status === l).length;
   const inLane = rows.filter((r) => r.status === lane);
@@ -71,6 +77,9 @@ export default function Warehouse() {
                       {lane === "pending" && <button className="btn primary" onClick={() => set.mutate({ id: x.indent_id, status: "dispatched" })}>{t.markDispatched}</button>}
                       {lane === "dispatched" && <button className="btn primary" onClick={() => set.mutate({ id: x.indent_id, status: "delivered" })}>{t.markDelivered}</button>}
                       {lane === "pending" && x.source !== "request" && <button className="btn" onClick={() => set.mutate({ id: x.indent_id, status: "cancelled" })}>{t.cancel}</button>}
+                      {lane === "pending" && x.source === "request" && (noSupply === x.indent_id
+                        ? <>{NS[lang].reasons.map((why) => <button key={why} className="btn" onClick={() => { set.mutate({ id: x.indent_id, status: "cancelled", reason: why }); setNoSupply(null); }}>{why}</button>)}<button className="btn quiet" onClick={() => setNoSupply(null)}>{t.cancel}</button></>
+                        : <button className="btn" title={NS[lang].hint} onClick={() => setNoSupply(x.indent_id)}>{NS[lang].cant}</button>)}
                     </div></td>
                   </tr>))}</tbody>
               </table>
@@ -118,6 +127,7 @@ export function WarehouseStock() {
           </div>
         </div>
       </section>
+      <IssueRegister unit={unit} district={district} />
       <section className="card">
         <div className="toolbar">
           <p className="muted" style={{ margin: 0, fontSize: 12, flex: 1, minWidth: 220 }}>{q.data.provenance} <Badge kind={basis === "simulated" ? "simulated" : "real"} /></p>
@@ -163,3 +173,28 @@ export function WarehouseStock() {
 
 const MONTHS = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 function fmt(v: number | null) { return v == null ? "…" : Math.round(v).toLocaleString("en-IN"); }
+
+const IR = {
+  en: { title: "Issued from the store", sub: "Every dispatch in this session, logged at the moment it leaves the store. Kept apart from the HMIS ledger below, which is the district's reported record and is never edited.",
+    none: "Nothing dispatched yet. Dispatches from the Indents queue appear here.", total: (n: string, k: number) => `${n} units in ${k} ${k === 1 ? "dispatch" : "dispatches"}`, med: "Medicine", qty: "Issued", n: "Dispatches", to: "Latest to", sample: "sample" },
+  hi: { title: "भंडार से जारी", sub: "इस सत्र का हर प्रेषण, भंडार से निकलते ही दर्ज। नीचे का HMIS लेजर ज़िले का रिपोर्ट किया रिकॉर्ड है और कभी बदला नहीं जाता।",
+    none: "अभी कुछ नहीं भेजा गया। इंडेंट कतार से भेजा गया सामान यहाँ दिखेगा।", total: (n: string, k: number) => `${k} प्रेषणों में ${n} इकाइयाँ`, med: "दवा", qty: "जारी", n: "प्रेषण", to: "अंतिम प्राप्तकर्ता", sample: "नमूना" },
+};
+
+/** The store's issue register: what left the store and for whom, per medicine. */
+function IssueRegister({ unit, district }: { unit: string; district: string }) {
+  const { lang } = useApp(); const l = IR[lang];
+  const q = useQuery({ queryKey: ["issues", unit, district], queryFn: () => api.issues(unit, district), refetchInterval: 15_000 });
+  const by = q.data?.by_medicine ?? [];
+  const latestTo = (cid: string) => q.data?.issues.find((i) => i.commodity_id === cid)?.facility_name ?? "";
+  return (
+    <section className="card">
+      <div className="card-head"><div><h2>{l.title}</h2><p className="faint">{l.sub}</p></div>{q.data && q.data.total > 0 && <span className="chip teal nowrap">{l.total(Math.round(q.data.total).toLocaleString("en-IN"), q.data.issues.length)}</span>}</div>
+      {q.data && by.length === 0 && <p className="muted">{l.none}</p>}
+      {by.length > 0 && <div className="tbl-wrap"><table className="table">
+        <thead><tr><th>{l.med}</th><th className="num">{l.qty}</th><th className="num">{l.n}</th><th>{l.to}</th></tr></thead>
+        <tbody>{by.map((t) => <tr key={t.commodity_id}><td>{t.commodity_name}</td><td className="num">{Math.round(t.quantity).toLocaleString("en-IN")}</td><td className="num">{t.dispatches}</td><td>{latestTo(t.commodity_id)}</td></tr>)}</tbody>
+      </table></div>}
+    </section>
+  );
+}

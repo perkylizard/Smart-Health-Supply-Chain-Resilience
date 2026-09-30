@@ -9,7 +9,7 @@ import MapView from "../components/MapView";
 import Scale from "../components/Scale";
 import Sparkline from "../components/Sparkline";
 import CarePanel from "../components/CarePanel";
-import { CountHistory, RequestTracker, RequestsInbox, RequestsWaiting } from "../components/Requests";
+import { CountHistory, NotSupplied, RequestTracker, RequestsInbox, RequestsWaiting } from "../components/Requests";
 import ResilienceAlerts from "../components/ResilienceAlerts";
 
 const TABS = ["requests", "transfers", "alerts", "map", "care", "counts"] as const;
@@ -42,7 +42,8 @@ export default function Briefing() {
   const [sp, setSp] = useSearchParams();
   const waiting = useQuery({ queryKey: ["districtRequests", unit, district], staleTime: 0, refetchOnMount: "always", queryFn: () => api.districtRequests(unit, district, "requested"), refetchInterval: 15_000 });
   const counts = useQuery({ queryKey: ["counts", unit, district], staleTime: 0, refetchOnMount: "always", queryFn: () => api.districtCounts(unit, district), refetchInterval: 15_000 });
-  const nWaiting = waiting.data?.requests.length ?? 0;
+  const back = useQuery({ queryKey: ["districtRequests", unit, district, "cancelled"], staleTime: 0, queryFn: () => api.districtRequests(unit, district, "cancelled"), refetchInterval: 15_000 });
+  const nWaiting = (waiting.data?.requests.length ?? 0) + (back.data?.requests.length ?? 0);
   const asked = sp.get("tab") as Tab | null;
   const tab: Tab = asked && TABS.includes(asked) ? asked : nWaiting > 0 ? "requests" : "alerts";
   const tabsRef = useRef<HTMLElement | null>(null);
@@ -123,7 +124,7 @@ export default function Briefing() {
       <div className="subpanel" role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`}>
         {tab === "requests" && (
           <div className="sp-grid">
-            <RequestsInbox unit={unit} district={district} />
+            <div><NotSupplied unit={unit} district={district} /><RequestsInbox unit={unit} district={district} /></div>
             <RequestTracker unit={unit} district={district} />
           </div>
         )}

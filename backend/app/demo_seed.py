@@ -33,6 +33,9 @@ def seed(app) -> dict:
             flow = {"approved": ["approved"], "declined": ["declined"], "dispatched": ["approved", "dispatched"], "delivered": ["approved", "dispatched", "delivered"]}.get(stage, [])
             for k, s in enumerate(flow):
                 st.set_transfer(rid, s, "Stock sent to this facility last week" if s == "declined" else None)
+                if s == "dispatched":  # the store's issue register shows the sample dispatches too
+                    st.add_entry({"kind": "issue", "facility_id": a["facility_id"], "facility_name": f["name"], "unit_id": unit, "district": district,
+                                  "commodity_id": a["commodity_id"], "quantity": float(qty), "ref": rid, "sample": True})
             made["requests"] += 1
         # stock counts from three facilities
         for j, a in enumerate(al[~al["data_issue"].astype(bool)].drop_duplicates("facility_id").iloc[6:9].to_dict("records")):
