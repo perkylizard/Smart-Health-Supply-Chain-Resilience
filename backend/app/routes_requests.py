@@ -106,7 +106,7 @@ def _counts(request: Request, keep) -> list[dict]:
         f = fac.loc[e["facility_id"]]
         row = {"entry_id": e.get("entry_id"), "facility_id": e["facility_id"], "facility_name": f["name"], "type": f["type"], "unit_id": f["unit_id"],
                "district": f["district"], "commodity_id": e["commodity_id"], "commodity_name": names.get(e["commodity_id"], e["commodity_id"]),
-               "quantity": e["quantity"], "channel": e.get("channel", "web"), "received": e.get("received")}
+               "quantity": e["quantity"], "channel": e.get("channel", "web"), "received": e.get("received"), "sample": bool(e.get("sample"))}
         if keep(row):
             out.append(row)
     return out

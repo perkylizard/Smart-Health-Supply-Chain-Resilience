@@ -177,13 +177,13 @@ export function DistrictsTable() {
           </div>
         </div>
         <div className="mv-bar">
-          <div className="seg" role="tablist" aria-label={a.lgEyebrow}>{tiers.map(([k, l]) => <button key={k} role="tab" aria-selected={tier === k} className={tier === k ? "on" : ""} onClick={() => setTier(k)}>{l}</button>)}</div>
+          <div className="seg" role="tablist" aria-label={a.lgEyebrow}>{tiers.map(([k, l]) => <button key={k} role="tab" aria-selected={tier === k} className={tier === k ? "on" : ""} onClick={() => setTier(k)}>{l}<span className="seg-n">{(d.data?.districts ?? []).filter((r) => k === "all" || band(r.score) === k).length}</span></button>)}</div>
           <input className="input mv-search" type="search" value={name} onChange={(e) => setName(e.target.value)} placeholder={a.filterName} aria-label={a.filterName} />
         </div>
       </section>
       <div className="pg-grid">
         <section className="card">
-          {d.isLoading ? <p className="skeleton" style={{ height: 200 }}>Scoring every district</p> : rows.length === 0 ? <p className="muted">{a.noDistricts}</p> : <LeagueTable rows={rows} sortable={{ key, dir, set: setSort }} />}
+          {d.isLoading ? <p className="skeleton" style={{ height: 200 }}>Scoring every district</p> : rows.length === 0 ? <p className="muted">{tier === "red" ? a.noneAtRisk : tier === "amber" ? a.noneWatch : a.noDistricts}</p> : <LeagueTable rows={rows} sortable={{ key, dir, set: setSort }} />}
         </section>
         <aside><ScoreCard /></aside>
       </div>

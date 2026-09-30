@@ -337,6 +337,8 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
             for d in ("Araria",):  # the demo district: summary and Move stock open instantly for the first visitor
                 alerts_for(hero, d)
                 proposals_for(hero, d)
+            from app.demo_seed import seed  # sample decisions so every screen shows a working flow (badged "sample")
+            seed(app)
         except Exception:
             pass
     if warm:

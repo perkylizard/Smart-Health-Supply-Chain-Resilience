@@ -104,3 +104,19 @@ def test_counts_only_for_real_facilities_and_medicines(client):
     assert client.post("/entries", json={"facility_id": "nope", "commodity_id": "ors", "quantity": 5}).status_code == 404
     assert client.post("/entries", json={"facility_id": f, "commodity_id": "nope", "quantity": 5}).status_code == 400
     assert client.post("/entries", json={"facility_id": f, "commodity_id": "ors", "quantity": 5}).status_code == 200
+
+
+def test_sample_activity_fills_every_stage(client):
+    from app.demo_seed import seed
+    from app.main import create_app
+    from fastapi.testclient import TestClient
+    app = create_app(warm=False); c = TestClient(app)
+    made = seed(app)
+    assert made["requests"] >= 12 and made["transfers"] >= 7 and made["counts"] >= 3
+    rs = c.get("/districts/bihar/Araria/requests").json()["requests"]
+    assert {r["status"] for r in rs} >= {"requested", "approved", "declined", "dispatched", "delivered"} and all(r.get("sample") for r in rs)
+    tr = c.get("/transfers/bihar/Araria").json()["transfers"]
+    assert {"approved", "picked_up", "delivered"} <= {x["status"] for x in tr}
+    ind = c.get("/districts/bihar/Araria/indents").json()["indents"]
+    assert {"dispatched", "delivered"} <= {x["status"] for x in ind} and any(x["source"] == "request" for x in ind)
+    assert seed(app) == {"skipped": "already seeded"}

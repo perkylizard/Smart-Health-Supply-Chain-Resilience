@@ -68,7 +68,9 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
     <aside className="phc-side">
       <div className="card"><h3>{t.phcThisMonth}</h3>
         {beds && <div style={{ marginBottom: 12 }}><span className="big">{beds.occupied}</span><span className="faint"> / {beds.beds}</span><div className="faint" style={{ fontSize: "var(--t-xs)" }}>{t.phcBeds}</div></div>}
-        {mo && <div><span className="big" style={{ color: mo.in_position === 0 ? "var(--red)" : undefined }}>{mo.in_position}</span><div className="faint" style={{ fontSize: "var(--t-xs)" }}>{t.phcDoctors}{mo.in_position > 0 ? `, ${mo.days_present} ${t.days}` : ""}</div></div>}
+        {mo && (mo.in_position === 0
+          ? <div><span className="chip red">{b.doctorNone}</span><div className="faint" style={{ fontSize: "var(--t-xs)", marginTop: 6 }}>{b.doctorWhy}</div></div>
+          : <div><span className="big">{mo.in_position}</span><div className="faint" style={{ fontSize: "var(--t-xs)" }}>{t.phcDoctors}, {mo.days_present} {t.days}</div></div>)}
         <p className="faint" style={{ fontSize: "var(--t-xs)", margin: "8px 0 0" }}><Badge kind="simulated" /></p>
       </div>
       {tab !== "deliveries" && <div className="card"><h3>{t.phcDeliveriesCard}</h3>

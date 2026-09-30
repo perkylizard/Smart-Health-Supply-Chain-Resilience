@@ -32,7 +32,7 @@ const en = {
   allDistricts: "All districts",
   // League
   lgEyebrow: "State league", lgSub: "Every district ranked by resilience score; select a district to open its Today screen",
-  filterName: "Filter districts", tierAll: "All", tierRes: "Resilient", tierWatch: "Watch", tierRisk: "At risk",
+  filterName: "Filter districts", tierAll: "All", tierRes: "Resilient", tierWatch: "Watch", tierRisk: "At risk", noneAtRisk: "No district is at risk: every score is 45 or higher. The lowest are listed under Watch.", noneWatch: "No district is on watch.",
   inspect: "Open", colFacilities: "Facilities", noDistricts: "No district matches.",
   // India
   inEyebrow: "All India", inSub: "State and district stock from the HMIS district ledgers; PHC-level detail for the demo states",
@@ -84,7 +84,7 @@ const hi: typeof en = {
   escEmpty: "अभी कोई नहीं। ज़िलाधिकारी साप्ताहिक ब्रीफ से एस्केलेट करते हैं।",
   allDistricts: "सभी ज़िले",
   lgEyebrow: "राज्य तालिका", lgSub: "हर ज़िला सुदृढ़ता स्कोर से क्रमबद्ध; उसका आज स्क्रीन खोलने के लिए ज़िला चुनें",
-  filterName: "ज़िले छाँटें", tierAll: "सभी", tierRes: "मज़बूत", tierWatch: "निगरानी", tierRisk: "जोखिम",
+  filterName: "ज़िले छाँटें", tierAll: "सभी", tierRes: "मज़बूत", tierWatch: "निगरानी", tierRisk: "जोखिम", noneAtRisk: "कोई ज़िला जोखिम में नहीं: हर स्कोर 45 या अधिक है।", noneWatch: "कोई ज़िला निगरानी में नहीं।",
   inspect: "खोलें", colFacilities: "सुविधाएँ", noDistricts: "कोई ज़िला मेल नहीं खाता।",
   inEyebrow: "पूरा भारत", inSub: "HMIS ज़िला लेजर से राज्य और ज़िला स्टॉक; डेमो राज्यों के लिए PHC स्तर का विवरण",
   tileStates: "रिपोर्ट करने वाले राज्य", tileStatesSub: (m: string) => m,

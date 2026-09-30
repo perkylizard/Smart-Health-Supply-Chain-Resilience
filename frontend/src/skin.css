@@ -225,3 +225,5 @@ body { font-family: var(--font); font-feature-settings: "tnum" 1, "cv11" 1; }
   main .card { overflow-x: auto; }
   main .card table { min-width: 100%; }
 }
+
+.brief-card .headline, .brief-card .lead { max-width: none; }

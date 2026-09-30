@@ -107,7 +107,7 @@ export function RequestsInbox({ unit, district }: { unit: string; district: stri
           </div>
           {items.map((r) => (
             <div key={r.request_id} className="req-item">
-              <div className="req-item-main"><b>{r.commodity_name}</b><span className="req-qty">{r.quantity.toLocaleString("en-IN")} {s.units}</span>{r.note && <span className="faint req-note">“{r.note}”</span>}</div>
+              <div className="req-item-main"><b>{r.commodity_name}</b>{(r as StockRequest & { sample?: boolean }).sample && <span className="badge" title="Loaded at server start so every stage has an example">sample</span>}<span className="req-qty">{r.quantity.toLocaleString("en-IN")} {s.units}</span>{r.note && <span className="faint req-note">“{r.note}”</span>}</div>
               <div className="req-item-act">{asking === r.request_id ? <>
                 {s.declineReasons.map((why) => <button key={why} className="btn" onClick={() => m.mutate({ id: r.request_id, st: "declined", reason: why })}>{why}</button>)}
                 <button className="btn quiet" onClick={() => setAsking(null)}>{v.cancel}</button>
@@ -182,7 +182,7 @@ export function DistrictRequestsView({ unit, district }: { unit: string; distric
 function StatusLine({ r, s, lang, showDistrict }: { r: StockRequest; s: typeof S.en; lang: "en" | "hi"; showDistrict?: boolean }) {
   return (
     <div className="req-line">
-      <div><b>{r.commodity_name}</b> <span className="req-qty">{r.quantity.toLocaleString("en-IN")}</span><div className="faint" style={{ fontSize: 12 }}>{r.facility_name}{showDistrict ? ` · ${r.district}` : ""} · {ago(r.received, lang)}{r.decision_reason ? ` · ${r.decision_reason}` : ""}</div></div>
+      <div><b>{r.commodity_name}</b> {(r as StockRequest & { sample?: boolean }).sample && <span className="badge" title="Loaded at server start so every stage has an example">sample</span>} <span className="req-qty">{r.quantity.toLocaleString("en-IN")}</span><div className="faint" style={{ fontSize: 12 }}>{r.facility_name}{showDistrict ? ` · ${r.district}` : ""} · {ago(r.received, lang)}{r.decision_reason ? ` · ${r.decision_reason}` : ""}</div></div>
       <span className={`chip ${tone[r.status]} nowrap`} style={{ minHeight: 24 }} title={s.status[r.status]}>{short(lang)[r.status]}</span>
     </div>
   );
@@ -204,7 +204,7 @@ export function CountHistory({ unit, district }: { unit: string; district?: stri
       {byD && byD.length > 0 && <p className="faint" style={{ fontSize: 12, margin: "0 0 8px" }}>{byD.slice(0, 6).map((x) => `${x.district} ${x.counts}`).join(" · ")}</p>}
       {rows.length > 0 && (
         <table className="table"><thead><tr><th>{v.when}</th><th>{v.facility}</th><th>{v.medicine}</th><th className="num">{v.qty}</th></tr></thead>
-          <tbody>{rows.slice(0, shown).map((c) => <tr key={c.entry_id}><td className="nowrap faint">{ago(c.received, lang)}</td><td>{c.facility_name}{district ? "" : <span className="faint"> · {c.district}</span>}</td><td>{c.commodity_name}</td><td className="num">{Math.round(c.quantity).toLocaleString("en-IN")}</td></tr>)}</tbody></table>
+          <tbody>{rows.slice(0, shown).map((c) => <tr key={c.entry_id}><td className="nowrap faint">{ago(c.received, lang)}</td><td>{c.facility_name}{district ? "" : <span className="faint"> · {c.district}</span>}</td><td>{c.commodity_name}{(c as StockCount & { sample?: boolean }).sample && <span className="badge" style={{ marginLeft: 6 }}>sample</span>}</td><td className="num">{Math.round(c.quantity).toLocaleString("en-IN")}</td></tr>)}</tbody></table>
       )}
       {rows.length > shown && <button className="btn quiet" onClick={() => setShown((n) => n + 20)}>{v.more(Math.min(20, rows.length - shown))}</button>}
     </div>
