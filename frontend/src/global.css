@@ -463,3 +463,9 @@ textarea.input { min-height: 120px; padding: var(--s3); font-family: ui-monospac
 .disp-warn { margin: 0; padding: 8px 12px; border-radius: 8px; background: var(--red-soft); color: var(--red); font-size: 13px; font-weight: 600; }
 .given-today .req-line:first-of-type { border-top: 0; }
 .disp-quick .chip[aria-pressed="true"], .disp-quick .chip[aria-pressed="true"]:hover, .disp-quick .chip[aria-pressed="true"]:focus-visible { background: var(--teal-2, #134e4a); border-color: var(--teal-2, #134e4a); color: #fff; }
+.disp-patient { border: 1px solid var(--rule); border-radius: 12px; padding: 10px 14px 12px; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.disp-patient legend { padding: 0 6px; font-size: 13px; font-weight: 700; color: var(--ink-2); }
+.disp-privacy { margin: 0; font-size: 12px; }
+.gt-sub { margin: 12px 0 4px; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.gt-item { display: flex; flex-direction: column; gap: 2px; padding: 6px 0; border-top: 1px solid #f1f5f9; font-size: 13px; }
+.gt-item .faint { font-size: 12px; }

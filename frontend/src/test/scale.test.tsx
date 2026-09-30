@@ -43,3 +43,11 @@ test("a formula word matching several products asks which one instead of guessin
   expect(parseLocal("normal saline 20", names)).toEqual([{ commodity_id: "ns", quantity: 20 }]);
   expect(parseLocal("IV fluid 20", names)[0].options?.sort()).toEqual(["ns", "rl"]);
 });
+
+test("'given' lines lower the stock instead of counting it", () => {
+  const names = { ors: "ORS sachet (WHO low-osmolarity)", zinc_20mg: "Zinc 20 mg dispersible tablet" };
+  expect(parseLocal("ORS 2 diye", names)).toEqual([{ commodity_id: "ors", quantity: 2, give: true }]);
+  expect(parseLocal("zinc 20 mg 3 given", names)).toEqual([{ commodity_id: "zinc_20mg", quantity: 3, give: true }]);
+  expect(parseLocal("ORS ke 40 packet bache hain", names)).toEqual([{ commodity_id: "ors", quantity: 40 }]);  // still a count
+  expect(parseLocal("zinc khatam", names)).toEqual([{ commodity_id: "zinc_20mg", quantity: 0 }]);
+});

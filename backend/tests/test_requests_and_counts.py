@@ -224,3 +224,17 @@ def test_giving_medicine_to_a_patient_lowers_the_stock_and_cannot_exceed_it(clie
     assert d["items"][0]["given"] == 4 and d["by_medicine"][0]["commodity_id"] == "ors"
     counts = client.get(f"/facilities/{fid}/counts").json()["counts"]
     assert all(c["channel"] != "dispensed" for c in counts)  # the count history shows what people counted, not the counter's giving
+
+
+def test_patient_details_stay_with_the_facility_and_answers_are_never_cached(client):
+    fid = client.get("/districts/bihar/Araria/facilities").json()["facilities"][6]["facility_id"]
+    client.post("/entries", json={"facility_id": fid, "commodity_id": "ors", "quantity": 30, "channel": "chat"})
+    r = client.post(f"/facilities/{fid}/dispense", json={"commodity_id": "ors", "quantity": 3, "patient_name": "Sita Devi", "patient_age": 34, "patient_place": "Bhabua ward 4"})
+    assert r.status_code == 200 and r.json()["on_hand"] == 27
+    item = client.get(f"/facilities/{fid}/dispensed").json()["items"][0]
+    assert item["patient_name"] == "Sita Devi" and item["patient_age"] == 34 and item["patient_place"] == "Bhabua ward 4" and item["on_hand"] == 27
+    assert client.post(f"/facilities/{fid}/dispense", json={"commodity_id": "ors", "quantity": 1, "patient_age": 200}).status_code == 422
+    assert client.get(f"/facilities/{fid}").headers["cache-control"] == "no-store"
+    # names never reach district or state views
+    for u in ["/districts/bihar/Araria/summary", "/districts/bihar/Araria/counts", "/units/bihar/counts", "/districts/bihar/Araria/requests"]:
+        assert "Sita Devi" not in client.get(u).text

@@ -23,6 +23,23 @@ PROVENANCE = {
 }
 
 
+class NoStore:
+    """API answers change with every count, approval or delivery: tell browsers and proxies never to reuse an old one."""
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+
+        async def wrapped(message):
+            if message["type"] == "http.response.start":
+                message = {**message, "headers": [h for h in message.get("headers", []) if h[0].lower() != b"cache-control"] + [(b"cache-control", b"no-store")]}
+            await send(message)
+        await self.app(scope, receive, wrapped)
+
+
 class StripPrefix:
     """Pure ASGI middleware: drop a leading path prefix so the same routes serve /units (dev proxy strips
     /api) and /api/units (Firebase Hosting forwards to Cloud Run with the prefix intact)."""
@@ -80,6 +97,7 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
     app.add_middleware(ResponseCache, version=lambda: state.version)  # inside StripPrefix: sees /units, not /api/units
     app.add_middleware(GZipMiddleware, minimum_size=1000)
     app.add_middleware(StripPrefix, prefix="/api")
+    app.add_middleware(NoStore)
     app.state.store, app.state.state = store, state
     from sanjeevani.gemini.client import GeminiClient
     app.state.gemini = gemini or GeminiClient()

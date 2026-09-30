@@ -40,7 +40,7 @@ def _enrich(request: Request, recs: list[dict]) -> list[dict]:
     return sorted(out, key=lambda x: -x["received"])
 
 
-def credit_stock(request, facility_id: str, commodity_id: str, quantity: float, ref: str, channel: str = "delivery") -> dict:
+def credit_stock(request, facility_id: str, commodity_id: str, quantity: float, ref: str, channel: str = "delivery", **extra) -> dict:
     """A confirmed receipt adds the quantity to what the facility holds now (its latest count, else the ledger), recorded as
     a stock count so days of stock, alerts, the map and every role's view recompute exactly as for a count from the Report screen."""
     app = getattr(request, "app", request)  # a Request, or the app itself
@@ -52,7 +52,7 @@ def credit_stock(request, facility_id: str, commodity_id: str, quantity: float, 
         if not row.empty:
             now = max(0.0, float(row.iloc[0]["closing"]))
     return app.state.state.add_entry({"kind": "count", "facility_id": facility_id, "commodity_id": commodity_id, "quantity": float(max(0, round(now + float(quantity)))),
-                                      "channel": channel, "added": float(quantity), "ref": ref})
+                                      "channel": channel, "added": float(quantity), "ref": ref, **extra})
 
 
 def log_issue(request: Request, facility_id: str, commodity_id: str, quantity: float, ref: str) -> dict | None:
@@ -187,7 +187,11 @@ def issues(unit_id: str, district: str, request: Request):
 class DispenseIn(BaseModel):
     commodity_id: str
     quantity: float = Field(..., gt=0, le=100_000)
-    slip: str | None = Field(None, max_length=40)  # an OPD slip number, never a patient's name
+    slip: str | None = Field(None, max_length=40)  # an OPD slip number
+    # optional patient details: kept with this facility's own record only; never shown to other roles, Gemini or federated learning
+    patient_name: str | None = Field(None, max_length=60)
+    patient_age: int | None = Field(None, ge=0, le=120)
+    patient_place: str | None = Field(None, max_length=80)
 
 
 @router.post("/facilities/{facility_id}/dispense")
@@ -205,8 +209,9 @@ def dispense(facility_id: str, body: DispenseIn, request: Request):
     on_hand = max(0.0, float(row.iloc[0]["closing"]))
     if body.quantity > on_hand + 1e-6:
         raise HTTPException(409, f"only {int(on_hand)} on hand")
-    rec = credit_stock(request, facility_id, body.commodity_id, -body.quantity, f"dispense:{int(time.time() * 1000)}", channel="dispensed")
-    rec = {**rec, "slip": body.slip}
+    patient = {k: v for k, v in {"slip": body.slip, "patient_name": (body.patient_name or "").strip() or None, "patient_age": body.patient_age,
+                                 "patient_place": (body.patient_place or "").strip() or None}.items() if v not in (None, "")}
+    rec = credit_stock(request, facility_id, body.commodity_id, -body.quantity, f"dispense:{int(time.time() * 1000)}", channel="dispensed", **patient)
     names = app.state.store.commodities().set_index("commodity_id")["name"].to_dict()
     return {"commodity_id": body.commodity_id, "commodity_name": names.get(body.commodity_id, body.commodity_id), "given": body.quantity, "on_hand": rec["quantity"]}
 
@@ -218,7 +223,8 @@ def dispensed(facility_id: str, request: Request, hours: int = 24):
     since = time.time() - hours * 3600
     rows = sorted([e for e in request.app.state.state.entries() if e.get("facility_id") == facility_id and e.get("channel") == "dispensed" and e.get("received", 0) >= since],
                   key=lambda e: -e["received"])
-    items = [{"commodity_id": e["commodity_id"], "commodity_name": names.get(e["commodity_id"], e["commodity_id"]), "given": -float(e.get("added", 0)), "received": e["received"]} for e in rows]
+    items = [{"commodity_id": e["commodity_id"], "commodity_name": names.get(e["commodity_id"], e["commodity_id"]), "given": -float(e.get("added", 0)), "received": e["received"],
+              "on_hand": e["quantity"], **{k: e[k] for k in ("slip", "patient_name", "patient_age", "patient_place") if k in e}} for e in rows]
     by: dict = {}
     for i in items:
         t = by.setdefault(i["commodity_id"], {"commodity_id": i["commodity_id"], "commodity_name": i["commodity_name"], "given": 0.0, "times": 0})
