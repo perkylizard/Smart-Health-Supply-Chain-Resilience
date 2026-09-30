@@ -69,7 +69,7 @@
 
 /* report */
 .report-modes { margin-bottom: 12px; }
-.report-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.report-split { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 16px; align-items: start; }
 .parse-preview { background: #fff; border: 1px solid var(--rule); border-radius: 12px; padding: 16px; }
 .parse-preview h3 { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 0 0 8px; font-size: 13px; }
 .parse-preview ul { list-style: none; margin: 0; padding: 0; }

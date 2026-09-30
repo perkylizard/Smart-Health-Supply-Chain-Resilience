@@ -158,7 +158,7 @@ export default function PhcHome({ tab }: { tab: "stock" | "report" | "deliveries
         </>)}
       </div>{Side}</div>}
       {tab === "report" && (
-        <section className="qsection report-section" style={{ maxWidth: 960 }}><ChatWidget facilityId={facilityId} names={Object.fromEntries(stock.map((s) => [s.commodity_id, s.commodity_name]))} withHeader /></section>
+        <section className="qsection report-section"><ChatWidget facilityId={facilityId} names={Object.fromEntries(stock.map((s) => [s.commodity_id, s.commodity_name]))} withHeader /></section>
       )}
     </div>
   );

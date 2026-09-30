@@ -40,7 +40,7 @@ export default function DmBrief() {
     ...(me.staffing_gap != null ? [{ k: b.bStaff, v: me.staffing_gap * 100, m: median(rows.map((r) => (r.staffing_gap ?? NaN) * 100)), good: false, fmt: (x: number) => `${Math.round(x)}%` }] : []),
   ] : [];
   return (
-    <div className="pg" style={{ maxWidth: 1100 }}>
+    <div className="pg">
       <section className="card">
         <div className="pg-head">
           <div>
@@ -85,6 +85,7 @@ export default function DmBrief() {
       </section>}
 
       <div className="split">
+        <div>
         <section className="card brief-sec">
           {n ? (<>{n.sections.map((s) => <div key={s.heading}><h2>{s.heading}</h2><ul>{s.bullets.map((x, i) => <li key={i}>{x}</li>)}</ul></div>)}
             {n.next_week_risks?.length > 0 && !n.sections.some((s) => s.heading === t.riskNext) && <div><h2>{t.riskNext}</h2><ul>{n.next_week_risks.slice(0, 5).map((r, i) => <li key={i}>{r}</li>)}</ul></div>}</>) : (<>
@@ -93,12 +94,13 @@ export default function DmBrief() {
             <h2>{t.riskNext}</h2><ul>{f.top_risks.map((r, i) => <li key={i}>{r}</li>)}</ul>
           </>)}
         </section>
+        <DistrictRequestsView unit={unit} district={district} />
+        </div>
         <aside>
           <section className="card brief-sec">
             <h2>{t.dataQuality}</h2><ul><li>{f.data_issues} facility-commodity rows look like reporting errors and were excluded from alerts.</li></ul>
             <p style={{ margin: 0 }}><Link to={`/dm/${unit}/${encodeURIComponent(district)}/compare`}>{t.neighbours} →</Link></p>
           </section>
-          <DistrictRequestsView unit={unit} district={district} />
           <CountHistory unit={unit} district={district} />
         </aside>
       </div>
