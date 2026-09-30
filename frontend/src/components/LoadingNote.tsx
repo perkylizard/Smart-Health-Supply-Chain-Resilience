@@ -9,7 +9,7 @@ type Say = (d: string, s: string) => string;
 const EN: Record<string, Say> = {
   summary: (d) => `Reading ${d}'s facilities and stock…`,
   resilience: () => "Checking what runs out before the next delivery…",
-  transfers: () => "Matching surplus to shortage nearby…",
+  transfers: () => "Matching spare stock to shortages nearby…",
   briefing: () => "Gemini is writing this morning's briefing…",
   brief: () => "Gemini is writing the weekly brief…",
   districts: (_d, s) => `Scoring every district in ${s}…`,
@@ -24,7 +24,7 @@ const EN: Record<string, Say> = {
 const HI: Record<string, Say> = {
   summary: (d) => `${d} की सुविधाएँ और स्टॉक पढ़े जा रहे हैं…`,
   resilience: () => "देखा जा रहा है कि अगली डिलीवरी से पहले क्या खत्म होगा…",
-  transfers: () => "पास के अधिशेष को कमी से मिलाया जा रहा है…",
+  transfers: () => "पास के बचे स्टॉक को कमी से मिलाया जा रहा है…",
   briefing: () => "Gemini आज सुबह का ब्रीफ़िंग लिख रहा है…",
   brief: () => "Gemini साप्ताहिक ब्रीफ़ लिख रहा है…",
   districts: (_d, s) => `${s} के हर ज़िले का स्कोर निकाला जा रहा है…`,

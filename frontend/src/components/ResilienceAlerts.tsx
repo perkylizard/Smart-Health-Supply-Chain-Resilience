@@ -15,7 +15,7 @@ const S = {
     outNow: (r: number) => `Already out; a delivery takes ${r} days to land`,
     after: (d: number, r: number) => `Runs out in ${d} days; resupply takes ${r} days`,
     rising: (d: number) => `Demand rising: about ${d} days of stock at forecast demand`,
-    fix: (q: string, from: string, km: number) => `Fix ready: +${q} from ${from}, ${km} km`, noFix: "No nearby donor has spare stock; raise an indent with the district store",
+    fix: (q: string, from: string, km: number) => `Fix ready: +${q} from ${from}, ${km} km`, noFix: "No nearby facility has stock to spare; request it from the district store",
     why: "Why?", move: "Move stock", more: (n: number) => `Show ${n} more`, none: "Nothing is projected to run out. Every facility has stock beyond its next delivery.",
     reported: "reported by facility", failed: "Warnings could not load. Use Retry at the top of the page.",
     tierHint: { critical: "Runs out before a resupply can arrive", warning: "Runs out within two weeks after the resupply time", watch: "Fine today, but demand is rising" } as Record<string, string>,

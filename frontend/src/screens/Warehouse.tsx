@@ -176,7 +176,7 @@ function fmt(v: number | null) { return v == null ? "…" : Math.round(v).toLoca
 
 const IR = {
   en: { title: "Issued from the store", sub: "Every dispatch in this session, logged at the moment it leaves the store. Kept apart from the HMIS ledger below, which is the district's reported record and is never edited.",
-    none: "Nothing dispatched yet. Dispatches from the Indents queue appear here.", total: (n: string, k: number) => `${n} units in ${k} ${k === 1 ? "dispatch" : "dispatches"}`, med: "Medicine", qty: "Issued", n: "Dispatches", to: "Latest to", sample: "sample" },
+    none: "Nothing dispatched yet. Anything you mark dispatched on Indents appears here.", total: (n: string, k: number) => `${n} units in ${k} ${k === 1 ? "dispatch" : "dispatches"}`, med: "Medicine", qty: "Issued", n: "Dispatches", to: "Latest to", sample: "sample" },
   hi: { title: "भंडार से जारी", sub: "इस सत्र का हर प्रेषण, भंडार से निकलते ही दर्ज। नीचे का HMIS लेजर ज़िले का रिपोर्ट किया रिकॉर्ड है और कभी बदला नहीं जाता।",
     none: "अभी कुछ नहीं भेजा गया। इंडेंट कतार से भेजा गया सामान यहाँ दिखेगा।", total: (n: string, k: number) => `${k} प्रेषणों में ${n} इकाइयाँ`, med: "दवा", qty: "जारी", n: "प्रेषण", to: "अंतिम प्राप्तकर्ता", sample: "नमूना" },
 };

@@ -42,11 +42,11 @@ const STEPS: Record<PersonaId, Step[]> = {
     { target: ".bench", path: "", en: ["Against the state", "Your district next to the state median, so you know where you stand."], hi: ["राज्य की तुलना में", "आपका ज़िला राज्य के मध्य के साथ, ताकि पता रहे आप कहाँ हैं।"] },
     { target: ".split .req-inbox", path: "", en: ["Requests from facilities", "Every request by status, from waiting to received."], hi: ["सुविधाओं के अनुरोध", "हर अनुरोध उसकी स्थिति के साथ, प्रतीक्षा से प्राप्ति तक।"] },
     { target: ".btn.rose", path: "", en: ["Escalate to the state", "One click sends a note the state officer sees."], hi: ["राज्य को सूचित करें", "एक क्लिक से राज्य अधिकारी को संदेश जाता है।"] },
-    { target: ROLE, en: ["See it from every side", "Switch role to see the district officer's cockpit or the state view."], hi: ["हर तरफ़ से देखें", "भूमिका बदलकर ज़िला अधिकारी या राज्य का दृश्य देखें।"] },
+    { target: ROLE, en: ["See it from every side", "Switch role to see the district officer's Today screen or the state view."], hi: ["हर तरफ़ से देखें", "भूमिका बदलकर ज़िला अधिकारी या राज्य का दृश्य देखें।"] },
   ],
   state: [
     { target: "[data-tour=st-hero]", path: "", en: ["Your state", "Every district's stock, beds and staff, in one place."], hi: ["आपका राज्य", "हर ज़िले का स्टॉक, बिस्तर और स्टाफ़, एक जगह।"] },
-    { target: "[data-tour=st-map]", path: "", en: ["Every district on one map", "Colour shows resilience; open a district to see its cockpit."], hi: ["हर ज़िला एक नक्शे पर", "रंग सुदृढ़ता दिखाता है; किसी ज़िले का कॉकपिट खोलें।"] },
+    { target: "[data-tour=st-map]", path: "", en: ["Every district on one map", "Colour shows resilience; tap a district to open its Today screen."], hi: ["हर ज़िला एक नक्शे पर", "रंग सुदृढ़ता दिखाता है; किसी ज़िले पर टैप करें, उसकी आज की स्क्रीन खुलेगी।"] },
     { target: "[data-tour=st-approvals]", path: "", en: ["Transfers across districts", "When stock moves between districts, the state approves."], hi: ["ज़िलों के बीच स्थानांतरण", "जब स्टॉक ज़िलों के बीच जाता है, राज्य स्वीकृति देता है।"] },
     { target: "[data-tour=st-league]", path: "", en: ["The district league", "Who is most at risk this week, and who is doing well."], hi: ["ज़िलों की सूची", "इस सप्ताह सबसे ज़्यादा जोखिम में कौन है, और कौन अच्छा कर रहा है।"] },
     { target: '.hdr-tabs a[href$="/federated"], .hdr-tabs-m a[href$="/federated"]', path: "", en: ["Federated learning", "Districts, states and a Brazil partner train one model. No record ever leaves home."], hi: ["फ़ेडरेटेड लर्निंग", "ज़िले, राज्य और ब्राज़ील साथी एक मॉडल सिखाते हैं। कोई रिकॉर्ड बाहर नहीं जाता।"] },
