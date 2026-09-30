@@ -56,7 +56,13 @@ function warmSiblings(which: string) {
 }
 
 /** Shown in the content area while a screen's code is on its way; the same shimmer the screens use for their own data. */
-const ScreenFallback = () => <div aria-busy="true"><p className="skeleton" style={{ height: 40, marginBottom: 16 }}>…</p><p className="skeleton" style={{ height: 320 }}>…</p></div>;
+/** While a screen's code loads: the page's shape in soft shimmer (hero, then two columns), never a blank frame. */
+const ScreenFallback = () => (
+  <div aria-busy="true" className="screen-fallback">
+    <p className="skeleton" style={{ height: 150, marginBottom: 24 }}>…</p>
+    <div className="sf-cols"><p className="skeleton" style={{ height: 340 }}>…</p><p className="skeleton" style={{ height: 340 }}>…</p></div>
+  </div>
+);
 
 export type Basis = "real" | "simulated";
 export interface Ctx {

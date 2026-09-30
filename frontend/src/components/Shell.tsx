@@ -7,6 +7,7 @@ import { PERSONAS, icons } from "../personas";
 import LocationPicker from "./LocationPicker";
 import RoleMenu from "./RoleMenu";
 import Tour from "./Tour";
+import LoadingNote from "./LoadingNote";
 import WhatIf from "./WhatIf";
 import LoadErrorBanner from "./LoadErrorBanner";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -52,6 +53,7 @@ export default function Shell({ children, offline }: { children: React.ReactNode
   return (
     <div className="shell" lang={lang}>
       <Tour />
+      <LoadingNote />
       <header className="hdr">
         <div className="hdr-bar">
           {/* zone 1: brand (start over) */}
