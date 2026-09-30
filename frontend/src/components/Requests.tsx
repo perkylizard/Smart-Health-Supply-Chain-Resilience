@@ -150,11 +150,15 @@ export function RequestsInbox({ unit, district }: { unit: string; district: stri
 const V = {
   en: { fromN: (n: number) => `From ${n} ${n === 1 ? "facility" : "facilities"}, oldest first.`, find: "Find a facility or medicine", waitingFor: (a: string) => `waiting ${a}`, approveAll: (n: number) => `Approve all ${n}`, cancel: "Cancel", moreFac: (n: number) => `Show ${n} more facilities`,
     waitingTitle: (n: number) => `${n} ${n === 1 ? "request" : "requests"} from facilities ${n === 1 ? "is" : "are"} waiting for your approval`, waitingFrom: (names: string, a: string) => `From ${names} · oldest waiting ${a}`, review: "Review requests",
+    trackTitle: "Track decided requests", trackHint: "What you approved or declined, and where it is now. The district store dispatches approved requests; the facility confirms delivery.",
+    trackNone: "Nothing decided yet. Requests you approve or decline appear here.", trackEmptyTab: "None at this stage.", allDecided: "All", updatedAgo: (a: string) => `updated ${a}`, moreRows: (n: number) => `Show ${n} more`,
     stateTitle: "Requests from facilities, statewide", stateHint: "Each district's health officer approves or declines. Shown here so the state can see where demand is building.", district: "District", waiting: "Waiting", approved: "Approved", declined: "Declined", moving: "On the way", delivered: "Delivered", latest: "Latest requests", none: "No facility has raised a request yet.",
     dmTitle: "Requests from facilities", dmHint: "Raised by PHC staff in this district; the District Health Officer decides.",
     countsTitle: "Stock counts from facilities", countsHint: "What PHC staff reported through the Report screen. Each count replaces that medicine's stock and recomputes its alerts.", countsState: "Stock counts from facilities, statewide", when: "When", facility: "Facility", medicine: "Medicine", qty: "Count", via: "Via", noCounts: "No facility has reported a count yet.", nFacilities: (n: number, c: number) => `${c} counts from ${n} facilities`, more: (n: number) => `Show ${n} more`, chat: "message", web: "form" },
   hi: { fromN: (n: number) => `${n} सुविधाओं से, सबसे पुराना पहले।`, find: "सुविधा या दवा खोजें", waitingFor: (a: string) => `${a} से प्रतीक्षा`, approveAll: (n: number) => `सभी ${n} स्वीकृत करें`, cancel: "रद्द करें", moreFac: (n: number) => `${n} और सुविधाएँ`,
     waitingTitle: (n: number) => `सुविधाओं के ${n} अनुरोध आपकी स्वीकृति की प्रतीक्षा में हैं`, waitingFrom: (names: string, a: string) => `${names} से · सबसे पुराना ${a} से प्रतीक्षा में`, review: "अनुरोध देखें",
+    trackTitle: "तय किए गए अनुरोधों की स्थिति", trackHint: "आपने क्या स्वीकृत या अस्वीकार किया, और वह अब कहाँ है। ज़िला भंडार स्वीकृत अनुरोध भेजता है; सुविधा प्राप्ति की पुष्टि करती है।",
+    trackNone: "अभी कुछ तय नहीं हुआ। आपके स्वीकृत या अस्वीकृत अनुरोध यहाँ दिखेंगे।", trackEmptyTab: "इस चरण में कोई नहीं।", allDecided: "सभी", updatedAgo: (a: string) => `${a} पहले अद्यतन`, moreRows: (n: number) => `${n} और देखें`,
     stateTitle: "सुविधाओं के अनुरोध, पूरे राज्य में", stateHint: "हर ज़िले के स्वास्थ्य अधिकारी निर्णय लेते हैं। राज्य देख सके कि मांग कहाँ बढ़ रही है।", district: "ज़िला", waiting: "प्रतीक्षा", approved: "स्वीकृत", declined: "अस्वीकृत", moving: "रास्ते में", delivered: "पहुँचा", latest: "नवीनतम अनुरोध", none: "अभी किसी सुविधा ने अनुरोध नहीं किया।",
     dmTitle: "सुविधाओं के अनुरोध", dmHint: "इस ज़िले के PHC स्टाफ के अनुरोध; निर्णय ज़िला स्वास्थ्य अधिकारी का।",
     countsTitle: "सुविधाओं की स्टॉक गिनती", countsHint: "PHC स्टाफ ने रिपोर्ट स्क्रीन से जो बताया। हर गिनती उस दवा का स्टॉक बदलती है और अलर्ट फिर से गणना होते हैं।", countsState: "सुविधाओं की स्टॉक गिनती, पूरे राज्य में", when: "कब", facility: "सुविधा", medicine: "दवा", qty: "गिनती", via: "माध्यम", noCounts: "अभी किसी सुविधा ने गिनती नहीं भेजी।", nFacilities: (n: number, c: number) => `${n} सुविधाओं से ${c} गिनतियाँ`, more: (n: number) => `${n} और दिखाएँ`, chat: "संदेश", web: "फ़ॉर्म" },
@@ -188,6 +192,41 @@ export function StateRequests({ unit }: { unit: string }) {
 }
 
 /** District Magistrate: the district's requests and where each stands, read-only. */
+/** District officer: every request already decided, filtered by where it is now (approved -> on the way -> delivered, or declined). */
+export function RequestTracker({ unit, district }: { unit: string; district: string }) {
+  const { lang } = useApp(); const v = V[lang]; const s = S[lang];
+  const q = useQuery({ queryKey: ["districtRequestsAll", unit, district], staleTime: 0, refetchOnMount: "always", queryFn: () => api.districtRequests(unit, district), refetchInterval: 15_000 });
+  const STAGES = ["approved", "dispatched", "delivered", "declined"] as const;
+  const [tab, setTab] = useState<"all" | (typeof STAGES)[number]>("all");
+  const [shown, setShown] = useState(6);
+  const decided = (q.data?.requests ?? []).filter((r) => r.status !== "requested").sort((a, b) => b.updated - a.updated);
+  const rows = tab === "all" ? decided : decided.filter((r) => r.status === tab);
+  const n = (st: string) => decided.filter((r) => r.status === st).length;
+  const pick = (t: typeof tab) => { setTab(t); setShown(6); };
+  return (
+    <div className="card req-inbox req-track">
+      <h2 style={{ fontSize: "var(--t-lg)" }}>{v.trackTitle}</h2>
+      <p className="faint" style={{ margin: "4px 0 12px", fontSize: "var(--t-xs)" }}>{v.trackHint}</p>
+      {q.data && decided.length === 0 && <p className="muted" style={{ margin: 0 }}>{v.trackNone}</p>}
+      {decided.length > 0 && <>
+        <div className="seg req-track-tabs" role="tablist" aria-label={v.trackTitle}>
+          <button type="button" role="tab" aria-selected={tab === "all"} className={tab === "all" ? "on" : ""} onClick={() => pick("all")}>{v.allDecided} <span className="seg-n">{decided.length}</span></button>
+          {STAGES.map((st) => <button key={st} type="button" role="tab" aria-selected={tab === st} className={tab === st ? "on" : ""} onClick={() => pick(st)} title={s.status[st]}>{short(lang)[st]} <span className="seg-n">{n(st)}</span></button>)}
+        </div>
+        {rows.length === 0 && <p className="muted" style={{ margin: "8px 0 0" }}>{v.trackEmptyTab}</p>}
+        {rows.slice(0, shown).map((r) => (
+          <div key={r.request_id} className="req-line">
+            <div><b>{r.commodity_name}</b> {(r as StockRequest & { sample?: boolean }).sample && <span className="badge" title="Loaded at server start so every stage has an example">sample</span>} <span className="req-qty">{r.quantity.toLocaleString("en-IN")} {s.units}</span>
+              <div className="faint" style={{ fontSize: 12 }}>{r.facility_name} · {v.updatedAgo(ago(r.updated, lang))}{r.decision_reason ? ` · ${r.decision_reason}` : ""}</div></div>
+            <span className={`chip ${tone[r.status]} nowrap`} style={{ minHeight: 24 }} title={s.status[r.status]}>{short(lang)[r.status]}</span>
+          </div>
+        ))}
+        {rows.length > shown && <button type="button" className="lnk-btn" style={{ marginTop: 8 }} onClick={() => setShown((x) => x + 10)}>{v.moreRows(Math.min(10, rows.length - shown))}</button>}
+      </>}
+    </div>
+  );
+}
+
 export function DistrictRequestsView({ unit, district }: { unit: string; district: string }) {
   const { lang } = useApp(); const v = V[lang]; const s = S[lang];
   const q = useQuery({ queryKey: ["districtRequestsAll", unit, district], staleTime: 0, refetchOnMount: "always", queryFn: () => api.districtRequests(unit, district), refetchInterval: 15_000 });

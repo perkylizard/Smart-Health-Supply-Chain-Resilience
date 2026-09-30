@@ -339,6 +339,7 @@ textarea.input { min-height: 120px; padding: var(--s3); font-family: ui-monospac
 .req-waiting-n { flex: none; display: grid; place-items: center; min-width: 40px; height: 40px; padding: 0 8px; border-radius: 20px; background: var(--amber); color: var(--amber-soft); font-weight: 700; font-size: 18px; }
 .req-waiting-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .req-waiting-t .faint { font-size: var(--t-xs); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.req-track-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; }
 .rw-phone { display: none; }
 @media (max-width: 904px) { .rw-phone { display: block; } .rw-wide { display: none; } }
 @media (max-width: 599px) { .req-waiting { flex-wrap: wrap; } .req-waiting .btn { width: 100%; } .req-waiting-t .faint { white-space: normal; } }
