@@ -19,6 +19,16 @@ class InMemoryState:
         self._scenario = {"name": "normal", "intensity": 1.0, "updated": time.time()}
         self._transfers: dict[str, dict] = {}
         self._entries: list[dict] = []
+        self._version = 0  # bumped on every change; read-only responses are cached per version (app/respcache.py)
+
+    @property
+    def version(self) -> int:
+        return self._version
+
+    def bump(self) -> None:
+        """Something the responses depend on changed outside this store (e.g. a background computation finished)."""
+        with self._lock:
+            self._version += 1
 
     def get_scenario(self) -> dict:
         return dict(self._scenario)
@@ -26,6 +36,7 @@ class InMemoryState:
     def set_scenario(self, name: str, intensity: float) -> dict:
         with self._lock:
             self._scenario = {"name": name, "intensity": float(max(0.0, min(1.0, intensity))), "updated": time.time()}
+            self._version += 1
             return dict(self._scenario)
 
     def transfer_status(self, transfer_id: str) -> dict | None:
@@ -35,6 +46,7 @@ class InMemoryState:
         with self._lock:
             rec = {"transfer_id": transfer_id, "status": status, "reason": reason, "updated": time.time()}
             self._transfers[transfer_id] = rec
+            self._version += 1
             return dict(rec)
 
     def all_transfers(self) -> dict[str, dict]:
@@ -44,6 +56,7 @@ class InMemoryState:
         with self._lock:
             rec = {**entry, "entry_id": f"e{len(self._entries) + 1}", "received": time.time()}
             self._entries.append(rec)
+            self._version += 1
             return rec
 
     def entries(self, facility_id: str | None = None) -> list[dict]:

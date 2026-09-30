@@ -73,9 +73,13 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
             if district not in _known[unit_id]:
                 return JSONResponse({"detail": f"unknown district {district} in {unit_id}"}, status_code=404)
         return await call_next(request)
-    app.add_middleware(StripPrefix, prefix="/api")
     store = store or Store()
     state = state or InMemoryState()
+    from starlette.middleware.gzip import GZipMiddleware
+    from app.respcache import ResponseCache
+    app.add_middleware(ResponseCache, version=lambda: state.version)  # inside StripPrefix: sees /units, not /api/units
+    app.add_middleware(GZipMiddleware, minimum_size=1000)
+    app.add_middleware(StripPrefix, prefix="/api")
     app.state.store, app.state.state = store, state
     from sanjeevani.gemini.client import GeminiClient
     app.state.gemini = gemini or GeminiClient()
@@ -119,7 +123,7 @@ def create_app(store: Store | None = None, state: InMemoryState | None = None, g
         key = _key_for(unit_id, None)
         if key in _ready:
             return A.apply_reports(_alerts_cached(*key), stock_reports())
-        _th.Thread(target=lambda: alerts_for(unit_id), daemon=True).start()
+        _th.Thread(target=lambda: (alerts_for(unit_id), state.bump()), daemon=True).start()
         return None
 
     def _unit_or_404(unit_id: str):
